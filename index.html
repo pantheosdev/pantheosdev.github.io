@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TFSA & FHSA Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;padding-bottom:24px}
+
+/* ── Header / Nav ── */
+.hdr{border-bottom:1px solid #12122a;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:80;background:rgba(8,8,16,.94);backdrop-filter:blur(12px)}
+.hdr h1{font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.hdr h1 span{color:#2563eb}
+.title-block{display:flex;flex-direction:column;gap:4px}
+.nav-rows{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex:1;min-width:340px}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav-main,.nav-actions{justify-content:flex-end}
+.nav button{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;background:transparent;color:#667;transition:all .2s}
+.nav button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.nav button.active{background:#2563eb;color:#fff}
+.nav button.sec{background:#1a1a2e;color:#889;border:1px solid #2a2a4a}
+.nav button.sec:hover{border-color:#2563eb;color:#aab}
+
+/* ── Layout ── */
+.main{padding:24px;max-width:1200px;margin:0 auto}
+.hidden{display:none !important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ── Cards ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:32px}
+.card{background:linear-gradient(135deg,#0a0a1a,#101020);border:1px solid #1a1a3a;border-radius:12px;padding:20px 24px;min-width:0}
+.card.warn{background:linear-gradient(135deg,#1a0a0a,#2a1010);border-color:#4a2020}
+.card-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#667;margin-bottom:8px}
+.card-val{font-size:26px;font-weight:700;font-family:'Space Mono',monospace;letter-spacing:-1px;color:#e8e8f0}
+.card.warn .card-val{color:#ff6b6b}
+.card-sub{font-size:12px;color:#556;margin-top:4px}
+.card.warn .card-sub{color:#cc5555}
+
+/* ── Headings ── */
+h2.sec{font-size:14px;text-transform:uppercase;letter-spacing:2px;color:#445;margin-bottom:16px}
+.view-title{font-size:18px;font-weight:700;margin-bottom:16px;color:#e8e8f0}
+.section-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.section-head h2.sec{margin:0}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse;font-size:13px;font-family:'Space Mono',monospace}
+th{padding:10px 12px;text-align:left;color:#556;font-size:11px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1a1a3a;white-space:nowrap}
+th.r{text-align:right}
+td{padding:8px 12px;border-bottom:1px solid #0f0f1f}
+td.r{text-align:right}
+tr.excess{background:#1a0808}
+.overflow{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ── Pills / Colors ── */
+.pill{padding:2px 10px;border-radius:12px;font-size:11px;white-space:nowrap}
+.pill-c{background:#0a2a1a;color:#4ade80}
+.pill-w{background:#2a0a0a;color:#f87171}
+.pill-tfsa{background:#1a1a3a;color:#7dd3fc}
+.pill-fhsa{background:#1a2a1a;color:#4ade80}
+.pill-t{background:#1a1a2a;color:#a78bfa}
+.green{color:#4ade80}.red{color:#f87171}.blue{color:#7dd3fc}.gold{color:#fbbf24}.dim{color:#556}.mute{color:#99a}.bright{color:#dde}.purple{color:#a78bfa}
+.bold{font-weight:600}
+.truncate{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Year filter buttons ── */
+.yr-btns{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.yr-btn{padding:5px 12px;border-radius:6px;border:1px solid #2a2a4a;background:transparent;color:#aab;font-size:12px;cursor:pointer;transition:all .2s}
+.yr-btn.active{border-color:#2563eb;background:#1a2a5a}
+
+/* ── Pagination ── */
+.pg{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.pg button{padding:6px 12px;border-radius:6px;border:1px solid #2a2a4a;background:transparent;color:#aab;font-size:12px;cursor:pointer}
+.pg button:disabled{opacity:.4;cursor:default}
+.pg span{padding:6px 12px;color:#667;font-size:12px}
+
+/* ── Panels (reusable box pattern) ── */
+.panel{background:#0a0a1a;border:1px solid #1a1a3a;border-radius:12px;padding:20px;margin-bottom:24px}
+.panel-title{margin:0 0 12px;font-size:14px;font-weight:600;color:#889}
+.panel-text{font-size:13px;color:#667;line-height:1.8;margin:4px 0}
+.panel-sub{font-size:12px;color:#556;margin-top:12px}
+.cra{background:#0a0f1a;border:1px solid #1a2a4a;border-radius:12px;padding:20px;margin-top:24px}
+.cra h3{color:#7dd3fc;margin:0 0 12px;font-size:14px}
+.cra p{font-size:12px;color:#667;line-height:1.7;margin:4px 0}
+.disclaimer{background:#0d0d18;border:1px solid #2a2a3a;border-radius:10px;padding:14px 18px;margin-top:16px;font-size:11px;color:#556;line-height:1.6}
+.note-box{background:#0a0a1a;border:1px solid #1a1a3a;border-radius:12px;padding:20px;margin-top:16px}
+.note-box h3{margin:0 0 12px;font-size:14px;color:#889}
+.note-box p{font-size:13px;color:#667;line-height:1.8;margin:4px 0}
+.note-box.warn-box{border-color:#4a2020}
+.note-box.warn-box h3{color:#f87171}
+.note-inline{font-size:12px;color:#667;margin-top:8px;line-height:1.6}
+
+/* ── Unified Input Styling (all inputs across the app) ── */
+.t-input{background:#12121f;border:1px solid #2a2a4a;border-radius:8px;padding:10px 14px;color:#e8e8f0;font-size:14px;width:100%;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.t-input:focus{border-color:#2563eb}
+.t-input::placeholder{color:#445}
+.t-label{font-size:11px;color:#667;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+
+/* ── Buttons ── */
+.add-btn{padding:10px 20px;background:#2563eb;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;white-space:nowrap}
+.add-btn:hover{background:#1d4ed8}
+.del-btn{background:none;border:none;color:#445;cursor:pointer;font-size:14px;padding:4px 8px;border-radius:4px;transition:color .2s}
+.del-btn:hover{color:#f87171}
+.inline-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.inline-btns button{padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;background:#12121f;color:#aab;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.inline-btns button:hover{border-color:#2563eb;color:#dde}
+
+/* ── Charts ── */
+.chrt{background:#0a0a1a;border:1px solid #1a1a3a;border-radius:12px;padding:20px;margin-bottom:24px}
+.chrt canvas{max-height:280px;width:100% !important}
+.chrt-title{color:#889;font-size:14px;font-weight:600;margin-bottom:12px}
+
+/* ── Modal ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:#0d0d1a;border:1px solid #2a2a4a;border-radius:16px;padding:32px;width:440px;max-width:90vw;max-height:90vh;overflow:auto}
+.modal h3{margin:0 0 24px;color:#e8e8f0}
+.modal .fields{display:flex;flex-direction:column;gap:16px}
+.modal label{font-size:11px;color:#667;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.modal input,.modal select,.modal textarea{background:#12121f;border:1px solid #2a2a4a;border-radius:8px;padding:10px 14px;color:#e8e8f0;font-size:14px;width:100%;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:#2563eb}
+.modal input::placeholder{color:#445}
+.modal .btns{display:flex;gap:12px;margin-top:8px}
+.modal .btns button{flex:1;padding:12px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.modal .btn-add{background:#2563eb;border:none;color:#fff;font-weight:600}
+.modal .btn-add:hover{background:#1d4ed8}
+.modal .btn-cancel{background:#1a1a2e;border:1px solid #2a2a4a;color:#889}
+.modal .btn-cancel:hover{border-color:#445}
+
+/* ── Toast / Undo ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:12px 20px;color:#e8e8f0;font-size:13px;z-index:2000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:slideUp .3s ease-out}
+.toast button{background:#2563eb;border:none;color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+
+/* ── Self-test badge ── */
+.engine-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+.engine-badge.pass{background:#0a2a1a;color:#4ade80}
+.engine-badge.fail{background:#2a0a0a;color:#f87171}
+
+/* ── Interactive Panels (What-if, Reconciliation) ── */
+.tool-panel{border-radius:12px;padding:20px;margin-top:24px}
+.tool-panel.blue{background:linear-gradient(135deg,#0a0f1a,#0d0d1a);border:1px solid #1a2a4a}
+.tool-panel.purple{background:linear-gradient(135deg,#0a0a1a,#0f0a1a);border:1px solid #2a1a4a}
+.tool-panel h3{margin:0 0 16px;font-size:14px;font-weight:600}
+.tool-panel.blue h3{color:#7dd3fc}
+.tool-panel.purple h3{color:#a78bfa}
+.tool-panel p.desc{font-size:12px;color:#667;margin-bottom:12px;line-height:1.6}
+.tool-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.tool-row>div{flex:1;min-width:140px}
+.tool-row>.tool-action{flex:0 0 auto}
+.tool-result{background:#0a0a1a;border:1px solid #1a1a3a;border-radius:8px;padding:14px;margin-top:12px}
+.tool-result p{font-size:13px;color:#889;line-height:1.7;margin:2px 0}
+.recon-diff{padding:12px 16px;border-radius:8px;font-size:13px;margin-top:8px;line-height:1.7}
+.recon-diff p{margin:2px 0}
+.recon-diff.match{background:#0a2a1a;color:#4ade80;border:1px solid #1a3a2a}
+.recon-diff.mismatch{background:#2a0a0a;color:#f87171;border:1px solid #4a1a1a}
+
+/* ── Annual view sub-headings ── */
+.annual-title{font-size:18px;font-weight:700;margin:32px 0 8px;color:#e8e8f0}
+.annual-title-first,.annual-title:first-of-type{margin-top:16px}
+.annual-desc{font-size:12px;color:#556;margin-bottom:12px;line-height:1.6}
+
+/* ── Structural helpers ── */
+.modal-wide{width:760px;max-width:96vw}
+.limits-scroll{max-height:260px;border:1px solid #1a1a3a;border-radius:10px;padding:8px;background:#090914}
+.limit-input{width:140px}
+.actions-cell{text-align:center;white-space:nowrap}
+.form-dim{font-size:12px}
+.mt-sm{margin-top:8px}
+.mt-lg{margin-top:24px}
+.view-header{margin-bottom:20px}
+.view-header .view-title{margin:0}
+.view-header .inline-btns{margin:0}
+
+/* ── Responsive ── */
+@media(max-width:900px){.nav-rows{min-width:0;width:100%;align-items:stretch}.nav-main,.nav-actions{justify-content:flex-start}}
+@media(max-width:768px){
+  .hdr{padding:14px}
+  .hdr h1{font-size:18px}
+  .main{padding:14px}
+  .g2{grid-template-columns:1fr}
+  .nav-main,.nav-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .nav button{width:100%;padding:12px 14px}
+  .inline-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .card{padding:16px}
+  .card-val{font-size:22px}
+  .chrt{padding:14px}
+  .chrt canvas{max-height:220px}
+  .truncate{max-width:none;overflow:visible;text-overflow:clip;white-space:normal}
+  .modal-bg{align-items:flex-end;padding:0}
+  .modal{width:100vw !important;max-width:100vw !important;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px}
+  .modal .btns{position:sticky;bottom:0;background:#0d0d1a;padding-top:12px}
+  .tool-row{flex-direction:column}
+  .tool-row>.tool-action{width:100%}
+  .tool-row>.tool-action .add-btn{width:100%}
+  table.mobile-stack,table.mobile-stack tbody,table.mobile-stack tr,table.mobile-stack td{display:block;width:100%}
+  table.mobile-stack thead{display:none}
+  table.mobile-stack tr{background:#0a0a1a;border:1px solid #1a1a3a;border-radius:14px;padding:10px 12px;margin-bottom:12px}
+  table.mobile-stack tr.excess{background:linear-gradient(135deg,#1a0808,#120c14)}
+  table.mobile-stack td{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #11121e;text-align:right;white-space:normal}
+  table.mobile-stack td::before{content:attr(data-label);flex:1 1 48%;text-align:left;color:#667;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-family:'DM Sans',sans-serif}
+  table.mobile-stack td:last-child{border-bottom:none}
+  table.mobile-stack td .pill{margin-left:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="title-block">
+    <h1><span>◆</span> TFSA & FHSA Tracker</h1>
+  </div>
+  <div class="nav-rows">
+    <div class="nav nav-main" role="navigation" aria-label="Main views">
+      <button data-nav-view="dashboard" class="active" onclick="showView('dashboard')">Dashboard</button>
+      <button data-nav-view="tfsa" onclick="showView('tfsa')">TFSA</button>
+      <button data-nav-view="fhsa" onclick="showView('fhsa')">FHSA</button>
+      <button data-nav-view="annual" onclick="showView('annual')">Annual</button>
+      <button data-nav-view="tax" onclick="showView('tax')">Tax</button>
+      <button data-nav-view="insights" onclick="showView('insights')">Insights</button>
+    </div>
+    <div class="nav nav-actions" role="navigation" aria-label="Actions">
+      <button class="sec" onclick="downloadCSVTemplate()">CSV Template</button>
+      <button class="sec" onclick="openCsvPicker()">Import CSV</button>
+      <button class="sec" onclick="exportCSV()">Export CSV</button>
+      <button class="sec" onclick="exportJSON()">Export JSON</button>
+      <button class="sec" onclick="openSettings()">Settings</button>
+      <button class="sec" onclick="resetData()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div id="v-dashboard"></div>
+  <div id="v-tfsa" class="hidden"></div>
+  <div id="v-fhsa" class="hidden"></div>
+  <div id="v-annual" class="hidden"></div>
+  <div id="v-tax" class="hidden"></div>
+  <div id="v-insights" class="hidden"></div>
+</div>
+
+<!-- Transaction Modal -->
+<div id="modal" class="modal-bg hidden" onclick="closeModal()" role="dialog" aria-label="Transaction editor">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modal-title">Add Transaction</h3>
+    <div class="fields">
+      <div><label for="m-date">Date</label><input type="date" id="m-date" title="Transaction date used in annual room and monthly excess-tax calculations."></div>
+      <div><label for="m-inst">Institution</label><input id="m-inst" list="inst-list" placeholder="Institution" title="Institution name for reconciliation and filtering."></div>
+      <div><label for="m-acct">Account</label><input id="m-acct" list="acct-list" placeholder="Account number or label" title="Account number or label used to group transactions."></div>
+      <div><label for="m-type">Type</label><select id="m-type" title="Transaction classification drives how room and tax are calculated."></select></div>
+      <div id="m-treat-wrap"><label for="m-treat">Treatment</label><select id="m-treat" title="Include affects room, Exclude ignores it, Review keeps it visible for follow-up."><option>Include</option><option>Exclude</option><option>Review</option></select></div>
+      <div id="m-status-wrap" class="hidden"><label for="m-status">Status</label><select id="m-status" title="Include affects room, Exclude ignores it, Review keeps it visible for follow-up."><option>Include</option><option>Exclude</option><option>Review</option></select></div>
+      <div><label for="m-amt">Amount ($)</label><input type="number" step="0.01" min="0.01" id="m-amt" placeholder="0.00" title="Gross transaction amount in Canadian dollars."></div>
+      <div><label for="m-note">Note</label><input id="m-note" placeholder="Optional note" title="Optional note for audit trail or special handling context."></div>
+      <datalist id="inst-list"></datalist>
+      <datalist id="acct-list"></datalist>
+      <div class="btns">
+        <button class="btn-add" id="modal-save-btn" onclick="saveTxn()">Add</button>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal-bg hidden" onclick="closeSettings()" role="dialog" aria-label="Tracker settings">
+  <div class="modal modal-wide" onclick="event.stopPropagation()">
+    <h3>Tracker Settings</h3>
+    <div class="fields">
+      <div class="g2">
+        <div><label for="s-tfsa-start">TFSA Eligible Start Year</label><input type="number" id="s-tfsa-start" min="2009" max="2100" value="2015" title="First year to include in your TFSA room history."></div>
+        <div><label for="s-current-year">Dashboard / Planning Year</label><input type="number" id="s-current-year" min="2009" max="2100" value="2026" title="Planning year shown on the dashboard and roll-forward views."></div>
+      </div>
+      <div class="g2">
+        <div><label for="s-fhsa-start">FHSA First Participation Year</label><input type="number" id="s-fhsa-start" min="2023" max="2100" value="2023" title="First calendar year you became an FHSA holder."></div>
+        <div><label for="s-fhsa-annual">FHSA Annual Limit ($)</label><input type="number" id="s-fhsa-annual" step="0.01" value="8000"></div>
+      </div>
+      <div class="g2">
+        <div><label for="s-fhsa-life">FHSA Lifetime Limit ($)</label><input type="number" id="s-fhsa-life" step="0.01" value="40000"></div>
+        <div><label for="s-fhsa-carry">FHSA Carryforward Cap ($)</label><input type="number" id="s-fhsa-carry" step="0.01" value="8000"></div>
+      </div>
+      <div>
+        <label>TFSA Annual Limits</label>
+        <div class="overflow limits-scroll">
+          <table id="limits-table"><thead><tr><th>Year</th><th class="r">Limit ($)</th><th>Status</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn-add" onclick="saveSettings()">Save Settings</button>
+        <button class="btn-cancel" onclick="closeSettings()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file input -->
+<input id="csv-file" type="file" accept=".csv,text/csv" class="hidden" aria-label="Choose a CSV file to import">
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TFSA & FHSA Tracker — Unified Engine (v6)
+// All phases implemented: compliance, formulas, UX, premium
+// ═══════════════════════════════════════════════════════════════
+
+// ─── CRA Official TFSA Annual Limits (2009–2035) ───
+const OFFICIAL_TFSA_LIMITS = {
+  2009:5000,2010:5000,2011:5000,2012:5000,2013:5500,2014:5500,
+  2015:10000,2016:5500,2017:5500,2018:5500,2019:6000,2020:6000,
+  2021:6000,2022:6000,2023:6500,2024:7000,2025:7000,2026:7000
+};
+
+const CONFIG_DEFAULTS = {
+  tfsaEligibleStartYear: 2015,
+  currentYear: 2026,
+  fhsaFirstYear: 2023,
+  fhsaAnnualLimit: 8000,
+  fhsaLifetimeLimit: 40000,
+  fhsaCarryforwardCap: 8000,
+  tfsaAnnualLimits: Object.assign({}, OFFICIAL_TFSA_LIMITS, {2027:0,2028:0,2029:0,2030:0,2031:0,2032:0,2033:0,2034:0,2035:0})
+};
+
+const UI_DEFAULTS = {
+  TFSA: {inst:'Wealthsimple',acct:'manual',type:'Contribution',treat:'Include'},
+  FHSA: {inst:'Wealthsimple',acct:'HQ5XRTH65CAD',type:'Contribution',status:'Include'}
+};
+
+// ─── Initial Seeded Data ───
+const INIT_T=[
+["2016-11-30","CIBC","66540998","C",25],["2016-12-30","CIBC","66540998","C",25],
+["2017-01-30","CIBC","66540998","C",25],["2017-02-28","CIBC","66540998","C",25],["2017-03-30","CIBC","66540998","C",25],["2017-04-30","CIBC","66540998","C",25],["2017-05-30","CIBC","66540998","C",25],["2017-06-30","CIBC","66540998","C",25],["2017-07-30","CIBC","66540998","C",25],
+["2017-08-11","Canada Trust","001626489768","C",25],["2017-08-25","Canada Trust","001626489768","C",25],["2017-08-30","CIBC","66540998","C",25],
+["2017-09-08","Canada Trust","001626489768","C",25],["2017-09-22","Canada Trust","001626489768","C",25],["2017-09-30","CIBC","66540998","C",25],
+["2017-10-06","Canada Trust","001626489768","C",25],["2017-10-20","Canada Trust","001626489768","C",25],["2017-10-30","CIBC","66540998","C",25],
+["2017-11-02","CIBC","66540998","W",301.27],["2017-11-03","Canada Trust","001626489768","C",25],["2017-11-17","Canada Trust","001626489768","C",25],
+["2017-12-01","Canada Trust","001626489768","C",25],["2017-12-15","Canada Trust","001626489768","C",25],["2017-12-29","Canada Trust","001626489768","C",25],
+["2018-01-12","Canada Trust","001626489768","C",25],["2018-01-26","Canada Trust","001626489768","C",25],
+["2018-02-05","Canada Trust","001626489768","W",10],["2018-02-05","Canada Trust","001626489768","W",134],["2018-02-05","Canada Trust","001626489768","C",20],
+["2018-02-09","Canada Trust","001626489768","C",25],["2018-02-14","Canada Trust","001626489768","W",126.57],["2018-02-16","Canada Trust","001626489768","W",100],
+["2018-02-23","Canada Trust","001626489768","C",25],["2018-02-26","Canada Trust","001626489768","W",25],
+["2018-03-09","Canada Trust","001626489768","C",25],["2018-03-13","Canada Trust","001626489768","W",25],["2018-03-23","Canada Trust","001626489768","C",25],
+["2018-04-06","Canada Trust","001626489768","C",25],["2018-04-20","Canada Trust","001626489768","C",25],["2018-04-25","Canada Trust","001626489768","W",75.09],
+["2018-05-04","TD Waterhouse","236RY3J","C",2000],["2018-05-09","TD Waterhouse","236RY3J","C",50],["2018-05-14","TD Waterhouse","236RY3J","C",600],["2018-05-15","TD Waterhouse","236RY3J","C",1133.22],
+["2018-06-01","TD Waterhouse","236RY3J","C",100],["2018-06-04","TD Waterhouse","236RY3J","C",1550],["2018-06-18","TD Waterhouse","236RY3J","C",1100],["2018-06-19","TD Waterhouse","236RY3J","C",1010],
+["2018-07-03","TD Waterhouse","236RY3J","C",100],["2018-08-01","TD Waterhouse","236RY3J","C",100],["2018-09-04","TD Waterhouse","236RY3J","C",100],["2018-10-01","TD Waterhouse","236RY3J","C",943.56],
+["2018-11-01","TD Waterhouse","236RY3J","C",100],["2018-12-03","TD Waterhouse","236RY3J","C",100],
+["2019-01-02","TD Waterhouse","236RY3J","C",100],["2019-02-01","TD Waterhouse","236RY3J","C",100],["2019-03-01","TD Waterhouse","236RY3J","C",100],["2019-04-01","TD Waterhouse","236RY3J","C",100],["2019-04-16","TD Waterhouse","236RY3J","C",700],
+["2019-05-01","TD Waterhouse","236RY3J","C",100],["2019-06-03","TD Waterhouse","236RY3J","C",100],["2019-06-27","TD Waterhouse","236RY3J","W",300.01],
+["2019-07-02","TD Waterhouse","236RY3J","C",100],["2019-07-03","TD Waterhouse","236RY3J","W",100],["2019-08-01","TD Waterhouse","236RY3J","C",100],
+["2019-09-03","TD Waterhouse","236RY3J","C",100],["2019-10-01","TD Waterhouse","236RY3J","C",100],["2019-11-01","TD Waterhouse","236RY3J","C",100],["2019-12-02","TD Waterhouse","236RY3J","C",100],["2019-12-05","TD Waterhouse","236RY3J","W",500],
+["2020-01-02","TD Waterhouse","236RY3J","C",100],["2020-02-03","TD Waterhouse","236RY3J","W",200],["2020-02-03","TD Waterhouse","236RY3J","C",100],
+["2020-03-02","TD Waterhouse","236RY3J","C",100],["2020-04-01","TD Waterhouse","236RY3J","C",100],["2020-04-22","TD Waterhouse","236RY3J","W",200],
+["2020-05-01","TD Waterhouse","236RY3J","C",100],["2020-06-01","TD Waterhouse","236RY3J","C",100],["2020-06-03","TD Waterhouse","236RY3J","W",200],
+["2020-07-02","TD Waterhouse","236RY3J","C",100],["2020-08-04","TD Waterhouse","236RY3J","C",100],["2020-08-10","TD Waterhouse","236RY3J","W",200],
+["2020-09-01","TD Waterhouse","236RY3J","C",100],["2020-10-01","TD Waterhouse","236RY3J","C",100],["2020-10-08","TD Waterhouse","236RY3J","W",200],
+["2020-10-19","TD Waterhouse","236RY3J","W",1.17],["2020-10-19","TD Waterhouse","236RY3J","C",6001],
+["2020-11-02","TD Waterhouse","236RY3J","C",100],["2020-11-23","TD Waterhouse","236RY3J","C",700],["2020-12-01","TD Waterhouse","236RY3J","C",100],
+["2020-12-03","TD Waterhouse","236RY3J","W",200],["2020-12-11","TD Waterhouse","236RY3J","C",18],["2020-12-17","TD Waterhouse","236RY3J","C",900],["2020-12-31","TD Waterhouse","236RY3J","W",845.91],
+["2021-01-04","TD Waterhouse","236RY3J","C",100],["2021-01-15","TD Waterhouse","236RY3J","C",1500],["2021-01-19","Questrade","5238539414","C",2000],
+["2021-02-01","TD Waterhouse","236RY3J","C",100],["2021-02-23","TD Waterhouse","236RY3J","C",1100],["2021-02-25","TD Waterhouse","236RY3J","C",45],
+["2021-03-01","TD Waterhouse","236RY3J","C",100],["2021-03-05","TD Waterhouse","236RY3J","C",620],["2021-03-17","TD Waterhouse","236RY3J","C",1300],["2021-03-18","TD Waterhouse","236RY3J","C",60],
+["2021-03-18","Canada Trust","001626489768","W",60.03],["2021-03-18","Canada Trust","001626489768","C",60],
+["2021-03-23","TD Waterhouse","236RY3J","C",1300],["2021-03-24","TD Waterhouse","236RY3J","C",1050],["2021-03-25","TD Waterhouse","236RY3J","C",1005],
+["2021-04-01","TD Waterhouse","236RY3J","C",100],["2021-04-07","TD Waterhouse","236RY3J","C",1200],["2021-04-09","TD Waterhouse","236RY3J","C",2200],["2021-04-14","TD Waterhouse","236RY3J","C",2000],["2021-04-19","TD Waterhouse","236RY3J","C",1000],["2021-04-23","TD Waterhouse","236RY3J","C",2200],
+["2021-05-03","TD Waterhouse","236RY3J","C",1600],["2021-05-17","Wealthsimple","HB03657K4CAD","C",250],["2021-05-25","Wealthsimple","HB03657K4CAD","C",250],["2021-05-27","TD Waterhouse","236RY3J","C",600],["2021-05-31","Wealthsimple","HB03657K4CAD","C",250],
+["2021-06-01","TD Waterhouse","236RY3J","C",100],["2021-06-16","Wealthsimple","HB03657K4CAD","C",250],["2021-06-24","Wealthsimple","HB03657K4CAD","C",250],
+["2021-07-02","TD Waterhouse","236RY3J","C",100],["2021-07-19","Wealthsimple","HB03657K4CAD","C",250],
+["2021-08-03","TD Waterhouse","236RY3J","C",100],["2021-08-18","Wealthsimple","HB03657K4CAD","C",250],
+["2021-09-01","TD Waterhouse","236RY3J","C",100],["2021-09-17","TD Waterhouse","236RY3J","C",2000],["2021-09-20","Wealthsimple","HB03657K4CAD","C",500],["2021-09-28","Wealthsimple","HB03657K4CAD","C",500],["2021-09-29","Wealthsimple","HB03657K4CAD","C",500],
+["2021-10-01","TD Waterhouse","236RY3J","C",100],["2021-10-06","TD Waterhouse","236RY3J","W",500],["2021-10-13","TD Waterhouse","236RY3J","W",1000],["2021-10-20","TD Waterhouse","236RY3J","C",600],["2021-10-25","TD Waterhouse","236RY3J","C",188.86],["2021-10-27","TD Waterhouse","236RY3J","W",100],
+["2021-11-01","TD Waterhouse","236RY3J","C",100],["2021-11-16","Wealthsimple","HB03657K4CAD","C",750],["2021-11-18","Wealthsimple","HB03657K4CAD","C",750],
+["2021-12-01","TD Waterhouse","236RY3J","C",100],["2021-12-03","Wealthsimple","HB03657K4CAD","C",300],
+["2022-01-04","TD Waterhouse","236RY3J","C",100],["2022-02-01","TD Waterhouse","236RY3J","C",100],["2022-02-07","TD Waterhouse","236RY3J","W",5000],["2022-02-07","Wealthsimple","HB03657K4CAD","C",5000],
+["2022-03-01","TD Waterhouse","236RY3J","C",100],["2022-04-01","TD Waterhouse","236RY3J","C",100],["2022-05-02","TD Waterhouse","236RY3J","C",100],["2022-05-24","TD Waterhouse","236RY3J","W",21980.6],
+["2022-06-01","TD Waterhouse","236RY3J","C",100],["2022-07-04","TD Waterhouse","236RY3J","C",100],["2022-08-02","TD Waterhouse","236RY3J","C",100],["2022-09-01","TD Waterhouse","236RY3J","C",100],["2022-10-03","TD Waterhouse","236RY3J","C",100],["2022-11-01","TD Waterhouse","236RY3J","C",100],["2022-12-01","TD Waterhouse","236RY3J","C",100],
+["2023-01-03","TD Waterhouse","236RY3J","C",100],["2023-02-01","TD Waterhouse","236RY3J","C",100],["2023-02-10","TD Waterhouse","236RY3J","W",3453],
+["2023-03-01","TD Waterhouse","236RY3J","C",100],["2023-04-03","TD Waterhouse","236RY3J","C",100],["2023-05-01","TD Waterhouse","236RY3J","C",100],["2023-06-01","TD Waterhouse","236RY3J","C",100],["2023-07-04","TD Waterhouse","236RY3J","C",100],["2023-07-31","TD Waterhouse","236RY3J","W",500],
+["2023-08-01","TD Waterhouse","236RY3J","C",100],["2023-09-01","TD Waterhouse","236RY3J","C",100],["2023-10-03","TD Waterhouse","236RY3J","C",100],["2023-11-01","TD Waterhouse","236RY3J","C",100],["2023-12-01","TD Waterhouse","236RY3J","C",100],
+["2024-01-02","TD Waterhouse","236RY3J","C",100],["2024-02-01","TD Waterhouse","236RY3J","C",100],["2024-03-01","TD Waterhouse","236RY3J","W",700],["2024-03-01","TD Waterhouse","236RY3J","C",100],
+["2024-03-11","Wealthsimple","HB03657K4CAD","C",3000],
+["2024-03-22","Wealthsimple","HB03657K4CAD","C",172.71],["2024-03-22","Wealthsimple","HB03657K4CAD","C",178.38],["2024-03-22","Wealthsimple","HB03657K4CAD","C",287.67],["2024-03-22","Wealthsimple","HB03657K4CAD","C",311.84],["2024-03-22","Wealthsimple","HB03657K4CAD","C",518.73],["2024-03-22","Wealthsimple","HB03657K4CAD","C",1156.16],
+["2024-03-25","Wealthsimple","HB03657K4CAD","C",310],["2024-03-25","Wealthsimple","HB03657K4CAD","C",310],["2024-03-25","Wealthsimple","HB03657K4CAD","C",462],["2024-03-25","Wealthsimple","HB03657K4CAD","C",463.83],
+["2024-03-26","Wealthsimple","HB03657K4CAD","C",147.5],["2024-03-26","Wealthsimple","HB03657K4CAD","C",301],["2024-03-26","Wealthsimple","HB03657K4CAD","C",502.48],
+["2024-03-27","Wealthsimple","HB03657K4CAD","C",145.47],["2024-03-27","Wealthsimple","HB03657K4CAD","C",214.26],["2024-03-27","Wealthsimple","HB03657K4CAD","C",281],["2024-03-27","Wealthsimple","HB03657K4CAD","C",284],["2024-03-27","Wealthsimple","HB03657K4CAD","C",284.04],["2024-03-27","Wealthsimple","HB03657K4CAD","C",287],["2024-03-27","Wealthsimple","HB03657K4CAD","C",373.27],["2024-03-27","Wealthsimple","HB03657K4CAD","C",382.61],["2024-03-27","Wealthsimple","HB03657K4CAD","C",438.57],
+["2024-03-28","Wealthsimple","HB03657K4CAD","C",250.5],["2024-03-28","Wealthsimple","HB03657K4CAD","C",583.76],["2024-03-28","Wealthsimple","HB03657K4CAD","C",590],
+["2024-04-01","TD Waterhouse","236RY3J","C",100],["2024-04-01","Wealthsimple","HB03657K4CAD","C",300],["2024-04-01","Wealthsimple","HB03657K4CAD","C",1887.6],["2024-04-01","Wealthsimple","HB03657K4CAD","C",2000],
+["2024-04-02","Wealthsimple","HB03657K4CAD","C",911.11],["2024-04-03","Wealthsimple","HB03657K4CAD","C",1000],["2024-04-03","Wealthsimple","HB03657K4CAD","C",1500],
+["2024-04-06","Wealthsimple","HB03657K4CAD","C",0.41],["2024-04-06","Wealthsimple","HB03657K4CAD","C",0.44],
+["2024-04-08","Wealthsimple","HB03657K4CAD","C",547.88],["2024-04-08","Wealthsimple","HB03657K4CAD","C",559.3],["2024-04-08","Wealthsimple","HB03657K4CAD","C",1219.41],["2024-04-08","Wealthsimple","HB03657K4CAD","C",1400],
+["2024-04-09","Wealthsimple","HB03657K4CAD","C",480],["2024-04-10","Wealthsimple","HB03657K4CAD","C",1000],["2024-04-10","Wealthsimple","HB03657K4CAD","C",2500],
+["2024-04-11","Wealthsimple","HB03657K4CAD","C",50],["2024-04-12","Wealthsimple","HB03657K4CAD","C",75],["2024-04-12","Wealthsimple","HB03657K4CAD","C",700],["2024-04-12","Wealthsimple","HB03657K4CAD","C",1500],
+["2024-04-15","Wealthsimple","HB03657K4CAD","C",424.68],["2024-04-28","Wealthsimple","HB03657K4CAD","C",0.04],["2024-04-28","Wealthsimple","HB03657K4CAD","C",0.35],
+["2024-04-29","Wealthsimple","HB03657K4CAD","C",600],["2024-04-30","Wealthsimple","HB03657K4CAD","C",1.5],["2024-04-30","Wealthsimple","HB03657K4CAD","C",800],
+["2024-05-01","TD Waterhouse","236RY3J","C",100],["2024-05-01","Wealthsimple","HB03657K4CAD","C",1.78],
+["2024-05-09","Wealthsimple","HB03657K4CAD","C",1000],["2024-05-10","Wealthsimple","HB03657K4CAD","C",700],["2024-05-10","Wealthsimple","HB03657K4CAD","C",1000],["2024-05-10","Wealthsimple","HB03657K4CAD","C",1000],
+["2024-05-15","Wealthsimple","HB03657K4CAD","C",2],["2024-05-15","Wealthsimple","HB03657K4CAD","C",3],["2024-05-15","Wealthsimple","HB03657K4CAD","C",750],["2024-05-15","Wealthsimple","HB03657K4CAD","C",750],
+["2024-05-16","Wealthsimple","HB03657K4CAD","C",201.72],["2024-05-16","Wealthsimple","HB03657K4CAD","C",243.26],["2024-05-16","Wealthsimple","HB03657K4CAD","C",1160],
+["2024-05-22","Wealthsimple","HB03657K4CAD","C",1500],["2024-05-24","TD Waterhouse","236RY3J","C",29.45],
+["2024-05-31","Wealthsimple","HB03657K4CAD","C",0.25],["2024-05-31","Wealthsimple","HB03657K4CAD","C",1.2],
+["2024-06-12","TD Waterhouse","236RY3J","C",1150.85],["2024-07-02","TD Waterhouse","236RY3J","C",101.6],["2024-07-29","Wealthsimple","HB03657K4CAD","C",15.9],["2024-08-01","Wealthsimple","HB03657K4CAD","C",533.45],
+["2024-10-10","Wealthsimple","HB03657K4CAD","C",3.33],
+["2024-11-07","Wealthsimple","HB03657K4CAD","C",0.11],["2024-11-08","Wealthsimple","HB03657K4CAD","C",3.56],["2024-11-09","Wealthsimple","HB03657K4CAD","C",0.11],
+["2024-11-12","Wealthsimple","HB03657K4CAD","C",0.51],["2024-11-12","Wealthsimple","HB03657K4CAD","C",0.51],
+["2024-11-13","Wealthsimple","HB03657K4CAD","C",0.02],["2024-11-13","Wealthsimple","HB03657K4CAD","C",0.76],
+["2024-11-14","Wealthsimple","HB03657K4CAD","C",0.51],["2024-11-14","Wealthsimple","HB03657K4CAD","C",0.51],
+["2024-11-15","Wealthsimple","HB03657K4CAD","C",0.25],["2024-11-15","Wealthsimple","HB03657K4CAD","C",0.85],
+["2024-11-19","Wealthsimple","HB03657K4CAD","C",5.84],["2024-11-21","Wealthsimple","HB03657K4CAD","C",1.02],
+["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.01],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.11],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.71],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.92],
+["2024-12-02","Wealthsimple","HB03657K4CAD","C",0.24],["2024-12-02","Wealthsimple","HB03657K4CAD","C",12.47],
+["2024-12-13","Wealthsimple","HB03657K4CAD","C",11.07],["2024-12-23","Wealthsimple","HB03657K4CAD","C",70.08],
+["2024-12-28","Wealthsimple","HB03657K4CAD","C",0.11],["2024-12-28","Wealthsimple","HB03657K4CAD","C",0.71],
+["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.03],["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.5],["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.8],["2024-12-30","Wealthsimple","HB03657K4CAD","C",338.76],
+["2025-10-07","Wealthsimple","WK49QC1K9CAD","C",100],["2025-10-30","Wealthsimple","WK49QC1K9CAD","C",100],["2025-11-30","Wealthsimple","WK49QC1K9CAD","C",100],["2025-12-30","Wealthsimple","WK49QC1K9CAD","C",100],
+["2026-01-06","Wealthsimple","Grouped TFSA activity export","C",3],["2026-01-19","Wealthsimple","Grouped TFSA activity export","C",253.79],["2026-01-21","Wealthsimple","Grouped TFSA activity export","C",385.32],["2026-01-21","Wealthsimple","Grouped TFSA activity export","C",410],
+["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",348.45],["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",550],["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",1001.2],
+["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",358.07],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",377.15],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",550],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",667],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",689.81],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",1044.39],
+["2026-01-28","Wealthsimple","Grouped TFSA activity export","C",20],["2026-01-28","Wealthsimple","Grouped TFSA activity export","C",345],
+["2026-02-02","Wealthsimple","Grouped TFSA activity export","C",475.02]];
+
+const INIT_F=[
+["2023-12-22","Questrade","53122590",250],["2023-12-31","Questrade","53122590",1750],["2023-12-31","Questrade","53122590",3000],["2023-12-31","Questrade","53122590",3000],
+["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],
+["2024-04-02","Wealthsimple","HQ5XRTH65CAD",1000],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",568.82],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",559],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",739.1],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",869.67],
+["2024-04-09","Wealthsimple","HQ5XRTH65CAD",269],["2024-04-09","Wealthsimple","HQ5XRTH65CAD",271],
+["2024-05-22","Wealthsimple","HQ5XRTH65CAD",500],["2024-05-31","Wealthsimple","HQ5XRTH65CAD",223],
+["2024-08-02","Wealthsimple","HQ5XRTH65CAD",469.1],["2024-10-10","Wealthsimple","HQ5XRTH65CAD",0.32],["2024-10-31","Wealthsimple","HQ5XRTH65CAD",5.83],["2024-12-13","Wealthsimple","HQ5XRTH65CAD",9.16],
+["2025-03-13","Wealthsimple","HQ5XRTH65CAD",54.87],["2025-03-18","Wealthsimple","HQ5XRTH65CAD",3.93],
+["2025-10-28","Wealthsimple","HQ5XRTH65CAD",5],["2025-11-01","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-08","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-15","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-22","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-29","Wealthsimple","HQ5XRTH65CAD",20],
+["2025-12-06","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-13","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-20","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-27","Wealthsimple","HQ5XRTH65CAD",20],
+["2026-01-03","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-10","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-17","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-24","Wealthsimple","HQ5XRTH65CAD",30],["2026-01-31","Wealthsimple","HQ5XRTH65CAD",30],
+["2026-02-07","Wealthsimple","HQ5XRTH65CAD",30],["2026-02-11","Wealthsimple","HQ5XRTH65CAD",254.07],["2026-02-11","Wealthsimple","HQ5XRTH65CAD",473.81],
+["2026-02-12","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-12","Wealthsimple","HQ5XRTH65CAD",315],
+["2026-02-13","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-14","Wealthsimple","HQ5XRTH65CAD",30],["2026-02-17","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-18","Wealthsimple","HQ5XRTH65CAD",50],
+["2026-02-19","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-20","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-21","Wealthsimple","HQ5XRTH65CAD",30],
+["2026-02-23","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-24","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-25","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-26","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-27","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-28","Wealthsimple","HQ5XRTH65CAD",30],
+["2026-03-02","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-03","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-04","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-07","Wealthsimple","HQ5XRTH65CAD",30],["2026-03-14","Wealthsimple","HQ5XRTH65CAD",30],["2026-03-21","Wealthsimple","HQ5XRTH65CAD",30]];
+
+function expandT(arr){return arr.map(a=>({d:a[0],inst:a[1],acct:a[2],type:a[3]==='C'?'Contribution':a[3]==='W'?'Withdrawal':a[3],amt:a[4],treat:'Include',note:''}))}
+function expandF(arr){return arr.map(a=>({d:a[0],inst:a[1],acct:a[2],type:'Contribution',status:'Include',amt:a[3],note:''}))}
+
+// ─── State ───
+let tT=[], fT=[];
+let trackerConfig = clone(CONFIG_DEFAULTS);
+let uiPrefs = clone(UI_DEFAULTS);
+let txnFilters = {TFSA:'all', FHSA:'all', tfsaPg:0, fhsaPg:0};
+let curView = 'dashboard';
+let modalPlan = '';
+let editingIndex = -1; // -1 = adding, >=0 = editing
+let undoStack = [];     // for undo
+
+// ─── Utilities ───
+function clone(obj){return JSON.parse(JSON.stringify(obj))}
+function safeNum(v){const n=Number(v); return Number.isFinite(n)?n:0}
+function actualCalendarYear(){return new Date().getFullYear()}
+function getCurrentYear(){return Math.max(+trackerConfig.currentYear||0, getLatestLoadedYear())}
+function getTfsaStartYear(){return +trackerConfig.tfsaEligibleStartYear||2009}
+function getFhsaStartYear(){return +trackerConfig.fhsaFirstYear||2023}
+function getTfsaLimits(){return trackerConfig.tfsaAnnualLimits||clone(CONFIG_DEFAULTS.tfsaAnnualLimits)}
+function getLatestLoadedYear(){
+  let max=actualCalendarYear();
+  tT.forEach(t=>{const y=+String(t.d).slice(0,4);if(y>max)max=y});
+  fT.forEach(t=>{const y=+String(t.d).slice(0,4);if(y>max)max=y});
+  return max;
+}
+function currentMonthSlotsRemaining(cy){return cy===actualCalendarYear()?Math.max(1,12-new Date().getMonth()):12}
+function monthKey(d){return String(d||'').slice(0,7)}
+function escAttr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+const F=n=>'$'+Math.abs(n||0).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+// ─── Type Normalizers (TFSA now includes Transfer In/Out) ───
+function normalizeTfsaType(v){
+  const s=String(v||'Contribution').trim().toLowerCase();
+  if(s==='w'||s==='withdrawal'||s==='withdraw') return 'Withdrawal';
+  if(s==='transfer in'||s==='transfer_in'||s==='xfer in') return 'Transfer In';
+  if(s==='transfer out'||s==='transfer_out'||s==='xfer out') return 'Transfer Out';
+  return 'Contribution';
+}
+function normalizeFhsaType(v){
+  const raw=String(v||'Contribution').trim();
+  const s=raw.toLowerCase();
+  const map={
+    'contribution':'Contribution','c':'Contribution',
+    'rrsp transfer in':'RRSP Transfer In','rrsp transfer':'RRSP Transfer In','rrsp_transfer_in':'RRSP Transfer In',
+    'transfer in':'Transfer In',
+    'withdrawal':'Taxable Withdrawal','taxable withdrawal':'Taxable Withdrawal',
+    'designated withdrawal':'Designated Withdrawal','designated transfer out':'Designated Transfer Out',
+    'fhsa direct transfer in':'FHSA Direct Transfer In','direct transfer in':'FHSA Direct Transfer In','fhsa transfer in':'FHSA Direct Transfer In',
+    'transfer out':'Transfer Out',
+    'fhsa direct transfer out':'FHSA Direct Transfer Out','direct transfer out':'FHSA Direct Transfer Out','fhsa transfer out':'FHSA Direct Transfer Out',
+    'qualifying withdrawal':'Qualifying Withdrawal'
+  };
+  return map[s]||raw||'Contribution';
+}
+function normalizeFlag(v, fallback){
+  const s=String(v||fallback||'Include').trim().toLowerCase();
+  if(s==='exclude') return 'Exclude';
+  if(s==='review') return 'Review';
+  return 'Include';
+}
+function fhsaTypeMeta(type){
+  const t=String(type||'Contribution');
+  if(t==='Contribution') return {bucket:'counted_inflow',pill:'pill-c',amountClass:'green',label:t,warning:false};
+  if(t==='RRSP Transfer In') return {bucket:'counted_inflow',pill:'pill-fhsa',amountClass:'green',label:t,warning:false};
+  if(t==='Transfer In') return {bucket:'counted_inflow',pill:'pill-fhsa',amountClass:'green',label:'Transfer In',warning:true,warningText:'Legacy "Transfer In" treated as RRSP transfer. Reclassify if FHSA-to-FHSA direct transfer.'};
+  if(t==='Taxable Withdrawal') return {bucket:'taxable_withdrawal',pill:'pill-w',amountClass:'red',label:t,warning:false};
+  if(t==='Designated Withdrawal') return {bucket:'designated_amount',pill:'pill-w',amountClass:'red',label:t,warning:false};
+  if(t==='Designated Transfer Out') return {bucket:'designated_amount',pill:'pill-w',amountClass:'red',label:t,warning:false};
+  if(t==='FHSA Direct Transfer In') return {bucket:'excluded_transfer',pill:'pill-fhsa',amountClass:'blue',label:t,warning:false};
+  if(t==='FHSA Direct Transfer Out') return {bucket:'excluded_transfer',pill:'pill-fhsa',amountClass:'blue',label:t,warning:false};
+  if(t==='Transfer Out') return {bucket:'excluded_transfer',pill:'pill-fhsa',amountClass:'blue',label:'Transfer Out',warning:true,warningText:'Legacy "Transfer Out" treated as FHSA direct transfer. Reclassify if designated transfer.'};
+  if(t==='Qualifying Withdrawal') return {bucket:'excluded_withdrawal',pill:'pill-w',amountClass:'red',label:t,warning:false};
+  return {bucket:'unknown',pill:'pill-w',amountClass:'gold',label:t||'Unknown',warning:true,warningText:'Unknown type — ignored for room calculations.'};
+}
+function tfsaTypeMeta(type){
+  if(type==='Contribution') return {pill:'pill-c',amountClass:'green',label:'Contribution'};
+  if(type==='Withdrawal') return {pill:'pill-w',amountClass:'red',label:'Withdrawal'};
+  if(type==='Transfer In') return {pill:'pill-t',amountClass:'purple',label:'Transfer In'};
+  if(type==='Transfer Out') return {pill:'pill-t',amountClass:'purple',label:'Transfer Out'};
+  return {pill:'pill-c',amountClass:'green',label:type};
+}
+
+// ═══════════════════════════════════════════════════
+// TFSA ENGINE — CRA-Compliant with Transfer Support
+// ═══════════════════════════════════════════════════
+function makeMonthState(year, openingExcess){
+  const m={};
+  for(let i=1;i<=12;i++){const k=year+'-'+String(i).padStart(2,'0'); m[k]={s:openingExcess,p:openingExcess,e:openingExcess}}
+  return m;
+}
+function finalizeMonthState(ms, year, yT, openExcess){
+  let carry=openExcess;
+  for(let i=1;i<=12;i++){
+    const k=year+'-'+String(i).padStart(2,'0');
+    if(!yT.some(t=>monthKey(t.d)===k)){ms[k]={s:carry,p:carry,e:carry}}
+    carry=ms[k].e;
+  }
+}
+
+function calcTFSA(txns){
+  const TL=getTfsaLimits(), TS=getTfsaStartYear(), CY=getCurrentYear();
+  const inc=txns
+    .map(t=>({d:String(t.d||''),inst:t.inst||'',acct:t.acct||'',type:normalizeTfsaType(t.type),amt:safeNum(t.amt),treat:normalizeFlag(t.treat,'Include'),note:t.note||''}))
+    .filter(t=>t.treat==='Include'&&t.d)
+    .sort((a,b)=>a.d.localeCompare(b.d));
+  const byY={}; inc.forEach(t=>{const y=+t.d.slice(0,4);(byY[y]=byY[y]||[]).push(t)});
+  const years={}, mTax=[]; let pNet=0, pAdd=0;
+  for(let y=TS;y<=CY;y++){
+    const lim=safeNum(TL[y]);
+    const co=y===TS?lim:pNet+pAdd+lim;
+    const oR=Math.max(0,co), oE=co<0?-co:0;
+    let room=oR, excess=oE, tC=0, tW=0, tQ=0, tA=0, tTI=0, tTO=0;
+    const ms=makeMonthState(y,oE); let cur=null;
+    const yT=byY[y]||[];
+    yT.forEach(t=>{
+      const k=monthKey(t.d);
+      if(k!==cur){if(cur&&ms[cur])ms[cur].e=excess;cur=k;if(ms[k]){ms[k].s=excess;ms[k].p=Math.max(ms[k].p,excess)}}
+      const amt=safeNum(t.amt);
+      if(t.type==='Contribution'){
+        tC+=amt;
+        if(amt<=room)room-=amt; else{excess+=(amt-room);room=0}
+      } else if(t.type==='Withdrawal'){
+        tW+=amt;
+        const q=Math.min(amt,excess); excess-=q; tQ+=q; tA+=(amt-q);
+      } else if(t.type==='Transfer In'){
+        tTI+=amt; // room-neutral
+      } else if(t.type==='Transfer Out'){
+        tTO+=amt; // room-neutral
+      }
+      if(ms[k])ms[k].p=Math.max(ms[k].p,excess);
+    });
+    if(cur&&ms[cur])ms[cur].e=excess;
+    finalizeMonthState(ms,y,yT,oE);
+    let yTx=0;
+    for(let i=1;i<=12;i++){
+      const k=y+'-'+String(i).padStart(2,'0');
+      const me=ms[k]; const tx=Math.round(me.p*0.01*100)/100;
+      if(me.p>0.005){mTax.push({month:k,year:y,start:me.s,peak:me.p,end:me.e,tax:tx});yTx+=tx}
+    }
+    years[y]={limit:lim,openRoom:oR,openExcess:oE,contribs:tC,withdrawals:tW,qualifyingWD:tQ,addbackWD:tA,
+      transferIn:tTI,transferOut:tTO,yeRoom:room,yeExcess:excess,netRoom:room-excess,
+      tax:Math.round(yTx*100)/100,status:excess>0.005?'excess':tC>0?'ok':'none'};
+    pNet=room-excess; pAdd=tA;
+  }
+  return {years,monthlyTax:mTax};
+}
+
+// ═══════════════════════════════════════════════════
+// FHSA ENGINE — Simplified Carryforward Formula
+// ═══════════════════════════════════════════════════
+function calcFHSA(txns){
+  const FA=safeNum(trackerConfig.fhsaAnnualLimit)||8000;
+  const FL=safeNum(trackerConfig.fhsaLifetimeLimit)||40000;
+  const FC=safeNum(trackerConfig.fhsaCarryforwardCap)||8000;
+  const FS=getFhsaStartYear(), CY=getCurrentYear();
+  const inc=txns
+    .map(t=>({d:String(t.d||''),inst:t.inst||'',acct:t.acct||'',type:normalizeFhsaType(t.type),amt:safeNum(t.amt),status:normalizeFlag(t.status,'Include'),note:t.note||''}))
+    .filter(t=>t.status==='Include'&&t.d)
+    .sort((a,b)=>a.d.localeCompare(b.d));
+  const byY={}; inc.forEach(t=>{const y=+t.d.slice(0,4);(byY[y]=byY[y]||[]).push(t)});
+  const years={}, mTax=[];
+  let lifetimeCountedNet=0;
+  let excessPrior=0; // CRA: prior-year excess reduces next year's participation room
+
+  for(let y=FS;y<=CY+5;y++){
+    const prev=years[y-1];
+    // Carryforward: min($8K cap, max(0, prior year-end unused room))
+    const carryforward=(y===FS)?0:Math.min(FC,Math.max(0,safeNum(prev?.yeRoom)));
+    // Participation room = annual + carryforward - prior excess, capped by lifetime headroom
+    const lifetimeHeadroom=Math.max(0,FL-lifetimeCountedNet);
+    const rawParticipation=(y===FS)?FA:Math.max(0,FA+carryforward-excessPrior);
+    const participationRoom=Math.min(rawParticipation, lifetimeHeadroom);
+    const openRoom=Math.max(0, participationRoom);
+
+    let room=openRoom, excess=0;
+    let countedInflows=0, taxableWithdrawals=0, designatedAmounts=0, directTransfers=0, qualifyingWithdrawals=0;
+    let ambiguousLegacyCount=0, unknownTypeCount=0;
+
+    const yT=byY[y]||[];
+    const ms=makeMonthState(y,0); let cur=null;
+
+    yT.forEach(t=>{
+      const meta=fhsaTypeMeta(t.type);
+      const amt=safeNum(t.amt);
+      const k=monthKey(t.d);
+      if(k!==cur){if(cur&&ms[cur])ms[cur].e=excess;cur=k;if(ms[k]){ms[k].s=excess;ms[k].p=Math.max(ms[k].p,excess)}}
+      if(meta.warning&&(t.type==='Transfer In'||t.type==='Transfer Out'))ambiguousLegacyCount++;
+      else if(meta.warning)unknownTypeCount++;
+
+      if(meta.bucket==='counted_inflow'){
+        countedInflows+=amt;
+        if(amt<=room)room-=amt; else{excess+=(amt-room);room=0}
+      } else if(meta.bucket==='taxable_withdrawal'){
+        taxableWithdrawals+=amt;
+        const q=Math.min(amt,excess); excess-=q; room+=(amt-q);
+      } else if(meta.bucket==='designated_amount'){
+        designatedAmounts+=amt;
+        const q=Math.min(amt,excess); excess-=q; room+=q;
+      } else if(meta.bucket==='excluded_transfer'){
+        directTransfers+=amt;
+      } else if(meta.bucket==='excluded_withdrawal'){
+        qualifyingWithdrawals+=amt;
+      }
+      if(ms[k])ms[k].p=Math.max(ms[k].p,excess);
+    });
+    if(cur&&ms[cur])ms[cur].e=excess;
+    finalizeMonthState(ms,y,yT,0);
+
+    let yTx=0;
+    for(let i=1;i<=12;i++){
+      const k=y+'-'+String(i).padStart(2,'0');
+      const me=ms[k]; const tx=Math.round(me.p*0.01*100)/100;
+      if(me.p>0.005){mTax.push({month:k,year:y,start:me.s,peak:me.p,end:me.e,tax:tx});yTx+=tx}
+    }
+
+    // Net counted for lifetime: inflows minus amounts that restored lifetime (designated)
+    lifetimeCountedNet+=(countedInflows-designatedAmounts);
+    const lifetimeLeft=Math.max(0,FL-lifetimeCountedNet);
+    const lifetimeUsed=Math.max(0,FL-lifetimeLeft);
+
+    years[y]={openRoom,participationRoom,carryforward,countedInflows,contribs:countedInflows,
+      taxableWithdrawals,designatedAmounts,directTransfers,qualifyingWithdrawals,
+      yeRoom:room,yeExcess:excess,lifetimeLeft,lifetimeUsed,
+      tax:Math.round(yTx*100)/100,ambiguousLegacyCount,unknownTypeCount,
+      status:excess>0.005?'excess':countedInflows>0?'ok':'none'};
+    excessPrior=excess; // carry forward for next year's participation room deduction
+  }
+  return {years,monthlyTax:mTax};
+}
+
+// ═══════════════════════════════════════════════════
+// SELF-TEST ENGINE — Regression checks
+// ═══════════════════════════════════════════════════
+function runSelfTest(){
+  const testT=expandT(INIT_T), testF=expandF(INIT_F);
+  const oldConfig=clone(trackerConfig);
+  trackerConfig=clone(CONFIG_DEFAULTS);
+  const tfsa=calcTFSA(testT), fhsa=calcFHSA(testF);
+  trackerConfig=oldConfig;
+
+  const checks=[
+    {label:'TFSA 2021 addback',actual:tfsa.years[2021]?.addbackWD,expected:1624.41,tol:0.02},
+    {label:'TFSA 2021 qual WD',actual:tfsa.years[2021]?.qualifyingWD,expected:35.62,tol:0.02},
+    {label:'TFSA 2021 excess',actual:tfsa.years[2021]?.yeExcess,expected:2000,tol:0.02},
+    {label:'TFSA 2022 excess',actual:tfsa.years[2022]?.yeExcess,expected:575.59,tol:0.02},
+    {label:'TFSA 2024 excess',actual:tfsa.years[2024]?.yeExcess,expected:135.36,tol:0.02},
+    {label:'TFSA 2026 room',actual:tfsa.years[2026]?.yeRoom,expected:6686.44,tol:0.02},
+    {label:'FHSA 2024 excess',actual:fhsa.years[2024]?.yeExcess,expected:484.00,tol:0.10},
+    {label:'FHSA 2026 room',actual:fhsa.years[2026]?.yeRoom,expected:13199.32,tol:1.00},
+  ];
+  const tTot=tfsa.monthlyTax.reduce((s,t)=>s+t.tax,0);
+  const fTot=fhsa.monthlyTax.reduce((s,t)=>s+t.tax,0);
+  checks.push({label:'TFSA tax total',actual:tTot,expected:57.27,tol:0.10});
+  checks.push({label:'FHSA tax total',actual:fTot,expected:23.72,tol:0.50});
+  checks.push({label:'Combined tax',actual:tTot+fTot,expected:80.99,tol:0.60});
+
+  let allPass=true;
+  const results=checks.map(c=>{
+    const pass=Math.abs(safeNum(c.actual)-c.expected)<=c.tol;
+    if(!pass)allPass=false;
+    return {...c,pass};
+  });
+  return {allPass,results};
+}
+
+// ═══════════════════════════════════════════════════
+// PERSISTENCE — with localStorage error handling
+// ═══════════════════════════════════════════════════
+const STORAGE_KEY='tfsa-fhsa-v6-html';
+function save(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({t:tT,f:fT,config:trackerConfig,prefs:uiPrefs}));
+  } catch(e){
+    console.error('Save failed:',e);
+    showToast('⚠️ Could not save — storage may be full.',null,4000);
+  }
+}
+function load(){
+  try{
+    const keys=[STORAGE_KEY,'tfsa-fhsa-v5-html','tfsa-fhsa-v4'];
+    for(const key of keys){
+      const s=localStorage.getItem(key);
+      if(!s)continue;
+      const d=JSON.parse(s);
+      if(d.t)tT=d.t;
+      if(d.f)fT=d.f;
+      if(d.config)trackerConfig=Object.assign(clone(CONFIG_DEFAULTS),d.config,{tfsaAnnualLimits:Object.assign(clone(CONFIG_DEFAULTS.tfsaAnnualLimits),(d.config&&d.config.tfsaAnnualLimits)||{})});
+      if(d.prefs)uiPrefs=Object.assign(clone(UI_DEFAULTS),d.prefs);
+      return true;
+    }
+  }catch(e){console.error(e)}
+  return false;
+}
+
+// ═══════════════════════════════════════════════════
+// TOAST & UNDO SYSTEM
+// ═══════════════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,undoFn,duration=5000){
+  clearTimeout(toastTimer);
+  const container=document.getElementById('toast-container');
+  let html=`<div class="toast"><span>${msg}</span>`;
+  if(undoFn){html+=`<button onclick="executeUndo()">Undo</button>`}
+  html+=`</div>`;
+  container.innerHTML=html;
+  toastTimer=setTimeout(()=>{container.innerHTML='';undoStack=[]},duration);
+}
+function executeUndo(){
+  if(undoStack.length){
+    const action=undoStack.pop();
+    if(action.type==='delete'){
+      const arr=action.plan==='TFSA'?tT:fT;
+      arr.splice(action.origIndex,0,action.txn);
+      save(); render();
+    }
+  }
+  document.getElementById('toast-container').innerHTML='';
+}
+
+// ═══════════════════════════════════════════════════
+// WHAT-IF SIMULATOR
+// ═══════════════════════════════════════════════════
+function runWhatIf(){
+  const plan=document.getElementById('wi-plan')?.value||'TFSA';
+  const amt=safeNum(document.getElementById('wi-amount')?.value);
+  const dateVal=document.getElementById('wi-date')?.value||new Date().toISOString().split('T')[0];
+  if(amt<=0){document.getElementById('wi-result').innerHTML='<p class="dim">Enter a positive amount to simulate.</p>';return}
+
+  const resultEl=document.getElementById('wi-result');
+  if(plan==='TFSA'){
+    const fakeTxn={d:dateVal,inst:'What-If',acct:'sim',type:'Contribution',amt,treat:'Include',note:'simulation'};
+    const before=calcTFSA(tT);
+    const after=calcTFSA([...tT,fakeTxn]);
+    const cy=getCurrentYear();
+    const bY=before.years[cy]||{}, aY=after.years[cy]||{};
+    const roomDrop=safeNum(bY.yeRoom)-safeNum(aY.yeRoom);
+    const excessDelta=safeNum(aY.yeExcess)-safeNum(bY.yeExcess);
+    const taxDelta=after.monthlyTax.reduce((s,t)=>s+t.tax,0)-before.monthlyTax.reduce((s,t)=>s+t.tax,0);
+    resultEl.innerHTML=`<p><b>TFSA What-If: +${F(amt)} on ${dateVal}</b></p>
+      <p>Room remaining: ${F(bY.yeRoom)} → <b class="${aY.yeRoom<0.01?'red':'green'}">${F(aY.yeRoom)}</b> (−${F(roomDrop)})</p>
+      <p>Year-end excess: ${F(bY.yeExcess)} → <b class="${aY.yeExcess>0.01?'red':'green'}">${F(aY.yeExcess)}</b>${excessDelta>0.01?' (+'+F(excessDelta)+')':''}</p>
+      <p>Tax impact: ${taxDelta>0.005?'<b class="red">+'+F(taxDelta)+' indicative tax</b>':'<span class="green">No additional tax</span>'}</p>`;
+  } else {
+    const fakeTxn={d:dateVal,inst:'What-If',acct:'sim',type:'Contribution',status:'Include',amt,note:'simulation'};
+    const before=calcFHSA(fT);
+    const after=calcFHSA([...fT,fakeTxn]);
+    const cy=getCurrentYear();
+    const bY=before.years[cy]||{}, aY=after.years[cy]||{};
+    const roomDrop=safeNum(bY.yeRoom)-safeNum(aY.yeRoom);
+    const excessDelta=safeNum(aY.yeExcess)-safeNum(bY.yeExcess);
+    const taxDelta=after.monthlyTax.reduce((s,t)=>s+t.tax,0)-before.monthlyTax.reduce((s,t)=>s+t.tax,0);
+    resultEl.innerHTML=`<p><b>FHSA What-If: +${F(amt)} on ${dateVal}</b></p>
+      <p>Room remaining: ${F(bY.yeRoom)} → <b class="${aY.yeRoom<0.01?'red':'green'}">${F(aY.yeRoom)}</b> (−${F(roomDrop)})</p>
+      <p>Year-end excess: ${F(bY.yeExcess)} → <b class="${aY.yeExcess>0.01?'red':'green'}">${F(aY.yeExcess)}</b>${excessDelta>0.01?' (+'+F(excessDelta)+')':''}</p>
+      <p>Lifetime left: ${F(aY.lifetimeLeft)}</p>
+      <p>Tax impact: ${taxDelta>0.005?'<b class="red">+'+F(taxDelta)+' indicative tax</b>':'<span class="green">No additional tax</span>'}</p>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// CRA RECONCILIATION HELPER
+// ═══════════════════════════════════════════════════
+function runReconciliation(){
+  const craRoom=safeNum(document.getElementById('recon-cra-room')?.value);
+  if(craRoom<=0){document.getElementById('recon-result').innerHTML='<p class="dim">Enter your CRA-stated room to compare.</p>';return}
+  const tfsa=calcTFSA(tT);
+  const cy=getCurrentYear();
+  const tc=tfsa.years[cy]||{};
+  // CRA states opening room for the year, before any current-year contributions
+  const trackerOpening=safeNum(tc.openRoom);
+  const diff=Math.abs(trackerOpening-craRoom);
+  const match=diff<1.00;
+  const resultEl=document.getElementById('recon-result');
+  resultEl.innerHTML=`<div class="recon-diff ${match?'match':'mismatch'}">
+    <p><b>CRA stated opening room (${cy}):</b> ${F(craRoom)}</p>
+    <p><b>Tracker computed opening room:</b> ${F(trackerOpening)}</p>
+    <p><b>Difference:</b> ${F(diff)} ${match?'✅ Match (within $1)':'⚠️ Mismatch — review transactions or CRA adjustments'}</p>
+    ${!match?'<p class="dim" class="mt-sm">Common causes: unrecorded transfers, CRA adjustments, timing differences on late-December transactions, or contributions not yet reflected in CRA systems.</p>':''}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDERING — Dashboard
+// ═══════════════════════════════════════════════════
+function card(label,value,sub,warn){
+  return `<div class="card${warn?' warn':''}"><div class="card-label">${label}</div><div class="card-val">${value}</div>${sub?`<div class="card-sub">${sub}</div>`:''}</div>`}
+
+function render(){
+  const tfsa=calcTFSA(tT), fhsa=calcFHSA(fT);
+  const cy=getCurrentYear();
+  const tc=tfsa.years[cy]||{}, fc=fhsa.years[cy]||{};
+  const tTot=tfsa.monthlyTax.reduce((s,t)=>s+safeNum(t.tax),0);
+  const fTot=fhsa.monthlyTax.reduce((s,t)=>s+safeNum(t.tax),0);
+  const fhsaWarnings=Object.values(fhsa.years).reduce((acc,y)=>({ambiguous:acc.ambiguous+safeNum(y.ambiguousLegacyCount),unknown:acc.unknown+safeNum(y.unknownTypeCount)}),{ambiguous:0,unknown:0});
+
+  // Self-test badge
+  const test=runSelfTest();
+  const badge=`<span class="engine-badge ${test.allPass?'pass':'fail'}">${test.allPass?'✓ Engine verified':'⚠ Engine mismatch'}</span>`;
+
+  // Dashboard
+  let h=`<div class="section-head"><h2 class="sec">TFSA — ${cy}</h2>${badge}</div><div class="cards">`;
+  h+=card('Room Remaining',F(tc.yeRoom),'Opening: '+F(tc.openRoom));
+  h+=card('YTD Contributions',F(tc.contribs),tT.filter(t=>String(t.d||'').startsWith(String(cy))&&normalizeTfsaType(t.type)==='Contribution').length+' contribution txns');
+  h+=card('Peak Monthly Excess',tfsa.monthlyTax.length?F(Math.max(...tfsa.monthlyTax.map(t=>safeNum(t.peak)))):'None',tfsa.monthlyTax.length?tfsa.monthlyTax.length+' taxed months':'No excess months',tfsa.monthlyTax.length>0);
+  h+=card('Indicative 1% Tax',tTot>0?F(tTot):'None',tTot>0?'RC243 / Schedule A if assessed':'No modeled tax',tTot>0);
+  h+=`</div><h2 class="sec">FHSA — ${cy}</h2><div class="cards">`;
+  h+=card('Room Remaining',F(fc.yeRoom),'Participation room: '+F(fc.participationRoom));
+  h+=card('Counted YTD Inflows',F(fc.countedInflows),'Life left: '+F(fc.lifetimeLeft));
+  h+=card('Year-End Excess',fc.yeExcess>0.01?F(fc.yeExcess):'None','',fc.yeExcess>0.01);
+  h+=card('Indicative 1% Tax',fTot>0?F(fTot):'None',fTot>0?'RC728 / Schedule A if assessed':'No modeled tax',fTot>0);
+  h+=`</div>`;
+
+  // Dashboard charts
+  h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">TFSA Room & Contributions</h3><canvas id="c1"></canvas></div>';
+  h+='<div class="chrt"><h3 class="chrt-title">Year-End Room Trend</h3><canvas id="c2"></canvas></div></div>';
+
+  // CRA logic notes
+  h+='<div class="cra"><h3>CRA-aligned logic used in this tracker</h3>';
+  h+='<p>• <b>TFSA:</b> New annual room added January 1. Withdrawals added back next January 1. Only the qualifying portion of a same-year withdrawal reduces excess for 1% tax purposes. Direct transfers between TFSA institutions are room-neutral.</p>';
+  h+='<p>• <b>FHSA:</b> Contributions and RRSP→FHSA transfers count against participation room. Direct FHSA→FHSA transfers do not. Taxable withdrawals can create re-participation room. Designated withdrawals/transfers restore lifetime headroom.</p>';
+  h+='<p>• <b>Excess tax:</b> Modeled at 1% of the highest excess in each month. TFSA excess returns filed on RC243; FHSA on RC728. Generally due by June 30 of the following year.</p>';
+  h+='<p>• <b>Planning note:</b> CRA room statements can lag the actual ledger. Reconcile against your institution history and CRA notices.</p>';
+  h+='</div>';
+
+  // Disclaimer
+  h+='<div class="disclaimer">⚠️ <b>Not tax advice.</b> This tracker is for personal informational use only. It does not constitute tax, legal, or financial advice. Verify all calculations against your CRA My Account and consult a qualified tax professional for filing decisions. The tracker models excess tax exposure but cannot determine whether CRA will assess it.</div>';
+
+  // Warnings
+  if(fhsaWarnings.ambiguous>0||fhsaWarnings.unknown>0){
+    h+=`<div class="note-box"><h3>Review recommended</h3><p>${fhsaWarnings.ambiguous>0?`⚠️ ${fhsaWarnings.ambiguous} legacy FHSA transfer row(s) interpreted with safe defaults. `:''}${fhsaWarnings.unknown>0?`⚠️ ${fhsaWarnings.unknown} FHSA row(s) with unknown type ignored in room calculations. `:''}Open the FHSA tab to reclassify.</p></div>`;
+  }
+
+  // Self-test details (collapsible)
+  if(!test.allPass){
+    h+=`<div class="note-box warn-box"><h3>Engine Self-Test Failures</h3>`;
+    test.results.filter(r=>!r.pass).forEach(r=>{h+=`<p class="red">${r.label}: expected ${r.expected}, got ${safeNum(r.actual).toFixed(2)}</p>`});
+    h+=`</div>`;
+  }
+
+  document.getElementById('v-dashboard').innerHTML=h;
+
+  // Charts
+  setTimeout(()=>{
+    if(window._charts)window._charts.forEach(c=>c.destroy());
+    window._charts=[];
+    const yrs=Object.keys(tfsa.years).filter(y=>+y>=getTfsaStartYear()&&+y<=cy).sort();
+    const ctx1=document.getElementById('c1');
+    if(ctx1){window._charts.push(new Chart(ctx1,{type:'bar',data:{labels:yrs,datasets:[
+      {label:'Contributions',data:yrs.map(y=>safeNum(tfsa.years[y].contribs)),backgroundColor:'#2563eb'},
+      {label:'Room Available',data:yrs.map(y=>safeNum(tfsa.years[y].openRoom)),backgroundColor:'#1a1a3a'},
+      {label:'Excess',data:yrs.map(y=>safeNum(tfsa.years[y].yeExcess)),backgroundColor:'#dc2626'}
+    ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}))}
+    const ctx2=document.getElementById('c2');
+    if(ctx2){window._charts.push(new Chart(ctx2,{type:'line',data:{labels:yrs,datasets:[
+      {label:'TFSA YE Room',data:yrs.map(y=>safeNum(tfsa.years[y].yeRoom)),borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3},
+      {label:'FHSA YE Room',data:yrs.map(y=>fhsa.years[y]?safeNum(fhsa.years[y].yeRoom):0),borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,.08)',fill:true,tension:.3}
+    ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}))}
+  },100);
+
+  // ── TFSA / FHSA Txn views ──
+  document.getElementById('v-tfsa').innerHTML=renderTxnView('TFSA',tT);
+  document.getElementById('v-fhsa').innerHTML=renderTxnView('FHSA',fT);
+
+  // ── Annual Roll-Forward ──
+  let a=`<div class="inline-btns"><button onclick="openSettings()">Update Annual Limits</button><button onclick="exportCSV()">Export All CSV</button></div>`;
+  a+=`<h2 class="annual-title annual-title-first">TFSA Annual Roll-Forward</h2>`;
+  a+=`<p class="annual-desc">Opening = prior net room + prior addback + current-year limit. Transfers are room-neutral. Only qualifying WD reduce excess.</p>`;
+  a+=renderAnnualTable(tfsa.years,'TFSA');
+  a+=`<h2 class="annual-title">FHSA Annual Roll-Forward</h2>`;
+  a+=`<p class="annual-desc">Carryforward = min($8K, prior YE unused room). Participation room capped by lifetime headroom ($40K).</p>`;
+  a+=renderAnnualTable(fhsa.years,'FHSA');
+  document.getElementById('v-annual').innerHTML=a;
+
+  // ── Tax View ──
+  let tx=`<h2 class="view-title">Monthly Excess Tax Breakdown</h2>`;
+  tx+=`<p class="annual-desc">Modeled at 1% of the highest excess in each month. TFSA and FHSA excess returns are generally due by June 30 of the following year.</p>`;
+  tx+=`<div class="cards">${card('TFSA Tax',tTot>0?F(tTot):'None',tfsa.monthlyTax.length+' months',tTot>0)}${card('FHSA Tax',fTot>0?F(fTot):'None',fhsa.monthlyTax.length+' months',fTot>0)}${card('Combined',F(tTot+fTot),'modeled exposure',tTot+fTot>0)}</div>`;
+  const allTax=[...tfsa.monthlyTax.map(t=>({...t,plan:'TFSA'})),...fhsa.monthlyTax.map(t=>({...t,plan:'FHSA'}))].sort((a,b)=>a.month.localeCompare(b.month));
+  if(allTax.length){
+    tx+=`<div class="overflow"><table class="mobile-stack"><thead><tr><th>Month</th><th>Plan</th><th class="r">Start</th><th class="r">Peak</th><th class="r">End</th><th class="r">1% Tax</th><th>Form</th></tr></thead><tbody>`;
+    allTax.forEach(t=>{tx+=`<tr><td data-label="Month" class="mute">${t.month}</td><td data-label="Plan"><span class="pill ${t.plan==='TFSA'?'pill-tfsa':'pill-fhsa'}">${t.plan}</span></td><td data-label="Start" class="r red">${F(t.start)}</td><td data-label="Peak" class="r red bold">${F(t.peak)}</td><td data-label="End" class="r red">${F(t.end)}</td><td data-label="1% Tax" class="r gold bold">${F(t.tax)}</td><td data-label="Form" class="dim form-dim">${t.plan==='TFSA'?'RC243':'RC728'}</td></tr>`});
+    tx+=`</tbody></table></div>`;
+  }
+  document.getElementById('v-tax').innerHTML=tx;
+
+  // ── Insights View ──
+  renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot);
+}
+
+// ═══════════════════════════════════════════════════
+// INSIGHTS — Improved Charts + What-If + Reconciliation
+// ═══════════════════════════════════════════════════
+function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
+  let h='<h2 class="view-title">Insights & Analytics</h2>';
+
+  // Charts row 1: Velocity + Excess History
+  h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">Annual Contribution Velocity</h3><canvas id="c4"></canvas></div>';
+  h+='<div class="chrt"><h3 class="chrt-title">Monthly Excess & Tax History</h3><canvas id="c6"></canvas></div></div>';
+
+  // Charts row 2: Room Utilization + FHSA Trajectory
+  h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">TFSA Room Utilization by Year</h3><canvas id="c7"></canvas></div>';
+  h+='<div class="chrt"><h3 class="chrt-title">FHSA Lifetime Trajectory</h3><canvas id="c5"></canvas></div></div>';
+
+  // Summary cards
+  let totInv=0;for(let yy=getTfsaStartYear();yy<=cy;yy++){if(tfsa.years[yy])totInv+=safeNum(tfsa.years[yy].contribs);if(fhsa.years[yy])totInv+=safeNum(fhsa.years[yy].countedInflows)}
+  const activeMonths=Math.max(1,(cy-getTfsaStartYear()+1)*12);
+  const avgM=totInv/activeMonths;
+  const fhsaPct=((safeNum(fc.lifetimeUsed)/(safeNum(trackerConfig.fhsaLifetimeLimit)||40000))*100).toFixed(1);
+  const tUtil=safeNum(tc.openRoom)>0?((safeNum(tc.contribs)/safeNum(tc.openRoom))*100).toFixed(1):'100';
+  h+='<div class="cards">';
+  h+=card('Total Invested',F(totInv),'TFSA + FHSA counted inflows');
+  h+=card('Avg Monthly Rate',F(avgM),'across active years');
+  h+=card('TFSA '+cy+' Utilization',tUtil+'%',F(tc.contribs)+' of '+F(tc.openRoom));
+  h+=card('FHSA Lifetime Used',fhsaPct+'%',F(fc.lifetimeUsed)+' of '+F(trackerConfig.fhsaLifetimeLimit));
+  h+='</div>';
+
+  // Contribution Planner
+  const monthsLeft=currentMonthSlotsRemaining(cy);
+  const tPM=monthsLeft>0?safeNum(tc.yeRoom)/monthsLeft:0;
+  const fPM=monthsLeft>0?safeNum(fc.yeRoom)/monthsLeft:0;
+  h+='<div class="panel">';
+  h+='<h3 class="panel-title">'+cy+' Contribution Planner</h3>';
+  h+='<p class="panel-text">• <b>TFSA:</b> '+F(tc.yeRoom)+' remaining → <b>'+F(tPM)+'/month</b> for '+monthsLeft+' month(s) to max out.</p>';
+  h+='<p class="panel-text">• <b>FHSA:</b> '+F(fc.yeRoom)+' remaining → <b>'+F(fPM)+'/month</b> for '+monthsLeft+' month(s) to max out.</p>';
+  h+='<p class="panel-text">• <b>Combined:</b> '+F(tPM+fPM)+'/month to fully utilize both.</p>';
+  const yrsToExhaust=Math.ceil(safeNum(fc.lifetimeLeft)/8000);
+  h+='<p class="panel-sub">At $8K/year, FHSA lifetime cap exhausted around '+(cy+yrsToExhaust)+'.</p>';
+  h+='</div>';
+
+  // What-If Simulator
+  h+=`<div class="tool-panel blue"><h3>📊 What-If Contribution Simulator</h3>
+    <div class="tool-row">
+      <div><label class="t-label" for="wi-plan">Plan</label><select id="wi-plan" class="t-input"><option value="TFSA">TFSA</option><option value="FHSA">FHSA</option></select></div>
+      <div><label class="t-label" for="wi-amount">Amount ($)</label><input type="number" step="0.01" min="0.01" id="wi-amount" class="t-input" placeholder="1000"></div>
+      <div><label class="t-label" for="wi-date">Date</label><input type="date" id="wi-date" class="t-input" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="tool-action"><button class="add-btn" onclick="runWhatIf()">Simulate</button></div>
+    </div>
+    <div id="wi-result" class="tool-result"><p class="dim">Enter an amount and click Simulate to see the impact before committing.</p></div>
+  </div>`;
+
+  // CRA Reconciliation Helper
+  h+=`<div class="tool-panel purple"><h3>🔍 CRA Room Reconciliation</h3>
+    <p class="desc">Enter your CRA-stated TFSA room (from My Account or your latest Notice of Assessment) to check against this tracker's computed opening room for ${cy}.</p>
+    <div class="tool-row">
+      <div><label class="t-label" for="recon-cra-room">CRA Stated Room ($)</label><input type="number" step="0.01" id="recon-cra-room" class="t-input" placeholder="e.g. 7000"></div>
+      <div class="tool-action"><button class="add-btn" onclick="runReconciliation()">Compare</button></div>
+    </div>
+    <div id="recon-result"></div>
+  </div>`;
+
+  // Account Reconciliation
+  const accts={};
+  tT.forEach(t=>{const k=(t.inst||'Unknown')+' • '+(t.acct||'—');if(!accts[k])accts[k]={c:0,w:0,p:'TFSA'};const tp=normalizeTfsaType(t.type);if(tp==='Contribution')accts[k].c+=safeNum(t.amt);else if(tp==='Withdrawal')accts[k].w+=safeNum(t.amt)});
+  fT.forEach(t=>{const k=(t.inst||'Unknown')+' • '+(t.acct||'—');if(!accts[k])accts[k]={c:0,w:0,p:'FHSA'};const meta=fhsaTypeMeta(normalizeFhsaType(t.type));if(meta.bucket==='counted_inflow')accts[k].c+=safeNum(t.amt);else if(meta.bucket!=='excluded_transfer')accts[k].w+=safeNum(t.amt)});
+  h+='<div class="panel mt-lg"><h3 class="panel-title">Account Reconciliation</h3><div class="overflow"><table class="mobile-stack"><thead><tr><th>Account</th><th>Plan</th><th class="r">Inflows</th><th class="r">Outflows</th><th class="r">Net</th></tr></thead><tbody>';
+  Object.keys(accts).sort((a,b)=>(accts[b].c-accts[b].w)-(accts[a].c-accts[a].w)).forEach(k=>{const v=accts[k];h+='<tr><td data-label="Account" class="mute truncate" title="'+escAttr(k)+'">'+k+'</td><td data-label="Plan"><span class="pill '+(v.p==='TFSA'?'pill-tfsa':'pill-fhsa')+'">'+v.p+'</span></td><td data-label="Inflows" class="r green">'+F(v.c)+'</td><td data-label="Outflows" class="r red">'+F(v.w)+'</td><td data-label="Net" class="r '+(v.c-v.w>=0?'blue':'red')+'">'+F(v.c-v.w)+'</td></tr>'});
+  h+='</tbody></table></div></div>';
+
+  document.getElementById('v-insights').innerHTML=h;
+
+  // Render insight charts
+  setTimeout(()=>{
+    const yrs=Object.keys(tfsa.years).filter(y=>+y>=getTfsaStartYear()&&+y<=cy).sort();
+
+    // Velocity chart
+    const ctx4=document.getElementById('c4');
+    if(ctx4&&window._charts){window._charts.push(new Chart(ctx4,{type:'bar',data:{labels:yrs,datasets:[
+      {label:'TFSA',data:yrs.map(y=>safeNum(tfsa.years[y].contribs)),backgroundColor:'#2563eb'},
+      {label:'FHSA',data:yrs.map(y=>fhsa.years[y]?safeNum(fhsa.years[y].countedInflows):0),backgroundColor:'#4ade80'}
+    ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}))}
+
+    // Excess History chart (monthly excess and tax over time)
+    const ctx6=document.getElementById('c6');
+    if(ctx6&&window._charts){
+      const allMonths=[...tfsa.monthlyTax.map(t=>({...t,plan:'TFSA'})),...fhsa.monthlyTax.map(t=>({...t,plan:'FHSA'}))].sort((a,b)=>a.month.localeCompare(b.month));
+      const labels=[...new Set(allMonths.map(t=>t.month))].sort();
+      const tfsaPeaks=labels.map(m=>{const f=allMonths.find(t=>t.month===m&&t.plan==='TFSA');return f?f.peak:0});
+      const fhsaPeaks=labels.map(m=>{const f=allMonths.find(t=>t.month===m&&t.plan==='FHSA');return f?f.peak:0});
+      window._charts.push(new Chart(ctx6,{type:'bar',data:{labels,datasets:[
+        {label:'TFSA Peak Excess',data:tfsaPeaks,backgroundColor:'rgba(37,99,235,.6)'},
+        {label:'FHSA Peak Excess',data:fhsaPeaks,backgroundColor:'rgba(74,222,128,.6)'}
+      ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667',maxRotation:45},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}));
+    }
+
+    // Room Utilization chart
+    const ctx7=document.getElementById('c7');
+    if(ctx7&&window._charts){
+      const utilData=yrs.map(y=>{const yr=tfsa.years[y];const openRoom=safeNum(yr.openRoom);return openRoom>0?Math.min(100,(safeNum(yr.contribs)/openRoom*100)):0});
+      window._charts.push(new Chart(ctx7,{type:'bar',data:{labels:yrs,datasets:[
+        {label:'% Room Used',data:utilData,backgroundColor:utilData.map(v=>v>100?'#dc2626':v>80?'#fbbf24':'#2563eb')}
+      ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{max:120,ticks:{color:'#667',callback:v=>v+'%'},grid:{color:'#111'}}}}}))}
+
+    // FHSA Trajectory chart (line showing cumulative + projection)
+    const ctx5=document.getElementById('c5');
+    if(ctx5&&window._charts){
+      const fhsaYrs=Object.keys(fhsa.years).filter(y=>+y>=getFhsaStartYear()&&+y<=cy+5).sort();
+      const usedData=fhsaYrs.map(y=>safeNum(fhsa.years[y].lifetimeUsed));
+      const capLine=fhsaYrs.map(()=>safeNum(trackerConfig.fhsaLifetimeLimit));
+      window._charts.push(new Chart(ctx5,{type:'line',data:{labels:fhsaYrs,datasets:[
+        {label:'Lifetime Used',data:usedData,borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,.1)',fill:true,tension:.3},
+        {label:'Lifetime Cap',data:capLine,borderColor:'#dc2626',borderDash:[5,5],pointRadius:0,fill:false}
+      ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}));
+    }
+  },200);
+}
+
+// ═══════════════════════════════════════════════════
+// TRANSACTION TABLE RENDERING
+// ═══════════════════════════════════════════════════
+function renderTxnTable(plan,rows,pg,total){
+  const pp=30, tp=Math.ceil(total/pp);
+  let h=`<table class="mobile-stack"><thead><tr><th>Date</th><th>Institution</th><th>Account</th><th>Type</th><th class="r">Amount</th><th>${plan==='TFSA'?'Treatment':'Status'}</th><th class="actions-cell"></th></tr></thead><tbody>`;
+  rows.forEach((t,i)=>{
+    const idx=pg*pp+i;
+    const flag=plan==='TFSA'?(t.treat||'Include'):(t.status||'Include');
+    const meta=plan==='TFSA'?tfsaTypeMeta(normalizeTfsaType(t.type)):fhsaTypeMeta(normalizeFhsaType(t.type));
+    h+=`<tr><td data-label="Date" class="mute">${t.d}</td><td data-label="Institution" class="mute truncate" title="${escAttr(t.inst||'—')}">${t.inst||'—'}</td><td data-label="Account" class="mute truncate" title="${escAttr(t.acct||'—')}">${t.acct||'—'}</td><td data-label="Type"><span class="pill ${meta.pill}">${meta.label||t.type}</span></td><td data-label="Amount" class="r ${meta.amountClass} bold">${F(t.amt)}</td><td data-label="${plan==='TFSA'?'Treatment':'Status'}" class="dim">${flag}</td><td data-label="Actions" class="actions-cell"><button class="del-btn" title="Edit" onclick="editTxn('${plan}',${idx})" aria-label="Edit transaction">✎</button><button class="del-btn" title="Delete" onclick="delTxn('${plan}',${idx})" aria-label="Delete transaction">×</button></td></tr>`;
+  });
+  h+=`</tbody></table>`;
+  if(tp>1){h+=`<div class="pg"><button onclick="pageTxn('${plan}',-1)" ${pg===0?'disabled':''}>Prev</button><span>${pg+1}/${tp}</span><button onclick="pageTxn('${plan}',1)" ${pg>=tp-1?'disabled':''}>Next</button></div>`}
+  return h;
+}
+function renderTxnView(plan,txns){
+  const sorted=[...txns].sort((a,b)=>b.d.localeCompare(a.d));
+  const yrs=[...new Set(sorted.map(t=>String(t.d||'').slice(0,4)).filter(Boolean))].sort().reverse();
+  let h=`<div class="section-head view-header"><h2 class="view-title">${plan} Transactions</h2><div class="inline-btns">`;
+  h+=`<button class="add-btn" onclick="openModal('${plan}')">+ Add</button>`;
+  h+=`<button onclick="exportCSV('${plan}')">Export ${plan} CSV</button>`;
+  h+=`<button onclick="downloadCSVTemplate('${plan}')">${plan} Template</button>`;
+  h+=`</div></div>`;
+  h+=`<div class="yr-btns"><button class="yr-btn active" onclick="filterYear('${plan}','all',this)">All (${txns.length})</button>`;
+  yrs.forEach(y=>{h+=`<button class="yr-btn" onclick="filterYear('${plan}','${y}',this)">${y}</button>`});
+  h+=`</div>`;
+  if(plan==='FHSA'){
+    h+=`<div class="note-inline">Types: Contribution, RRSP Transfer In, Taxable Withdrawal, Designated Withdrawal, Designated Transfer Out, FHSA Direct Transfer In/Out, Qualifying Withdrawal.</div>`;
+  } else {
+    h+=`<div class="note-inline">Types: Contribution, Withdrawal, Transfer In (room-neutral), Transfer Out (room-neutral). Use transfers for institution-to-institution moves.</div>`;
+  }
+  h+=`<div class="overflow" id="tbl-${plan.toLowerCase()}">${renderTxnTable(plan,sorted.slice(0,30),0,sorted.length)}</div>`;
+  return h;
+}
+function filterYear(plan,yr,btn){txnFilters[plan]=yr;txnFilters[plan.toLowerCase()+'Pg']=0;btn.parentElement.querySelectorAll('.yr-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFilteredTxns(plan)}
+function renderFilteredTxns(plan){
+  const txns=plan==='TFSA'?tT:fT;
+  const yr=txnFilters[plan];
+  const sorted=[...txns].sort((a,b)=>b.d.localeCompare(a.d));
+  const filtered=yr==='all'?sorted:sorted.filter(t=>String(t.d||'').startsWith(yr));
+  const pg=txnFilters[plan.toLowerCase()+'Pg']||0;
+  document.getElementById('tbl-'+plan.toLowerCase()).innerHTML=renderTxnTable(plan,filtered.slice(pg*30,(pg+1)*30),pg,filtered.length);
+}
+function pageTxn(plan,dir){txnFilters[plan.toLowerCase()+'Pg']=(txnFilters[plan.toLowerCase()+'Pg']||0)+dir;renderFilteredTxns(plan)}
+
+// ═══════════════════════════════════════════════════
+// ANNUAL TABLE RENDERING
+// ═══════════════════════════════════════════════════
+function renderAnnualTable(data,type){
+  const start=type==='TFSA'?getTfsaStartYear():getFhsaStartYear();
+  const end=getCurrentYear();
+  const rows=Object.entries(data).filter(([y])=>+y>=start&&+y<=end).sort((a,b)=>+a[0]-+b[0]);
+  let h=`<div class="overflow"><table class="mobile-stack"><thead><tr>`;
+  if(type==='TFSA'){
+    h+=`<th>Year</th><th class="r">Limit</th><th class="r">Contribs</th><th class="r">W/D</th><th class="r">Qual WD</th><th class="r">Addback</th><th class="r">Transfers</th><th class="r">Open</th><th class="r">YE Room</th><th class="r">YE Excess</th><th class="r">Tax</th>`;
+  } else {
+    h+=`<th>Year</th><th class="r">Part. Room</th><th class="r">Carry</th><th class="r">Counted In</th><th class="r">Taxable WD</th><th class="r">Designated</th><th class="r">YE Room</th><th class="r">YE Excess</th><th class="r">Life Left</th><th class="r">Tax</th>`;
+  }
+  h+=`</tr></thead><tbody>`;
+  rows.forEach(([y,yr])=>{
+    const ex=safeNum(yr.yeExcess)>0.005;
+    h+=`<tr${ex?' class="excess"':''}><td data-label="Year" class="bright bold">${y}</td>`;
+    if(type==='TFSA'){
+      const ti=safeNum(yr.transferIn), to=safeNum(yr.transferOut);
+      const tfStr=ti>0||to>0?`In ${F(ti)} / Out ${F(to)}`:'—';
+      h+=`<td data-label="Limit" class="r dim">${F(yr.limit)}</td><td data-label="Contribs" class="r ${yr.contribs>0?'green':'dim'}">${F(yr.contribs)}</td><td data-label="W/D" class="r ${yr.withdrawals>0?'red':'dim'}">${F(yr.withdrawals)}</td><td data-label="Qual WD" class="r ${yr.qualifyingWD>0.005?'gold':'dim'}">${yr.qualifyingWD>0.005?F(yr.qualifyingWD):'—'}</td><td data-label="Addback" class="r ${yr.addbackWD>0?'blue':'dim'}">${F(yr.addbackWD)}</td><td data-label="Transfers" class="r ${ti+to>0?'purple':'dim'}">${tfStr}</td><td data-label="Open" class="r mute">${F(yr.openRoom)}</td><td data-label="YE Room" class="r blue">${F(yr.yeRoom)}</td><td data-label="YE Excess" class="r ${ex?'red':'dim'}">${ex?F(yr.yeExcess):'—'}</td><td data-label="Tax" class="r ${yr.tax>0?'gold':'dim'}">${yr.tax>0?F(yr.tax):'—'}</td>`;
+    } else {
+      h+=`<td data-label="Part. Room" class="r mute">${F(yr.participationRoom)}</td><td data-label="Carry" class="r ${yr.carryforward>0?'blue':'dim'}">${F(yr.carryforward)}</td><td data-label="Counted In" class="r ${yr.countedInflows>0?'green':'dim'}">${F(yr.countedInflows)}</td><td data-label="Taxable WD" class="r ${yr.taxableWithdrawals>0?'red':'dim'}">${yr.taxableWithdrawals>0?F(yr.taxableWithdrawals):'—'}</td><td data-label="Designated" class="r ${yr.designatedAmounts>0?'gold':'dim'}">${yr.designatedAmounts>0?F(yr.designatedAmounts):'—'}</td><td data-label="YE Room" class="r blue">${F(yr.yeRoom)}</td><td data-label="YE Excess" class="r ${ex?'red':'dim'}">${ex?F(yr.yeExcess):'—'}</td><td data-label="Life Left" class="r mute">${F(yr.lifetimeLeft)}</td><td data-label="Tax" class="r ${yr.tax>0?'gold':'dim'}">${yr.tax>0?F(yr.tax):'—'}</td>`;
+    }
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  return h;
+}
+
+// ═══════════════════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════════════════
+function showView(v){
+  curView=v;
+  ['dashboard','tfsa','fhsa','annual','tax','insights'].forEach(id=>{document.getElementById('v-'+id).classList.toggle('hidden',id!==v)});
+  document.querySelectorAll('.nav-main button[data-nav-view]').forEach(b=>b.classList.remove('active'));
+  const btn=document.querySelector(`.nav-main button[data-nav-view="${v}"]`);
+  if(btn)btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════
+// MODAL — Add/Edit with validation
+// ═══════════════════════════════════════════════════
+function buildLookups(){
+  const instSet=new Set(), acctSet=new Set();
+  [...tT,...fT].forEach(t=>{if(t.inst)instSet.add(t.inst);if(t.acct)acctSet.add(t.acct)});
+  const instList=document.getElementById('inst-list');
+  const acctList=document.getElementById('acct-list');
+  if(instList)instList.innerHTML=[...instSet].sort().map(v=>`<option value="${escAttr(v)}"></option>`).join('');
+  if(acctList)acctList.innerHTML=[...acctSet].sort().map(v=>`<option value="${escAttr(v)}"></option>`).join('');
+}
+function setModalTypeOptions(plan){
+  const sel=document.getElementById('m-type');
+  if(plan==='TFSA'){
+    sel.innerHTML='<option value="Contribution">Contribution</option><option value="Withdrawal">Withdrawal</option><option value="Transfer In">Transfer In (room-neutral)</option><option value="Transfer Out">Transfer Out (room-neutral)</option>';
+  } else {
+    sel.innerHTML=['<option value="Contribution">Contribution</option>','<option value="RRSP Transfer In">RRSP Transfer In</option>','<option value="Taxable Withdrawal">Taxable Withdrawal</option>','<option value="Designated Withdrawal">Designated Withdrawal</option>','<option value="Designated Transfer Out">Designated Transfer Out</option>','<option value="FHSA Direct Transfer In">FHSA Direct Transfer In</option>','<option value="FHSA Direct Transfer Out">FHSA Direct Transfer Out</option>','<option value="Qualifying Withdrawal">Qualifying Withdrawal</option>'].join('');
+  }
+}
+function syncModalForPlan(plan){
+  setModalTypeOptions(plan);
+  document.getElementById('m-treat-wrap').classList.toggle('hidden',plan!=='TFSA');
+  document.getElementById('m-status-wrap').classList.toggle('hidden',plan==='TFSA');
+  const pref=uiPrefs[plan]||{};
+  document.getElementById('m-inst').value=pref.inst||'';
+  document.getElementById('m-acct').value=pref.acct||'';
+  document.getElementById('m-type').value=pref.type||'Contribution';
+  document.getElementById('m-treat').value=pref.treat||'Include';
+  document.getElementById('m-status').value=pref.status||'Include';
+}
+function openModal(plan){
+  modalPlan=plan; editingIndex=-1;
+  buildLookups();
+  document.getElementById('modal-title').textContent='Add '+plan+' Transaction';
+  document.getElementById('modal-save-btn').textContent='Add';
+  document.getElementById('m-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('m-amt').value='';
+  document.getElementById('m-note').value='';
+  syncModalForPlan(plan);
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal(){document.getElementById('modal').classList.add('hidden');editingIndex=-1}
+
+function editTxn(plan,idx){
+  const txns=plan==='TFSA'?tT:fT;
+  const sorted=[...txns].sort((a,b)=>b.d.localeCompare(a.d));
+  const yr=txnFilters[plan];
+  const filtered=yr==='all'?sorted:sorted.filter(t=>String(t.d||'').startsWith(yr));
+  const target=filtered[idx];
+  if(!target)return;
+  const origIdx=txns.indexOf(target);
+  if(origIdx<0)return;
+
+  modalPlan=plan; editingIndex=origIdx;
+  buildLookups();
+  document.getElementById('modal-title').textContent='Edit '+plan+' Transaction';
+  document.getElementById('modal-save-btn').textContent='Save Changes';
+  setModalTypeOptions(plan);
+  document.getElementById('m-treat-wrap').classList.toggle('hidden',plan!=='TFSA');
+  document.getElementById('m-status-wrap').classList.toggle('hidden',plan==='TFSA');
+  document.getElementById('m-date').value=target.d||'';
+  document.getElementById('m-inst').value=target.inst||'';
+  document.getElementById('m-acct').value=target.acct||'';
+  document.getElementById('m-type').value=target.type||'Contribution';
+  if(plan==='TFSA')document.getElementById('m-treat').value=target.treat||'Include';
+  else document.getElementById('m-status').value=target.status||'Include';
+  document.getElementById('m-amt').value=target.amt||'';
+  document.getElementById('m-note').value=target.note||'';
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function saveTxn(){
+  const d=document.getElementById('m-date').value;
+  const inst=(document.getElementById('m-inst').value||'').trim();
+  const acct=(document.getElementById('m-acct').value||'').trim()||'manual';
+  const rawType=document.getElementById('m-type').value;
+  const amt=safeNum(document.getElementById('m-amt').value);
+  const note=(document.getElementById('m-note').value||'').trim();
+  if(!d||!inst||amt<=0){alert('Please enter a valid date, institution, and positive amount.');return}
+
+  if(modalPlan==='TFSA'){
+    const treat=normalizeFlag(document.getElementById('m-treat').value,'Include');
+    const type=normalizeTfsaType(rawType);
+    const txn={d,inst,acct,type,amt,treat,note};
+    if(editingIndex>=0){tT[editingIndex]=txn}else{tT.push(txn)}
+    uiPrefs.TFSA={inst,acct,type,treat};
+  } else {
+    const status=normalizeFlag(document.getElementById('m-status').value,'Include');
+    const type=normalizeFhsaType(rawType);
+    const txn={d,inst,acct,type,amt,status,note};
+    if(editingIndex>=0){fT[editingIndex]=txn}else{fT.push(txn)}
+    uiPrefs.FHSA={inst,acct,type,status};
+  }
+  editingIndex=-1;
+  closeModal(); save(); render();
+}
+
+function delTxn(plan,idx){
+  if(!confirm('Delete this transaction? You can undo within 5 seconds.'))return;
+  const txns=plan==='TFSA'?tT:fT;
+  const sorted=[...txns].sort((a,b)=>b.d.localeCompare(a.d));
+  const yr=txnFilters[plan];
+  const filtered=yr==='all'?sorted:sorted.filter(t=>String(t.d||'').startsWith(yr));
+  const target=filtered[idx];
+  if(!target)return;
+  const origIdx=txns.indexOf(target);
+  if(origIdx>=0){
+    const removed=txns.splice(origIdx,1)[0];
+    undoStack=[{type:'delete',plan,origIndex:origIdx,txn:removed}];
+    save(); render();
+    showToast(`Deleted ${plan} ${F(removed.amt)} on ${removed.d}`,true);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// CSV IMPORT/EXPORT — with duplicate detection
+// ═══════════════════════════════════════════════════
+function toCSV(rows){
+  const esc=v=>{const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+  return rows.map(r=>r.map(esc).join(',')).join('\n');
+}
+function parseCSV(text){
+  const rows=[];let row=[],cur='',q=false;
+  const clean=String(text||'').replace(/^\uFEFF/,'');
+  for(let i=0;i<clean.length;i++){
+    const ch=clean[i],nx=clean[i+1];
+    if(q){if(ch==='"'&&nx==='"'){cur+='"';i++}else if(ch==='"'){q=false}else{cur+=ch}}
+    else{if(ch==='"'){q=true}else if(ch===','){row.push(cur);cur=''}else if(ch==='\n'){row.push(cur);rows.push(row);row=[];cur=''}else if(ch==='\r'){}else{cur+=ch}}
+  }
+  row.push(cur);if(row.length>1||row[0]!=='')rows.push(row);
+  return rows;
+}
+function isDuplicateTxn(plan,txn){
+  const arr=plan==='TFSA'?tT:fT;
+  return arr.some(t=>t.d===txn.d&&t.inst===txn.inst&&t.acct===txn.acct&&t.type===txn.type&&Math.abs(safeNum(t.amt)-safeNum(txn.amt))<0.005);
+}
+function exportCSV(plan='ALL'){
+  const rows=[["plan","date","institution","account","type","amount","treatment","status","note"]];
+  const add=(p,t)=>rows.push([p,t.d||'',t.inst||'',t.acct||'',t.type||'',t.amt||'',t.treat||'',t.status||'',t.note||'']);
+  if(plan==='ALL'||plan==='TFSA')tT.forEach(t=>add('TFSA',t));
+  if(plan==='ALL'||plan==='FHSA')fT.forEach(t=>add('FHSA',t));
+  const blob=new Blob([toCSV(rows)],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download='tracker_'+String(plan).toLowerCase()+'_'+new Date().toISOString().split('T')[0]+'.csv';a.click();URL.revokeObjectURL(u);
+}
+function downloadCSVTemplate(plan='ALL'){
+  const rows=[["plan","date","institution","account","type","amount","treatment","status","note"]];
+  if(plan==='ALL'||plan==='TFSA'){
+    rows.push(["TFSA","2026-04-01","Wealthsimple","manual","Contribution","100.00","Include","","Optional note"]);
+    rows.push(["TFSA","2026-04-15","Wealthsimple","manual","Transfer In","5000.00","Include","","Room-neutral transfer"]);
+  }
+  if(plan==='ALL'||plan==='FHSA'){
+    rows.push(["FHSA","2026-04-01","Wealthsimple","HQ5XRTH65CAD","Contribution","100.00","","Include","Optional note"]);
+    rows.push(["FHSA","2026-04-15","Wealthsimple","HQ5XRTH65CAD","RRSP Transfer In","500.00","","Include","Counts against participation room"]);
+  }
+  const blob=new Blob([toCSV(rows)],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download='tracker_'+String(plan).toLowerCase()+'_template.csv';a.click();URL.revokeObjectURL(u);
+}
+function openCsvPicker(){const el=document.getElementById('csv-file');if(el){el.value='';el.click()}}
+function importCSVText(text){
+  const rows=parseCSV(text);
+  if(rows.length<2){alert('CSV has no data rows.');return}
+  const hdr=rows[0].map(h=>String(h||'').trim().toLowerCase());
+  const idx=name=>hdr.indexOf(name);
+  const missing=['plan','date','institution','account','type','amount'].filter(c=>idx(c)===-1);
+  if(missing.length){alert('Missing CSV columns: '+missing.join(', '));return}
+  const dateRe=/^\d{4}-\d{2}-\d{2}$/;
+  let added=0,skipped=0,dupes=0;
+  for(let i=1;i<rows.length;i++){
+    const r=rows[i];
+    if(!r.some(v=>String(v||'').trim()))continue;
+    const plan=String(r[idx('plan')]||'').trim().toUpperCase();
+    const d=String(r[idx('date')]||'').trim();
+    const inst=String(r[idx('institution')]||'').trim();
+    const acct=String(r[idx('account')]||'').trim()||'manual';
+    const rawType=String(r[idx('type')]||'Contribution').trim();
+    const amt=safeNum(r[idx('amount')]||'0');
+    const treat=idx('treatment')>-1?normalizeFlag(r[idx('treatment')],'Include'):'Include';
+    const status=idx('status')>-1?normalizeFlag(r[idx('status')],'Include'):'Include';
+    const note=idx('note')>-1?String(r[idx('note')]||'').trim():'';
+    if(!plan||!d||!inst||amt<=0||!dateRe.test(d)){skipped++;continue}
+    if(plan==='TFSA'){
+      const txn={d,inst,acct,type:normalizeTfsaType(rawType),amt,treat,note};
+      if(isDuplicateTxn('TFSA',txn)){dupes++;continue}
+      tT.push(txn);added++;
+    } else if(plan==='FHSA'){
+      const txn={d,inst,acct,type:normalizeFhsaType(rawType),amt,status,note};
+      if(isDuplicateTxn('FHSA',txn)){dupes++;continue}
+      fT.push(txn);added++;
+    } else {skipped++}
+  }
+  save();render();
+  let msg='Imported '+added+' transaction(s).';
+  if(dupes>0)msg+=' Skipped '+dupes+' duplicate(s).';
+  if(skipped>0)msg+=' Skipped '+skipped+' invalid row(s).';
+  alert(msg);
+}
+function handleCsvFile(evt){
+  const f=evt.target.files&&evt.target.files[0];if(!f)return;
+  const reader=new FileReader();reader.onload=e=>importCSVText(String(e.target.result||''));reader.readAsText(f);
+}
+
+// ═══════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════
+function buildSettingsTable(){
+  const tbody=document.querySelector('#limits-table tbody');if(!tbody)return;
+  let html='';
+  for(let y=2009;y<=Math.max(getCurrentYear()+5,2035);y++){
+    const val=trackerConfig.tfsaAnnualLimits[y]??OFFICIAL_TFSA_LIMITS[y]??0;
+    const official=OFFICIAL_TFSA_LIMITS[y]!==undefined;
+    html+=`<tr><td class="mute">${y}</td><td class="r"><input type="number" step="0.01" data-year="${y}" class="limit-input t-input" value="${val}"></td><td class="dim">${official?'CRA official':'Editable future year'}</td></tr>`;
+  }
+  tbody.innerHTML=html;
+}
+function openSettings(){
+  document.getElementById('s-tfsa-start').value=trackerConfig.tfsaEligibleStartYear;
+  document.getElementById('s-current-year').value=trackerConfig.currentYear;
+  document.getElementById('s-fhsa-start').value=trackerConfig.fhsaFirstYear;
+  document.getElementById('s-fhsa-annual').value=trackerConfig.fhsaAnnualLimit;
+  document.getElementById('s-fhsa-life').value=trackerConfig.fhsaLifetimeLimit;
+  document.getElementById('s-fhsa-carry').value=trackerConfig.fhsaCarryforwardCap;
+  buildSettingsTable();
+  document.getElementById('settings-modal').classList.remove('hidden');
+}
+function closeSettings(){document.getElementById('settings-modal').classList.add('hidden')}
+function saveSettings(){
+  // Validate critical fields aren't empty or destructive
+  const startVal=+document.getElementById('s-tfsa-start').value;
+  const cyVal=+document.getElementById('s-current-year').value;
+  const fhsaStartVal=+document.getElementById('s-fhsa-start').value;
+  const annualVal=safeNum(document.getElementById('s-fhsa-annual').value);
+  const lifeVal=safeNum(document.getElementById('s-fhsa-life').value);
+  const carryVal=safeNum(document.getElementById('s-fhsa-carry').value);
+  if(!startVal||startVal<2009||startVal>2100){alert('TFSA start year must be between 2009 and 2100.');return}
+  if(!cyVal||cyVal<2009||cyVal>2100){alert('Planning year must be between 2009 and 2100.');return}
+  if(!fhsaStartVal||fhsaStartVal<2023){alert('FHSA start year must be 2023 or later.');return}
+  if(annualVal<=0||lifeVal<=0||carryVal<=0){alert('FHSA limits must be positive numbers.');return}
+  if(!confirm('Save these settings? This will recalculate all room and tax values.'))return;
+  // Backup before applying
+  const backup=clone(trackerConfig);
+  try{
+    trackerConfig.tfsaEligibleStartYear=startVal;
+    trackerConfig.currentYear=cyVal;
+    trackerConfig.fhsaFirstYear=fhsaStartVal;
+    trackerConfig.fhsaAnnualLimit=annualVal;
+    trackerConfig.fhsaLifetimeLimit=lifeVal;
+    trackerConfig.fhsaCarryforwardCap=carryVal;
+    // Read limit inputs — if table rendered, use its values; otherwise keep existing limits
+    const limitInputs=document.querySelectorAll('.limit-input');
+    if(limitInputs.length>0){
+      const newLimits={};
+      limitInputs.forEach(inp=>{newLimits[inp.dataset.year]=safeNum(inp.value)});
+      trackerConfig.tfsaAnnualLimits=newLimits;
+    }
+    // else: keep trackerConfig.tfsaAnnualLimits as-is (safe fallback)
+    closeSettings();save();render();
+  }catch(e){
+    console.error('Settings save failed, restoring backup:',e);
+    trackerConfig=backup;
+    alert('Error saving settings. Previous values restored.');
+  }
+}
+function exportJSON(){
+  const b=new Blob([JSON.stringify({config:trackerConfig,tfsaTxns:tT,fhsaTxns:fT,exported:new Date().toISOString()},null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='tracker_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(u);
+}
+function exportSettingsCSV(){
+  const rows=[["setting","key","value"],["tfsa_start_year","",trackerConfig.tfsaEligibleStartYear],["current_year","",trackerConfig.currentYear],["fhsa_first_year","",trackerConfig.fhsaFirstYear],["fhsa_annual_limit","",trackerConfig.fhsaAnnualLimit],["fhsa_lifetime_limit","",trackerConfig.fhsaLifetimeLimit],["fhsa_carryforward_cap","",trackerConfig.fhsaCarryforwardCap],["","",""],["tfsa_limit","year","limit"]];
+  Object.keys(trackerConfig.tfsaAnnualLimits).sort().forEach(y=>rows.push(["tfsa_limit",y,trackerConfig.tfsaAnnualLimits[y]]));
+  const blob=new Blob([toCSV(rows)],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='tracker_settings_'+new Date().toISOString().split('T')[0]+'.csv';a.click();URL.revokeObjectURL(u);
+}
+function resetData(){
+  if(!confirm('⚠️ This will ERASE all your local changes and restore the original seeded data.\n\nYour current transactions, settings, and any imported data will be lost.\n\nAre you sure?'))return;
+  if(!confirm('Final confirmation: Reset everything to defaults?'))return;
+  tT=expandT(INIT_T);fT=expandF(INIT_F);trackerConfig=clone(CONFIG_DEFAULTS);uiPrefs=clone(UI_DEFAULTS);save();render();
+}
+
+// ─── Normalize existing data on load ───
+function seedNormalizedData(){
+  tT=tT.map(t=>({d:String(t.d||''),inst:t.inst||'',acct:t.acct||'manual',type:normalizeTfsaType(t.type),amt:safeNum(t.amt),treat:normalizeFlag(t.treat,'Include'),note:t.note||''}));
+  fT=fT.map(t=>({d:String(t.d||''),inst:t.inst||'',acct:t.acct||'manual',type:normalizeFhsaType(t.type),amt:safeNum(t.amt),status:normalizeFlag(t.status,'Include'),note:t.note||''}));
+}
+
+// ═══════════════════════════════════════════════════
+// KEYBOARD ACCESSIBILITY
+// ═══════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(!document.getElementById('modal').classList.contains('hidden'))closeModal();
+    if(!document.getElementById('settings-modal').classList.contains('hidden'))closeSettings();
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.getElementById('csv-file').addEventListener('change',handleCsvFile);
+const isFirstLoad=!load();
+if(isFirstLoad){tT=expandT(INIT_T);fT=expandF(INIT_F);trackerConfig=clone(CONFIG_DEFAULTS);uiPrefs=clone(UI_DEFAULTS)}
+seedNormalizedData();
+if(isFirstLoad) save(); // only write to localStorage on first-ever load (seeding defaults)
+render();
+
+// Log self-test results to console
+const selfTestResults=runSelfTest();
+console.log('Engine self-test:',selfTestResults.allPass?'ALL PASSED':'FAILURES DETECTED');
+selfTestResults.results.forEach(r=>console.log(`  ${r.pass?'✓':'✗'} ${r.label}: expected=${r.expected} actual=${safeNum(r.actual).toFixed(2)}`));
+</script>
+</body>
+</html>
