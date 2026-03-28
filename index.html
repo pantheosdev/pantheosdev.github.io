@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#080810">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>TFSA & FHSA Tracker</title>
+<title>TFSA & FHSA Tracker — Demo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -15,19 +15,19 @@ html{scroll-behavior:smooth}
 body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 
 /* ── Header / Nav ── */
-.hdr{border-bottom:1px solid #12122a;padding:16px 24px;padding-top:calc(16px + env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:80;background:rgba(8,8,16,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.hdr{border-bottom:1px solid #12122a;padding:14px 24px;padding-top:calc(14px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:80;background:rgba(8,8,16,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .hdr h1{font-size:20px;font-weight:700;letter-spacing:-0.5px}
 .hdr h1 span{color:#2563eb}
 .title-block{display:flex;align-items:center;gap:10px}
-.nav-rows{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex:1;min-width:0}
-.nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-/* Desktop: action buttons use grid so all 6 sit evenly in one row — no orphans */
-.nav-actions{display:grid;grid-template-columns:repeat(6,auto);gap:6px;justify-content:end;border-top:1px solid #1a1a2e;padding-top:8px}
-.nav button{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;background:transparent;color:#667;transition:all .2s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.nav-rows{display:flex;flex-direction:column;gap:6px;align-items:center}
+.nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.nav-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;border-top:1px solid #1a1a2e;padding-top:6px}
+.nav button{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;background:transparent;color:#667;transition:all .2s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
 .nav button:hover{color:#aab;background:rgba(255,255,255,.04)}
 .nav button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
 .nav button.active{background:#2563eb;color:#fff}
-.nav button.sec{background:#1a1a2e;color:#889;border:1px solid #2a2a4a;padding:8px 14px;font-size:12px}
+.nav button.sec{background:#1a1a2e;color:#889;border:1px solid #2a2a4a;padding:6px 12px;font-size:11px}
 .nav button.sec:hover{border-color:#2563eb;color:#aab}
 
 /* ── Layout ── */
@@ -37,13 +37,55 @@ body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif
 
 /* ── Cards ── */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
-.card{background:linear-gradient(135deg,#0a0a1a,#101020);border:1px solid #1a1a3a;border-radius:12px;padding:20px 24px;min-width:0}
-.card.warn{background:linear-gradient(135deg,#1a0a0a,#2a1010);border-color:#4a2020}
+.cards-4{grid-template-columns:repeat(4,1fr)}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.card{background:linear-gradient(135deg,#0a0a1a,#101020);border:1px solid #1a1a3a;border-radius:12px;padding:20px 24px;min-width:0;border-left:3px solid #1a1a3a;transition:border-color .3s,transform .2s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-1px)}
+.card.accent-green{border-left-color:#4ade80}
+.card.accent-blue{border-left-color:#2563eb}
+.card.accent-gold{border-left-color:#fbbf24}
+.card.accent-purple{border-left-color:#a78bfa}
+.card.warn{background:linear-gradient(135deg,#1a0a0a,#2a1010);border-color:#4a2020;border-left-color:#f87171}
 .card-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#667;margin-bottom:8px}
 .card-val{font-size:26px;font-weight:700;font-family:'Space Mono',monospace;letter-spacing:-1px;color:#e8e8f0}
 .card.warn .card-val{color:#ff6b6b}
 .card-sub{font-size:12px;color:#556;margin-top:4px}
 .card.warn .card-sub{color:#cc5555}
+
+/* ── Progress Bar ── */
+.card-progress-wrap{margin-top:auto;padding-top:10px}
+.card-progress{height:4px;background:#1a1a3a;border-radius:2px;overflow:hidden}
+.card-progress-fill{height:100%;border-radius:2px;transition:width .6s ease-out}
+.card-progress-fill.fill-green{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.card-progress-fill.fill-blue{background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
+.card-progress-fill.fill-gold{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.card-progress-fill.fill-red{background:linear-gradient(90deg,#dc2626,#f87171)}
+.card-progress-fill.fill-purple{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+
+/* ── View Transitions ── */
+.main>div{animation:fadeIn .25s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Smart Tips ── */
+.smart-tips{background:linear-gradient(135deg,#0a101a,#0d0d1a);border:1px solid #1a2a3a;border-radius:12px;padding:20px;margin-bottom:24px}
+.smart-tips h3{color:#7dd3fc;font-size:14px;margin:0 0 12px;font-weight:600}
+.tip{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #111828;font-size:13px;color:#889;line-height:1.6}
+.tip:last-child{border-bottom:none}
+.tip-icon{flex-shrink:0;font-size:15px;margin-top:1px}
+.tip b{color:#ccd}
+
+/* ── Heatmap ── */
+.heatmap{margin-bottom:24px}
+.heatmap-title{color:#889;font-size:14px;font-weight:600;margin-bottom:10px}
+.heatmap-grid{display:flex;gap:3px;flex-wrap:wrap}
+.heatmap-cell{width:14px;height:14px;border-radius:3px;transition:transform .15s}
+.heatmap-cell:hover{transform:scale(1.5);z-index:1}
+.heatmap-legend{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:#556}
+.heatmap-legend .heatmap-cell{width:12px;height:12px;cursor:default}
+.heatmap-legend .heatmap-cell:hover{transform:none}
+
+/* ── Section Dividers ── */
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,#2a2a4a,transparent);margin:32px 0}
 
 /* ── Headings ── */
 h2.sec{font-size:14px;text-transform:uppercase;letter-spacing:2px;color:#445;margin-bottom:16px}
@@ -184,21 +226,19 @@ tr.excess{background:#1a0808}
 
 /* ── Responsive ── */
 @media(max-width:900px){
-  .nav-rows{min-width:0;width:100%;align-items:stretch}
-  .nav{justify-content:center}
-  .nav-actions{grid-template-columns:repeat(3,1fr);width:100%;justify-content:stretch}
-  .nav-main{justify-content:center}
+  .cards-4{grid-template-columns:repeat(2,1fr)}
+  .cards-3{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:768px){
-  .hdr{padding:12px 14px;gap:8px}
+  .hdr{padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+  .hdr-top{margin-bottom:8px}
   .hdr h1{font-size:17px}
-  .title-block{width:100%;justify-content:space-between}
   .main{padding:14px}
   .g2{grid-template-columns:1fr}
 
   /* ── Mobile nav: 3-column centered grids ── */
   .nav-main{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:6px}
-  .nav-actions{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:6px;justify-content:stretch}
+  .nav-actions{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:6px}
   .nav button{width:100%;padding:11px 8px;font-size:12px;text-align:center;min-height:44px}
   .nav button.sec{width:100%;padding:10px 8px;font-size:11px;text-align:center;min-height:44px}
 
@@ -208,6 +248,8 @@ tr.excess{background:#1a0808}
 
   /* ── Mobile cards ── */
   .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .cards-4{grid-template-columns:repeat(2,1fr)}
+  .cards-3{grid-template-columns:repeat(2,1fr)}
   .card{padding:14px 12px}
   .card-val{font-size:20px}
   .card-label{font-size:10px;letter-spacing:1.2px}
@@ -267,6 +309,8 @@ tr.excess{background:#1a0808}
 @media(max-width:380px){
   .nav-main,.nav-actions{grid-template-columns:repeat(2,1fr)}
   .cards{grid-template-columns:1fr}
+  .cards-4{grid-template-columns:1fr}
+  .cards-3{grid-template-columns:1fr}
   .card-val{font-size:18px}
   .nav button{font-size:11px;padding:10px 6px}
   .nav button.sec{font-size:10px;padding:10px 6px}
@@ -280,7 +324,13 @@ tr.excess{background:#1a0808}
 html.light body{background:#f5f5f8;color:#1a1a2e}
 html.light .hdr{background:rgba(245,245,248,.96);border-color:#e0e0e8}
 html.light .hdr h1{color:#1a1a2e}
-html.light .card{background:linear-gradient(135deg,#fff,#f8f8fc);border-color:#e0e0e8}
+html.light .card{background:linear-gradient(135deg,#fff,#f8f8fc);border-color:#e0e0e8;border-left-color:#e0e0e8}
+html.light .card:hover{transform:translateY(-1px)}
+html.light .card.accent-green{border-left-color:#16a34a}
+html.light .card.accent-blue{border-left-color:#2563eb}
+html.light .card.accent-gold{border-left-color:#d97706}
+html.light .card.accent-purple{border-left-color:#7c3aed}
+html.light .card.warn{background:linear-gradient(135deg,#fff5f5,#ffe8e8);border-color:#fca5a5;border-left-color:#dc2626}
 html.light .card-val{color:#1a1a2e}
 html.light .card.warn{background:linear-gradient(135deg,#fff5f5,#ffe8e8);border-color:#fca5a5}
 html.light .card.warn .card-val{color:#dc2626}
@@ -321,6 +371,13 @@ html.light .overflow::-webkit-scrollbar-thumb{background:#d0d0e0}
 html.light .search-input{background:#f8f8fc;border-color:#d0d0e0;color:#1a1a2e}
 html.light .engine-badge.pass{background:#dcfce7;color:#166534}
 html.light .engine-badge.fail{background:#fee2e2;color:#991b1b}
+html.light .card-progress{background:#e0e0e8}
+html.light .smart-tips{background:linear-gradient(135deg,#f0f4ff,#fff);border-color:#c4d4f0}
+html.light .smart-tips h3{color:#1e40af}
+html.light .tip{border-color:#f0f0f4;color:#555}
+html.light .tip b{color:#333}
+html.light .section-divider{background:linear-gradient(90deg,transparent,#e0e0e8,transparent)}
+html.light .heatmap-legend{color:#889}
 html.light .recon-diff.match{background:#dcfce7;color:#166534;border-color:#bbf7d0}
 html.light .recon-diff.mismatch{background:#fee2e2;color:#991b1b;border-color:#fecaca}
 html.light .limits-scroll{background:#f8f8fc;border-color:#e0e0e8}
@@ -373,8 +430,10 @@ html.light .backup-banner{background:#fffbeb;border-color:#fde68a;color:#92400e}
 <body>
 
 <div class="hdr">
-  <div class="title-block">
-    <h1><span>◆</span> TFSA & FHSA Tracker</h1>
+  <div class="hdr-top">
+    <div class="title-block">
+      <h1><span>◆</span> TFSA & FHSA Tracker <span style="font-size:11px;background:#2563eb;color:#fff;padding:2px 8px;border-radius:6px;vertical-align:middle;letter-spacing:1px;margin-left:4px">DEMO</span></h1>
+    </div>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark theme" aria-label="Toggle theme">☀</button>
   </div>
   <div class="nav-rows">
@@ -461,7 +520,7 @@ html.light .backup-banner{background:#fffbeb;border-color:#fde68a;color:#92400e}
 </div>
 
 <!-- Footer -->
-<div style="max-width:1200px;margin:32px auto 0;padding:0 24px 16px;text-align:center;font-size:10px;color:#334;letter-spacing:.5px;font-family:'DM Sans',sans-serif">TFSA & FHSA Tracker v7.0 — For personal informational use only. Not tax advice. <span class="kbd">?</span> for keyboard shortcuts.</div>
+<div style="max-width:1200px;margin:32px auto 0;padding:0 24px 16px;text-align:center;font-size:10px;color:#334;letter-spacing:.5px;font-family:'DM Sans',sans-serif">TFSA & FHSA Tracker v7.1 — DEMO — Fictional data for demonstration only. — For personal informational use only. Not tax advice. <span class="kbd">?</span> for keyboard shortcuts.</div>
 
 <!-- Hidden file input -->
 <input id="csv-file" type="file" accept=".csv,text/csv" class="hidden" aria-label="Choose a CSV file to import">
@@ -483,9 +542,9 @@ const OFFICIAL_TFSA_LIMITS = {
 };
 
 const CONFIG_DEFAULTS = {
-  tfsaEligibleStartYear: 2015,
+  tfsaEligibleStartYear: 2018,
   currentYear: 2026,
-  fhsaFirstYear: 2023,
+  fhsaFirstYear: 2024,
   fhsaAnnualLimit: 8000,
   fhsaLifetimeLimit: 40000,
   fhsaCarryforwardCap: 8000,
@@ -493,119 +552,83 @@ const CONFIG_DEFAULTS = {
 };
 
 const UI_DEFAULTS = {
-  TFSA: {inst:'Wealthsimple',acct:'manual',type:'Contribution',treat:'Include'},
-  FHSA: {inst:'Wealthsimple',acct:'HQ5XRTH65CAD',type:'Contribution',status:'Include'}
+  TFSA: {inst:'Pacific Savings',acct:'PS-TFSA-07',type:'Contribution',treat:'Include'},
+  FHSA: {inst:'Horizon Direct',acct:'HD-FHSA-44',type:'Contribution',status:'Include'}
 };
 
-// ─── Initial Seeded Data ───
+// ─── Demo Seeded Data (100% fictional — no real financial records) ───
 const INIT_T=[
-["2016-11-30","CIBC","66540998","C",25],["2016-12-30","CIBC","66540998","C",25],
-["2017-01-30","CIBC","66540998","C",25],["2017-02-28","CIBC","66540998","C",25],["2017-03-30","CIBC","66540998","C",25],["2017-04-30","CIBC","66540998","C",25],["2017-05-30","CIBC","66540998","C",25],["2017-06-30","CIBC","66540998","C",25],["2017-07-30","CIBC","66540998","C",25],
-["2017-08-11","Canada Trust","001626489768","C",25],["2017-08-25","Canada Trust","001626489768","C",25],["2017-08-30","CIBC","66540998","C",25],
-["2017-09-08","Canada Trust","001626489768","C",25],["2017-09-22","Canada Trust","001626489768","C",25],["2017-09-30","CIBC","66540998","C",25],
-["2017-10-06","Canada Trust","001626489768","C",25],["2017-10-20","Canada Trust","001626489768","C",25],["2017-10-30","CIBC","66540998","C",25],
-["2017-11-02","CIBC","66540998","W",301.27],["2017-11-03","Canada Trust","001626489768","C",25],["2017-11-17","Canada Trust","001626489768","C",25],
-["2017-12-01","Canada Trust","001626489768","C",25],["2017-12-15","Canada Trust","001626489768","C",25],["2017-12-29","Canada Trust","001626489768","C",25],
-["2018-01-12","Canada Trust","001626489768","C",25],["2018-01-26","Canada Trust","001626489768","C",25],
-["2018-02-05","Canada Trust","001626489768","W",10],["2018-02-05","Canada Trust","001626489768","W",134],["2018-02-05","Canada Trust","001626489768","C",20],
-["2018-02-09","Canada Trust","001626489768","C",25],["2018-02-14","Canada Trust","001626489768","W",126.57],["2018-02-16","Canada Trust","001626489768","W",100],
-["2018-02-23","Canada Trust","001626489768","C",25],["2018-02-26","Canada Trust","001626489768","W",25],
-["2018-03-09","Canada Trust","001626489768","C",25],["2018-03-13","Canada Trust","001626489768","W",25],["2018-03-23","Canada Trust","001626489768","C",25],
-["2018-04-06","Canada Trust","001626489768","C",25],["2018-04-20","Canada Trust","001626489768","C",25],["2018-04-25","Canada Trust","001626489768","W",75.09],
-["2018-05-04","TD Waterhouse","236RY3J","C",2000],["2018-05-09","TD Waterhouse","236RY3J","C",50],["2018-05-14","TD Waterhouse","236RY3J","C",600],["2018-05-15","TD Waterhouse","236RY3J","C",1133.22],
-["2018-06-01","TD Waterhouse","236RY3J","C",100],["2018-06-04","TD Waterhouse","236RY3J","C",1550],["2018-06-18","TD Waterhouse","236RY3J","C",1100],["2018-06-19","TD Waterhouse","236RY3J","C",1010],
-["2018-07-03","TD Waterhouse","236RY3J","C",100],["2018-08-01","TD Waterhouse","236RY3J","C",100],["2018-09-04","TD Waterhouse","236RY3J","C",100],["2018-10-01","TD Waterhouse","236RY3J","C",943.56],
-["2018-11-01","TD Waterhouse","236RY3J","C",100],["2018-12-03","TD Waterhouse","236RY3J","C",100],
-["2019-01-02","TD Waterhouse","236RY3J","C",100],["2019-02-01","TD Waterhouse","236RY3J","C",100],["2019-03-01","TD Waterhouse","236RY3J","C",100],["2019-04-01","TD Waterhouse","236RY3J","C",100],["2019-04-16","TD Waterhouse","236RY3J","C",700],
-["2019-05-01","TD Waterhouse","236RY3J","C",100],["2019-06-03","TD Waterhouse","236RY3J","C",100],["2019-06-27","TD Waterhouse","236RY3J","W",300.01],
-["2019-07-02","TD Waterhouse","236RY3J","C",100],["2019-07-03","TD Waterhouse","236RY3J","W",100],["2019-08-01","TD Waterhouse","236RY3J","C",100],
-["2019-09-03","TD Waterhouse","236RY3J","C",100],["2019-10-01","TD Waterhouse","236RY3J","C",100],["2019-11-01","TD Waterhouse","236RY3J","C",100],["2019-12-02","TD Waterhouse","236RY3J","C",100],["2019-12-05","TD Waterhouse","236RY3J","W",500],
-["2020-01-02","TD Waterhouse","236RY3J","C",100],["2020-02-03","TD Waterhouse","236RY3J","W",200],["2020-02-03","TD Waterhouse","236RY3J","C",100],
-["2020-03-02","TD Waterhouse","236RY3J","C",100],["2020-04-01","TD Waterhouse","236RY3J","C",100],["2020-04-22","TD Waterhouse","236RY3J","W",200],
-["2020-05-01","TD Waterhouse","236RY3J","C",100],["2020-06-01","TD Waterhouse","236RY3J","C",100],["2020-06-03","TD Waterhouse","236RY3J","W",200],
-["2020-07-02","TD Waterhouse","236RY3J","C",100],["2020-08-04","TD Waterhouse","236RY3J","C",100],["2020-08-10","TD Waterhouse","236RY3J","W",200],
-["2020-09-01","TD Waterhouse","236RY3J","C",100],["2020-10-01","TD Waterhouse","236RY3J","C",100],["2020-10-08","TD Waterhouse","236RY3J","W",200],
-["2020-10-19","TD Waterhouse","236RY3J","W",1.17],["2020-10-19","TD Waterhouse","236RY3J","C",6001],
-["2020-11-02","TD Waterhouse","236RY3J","C",100],["2020-11-23","TD Waterhouse","236RY3J","C",700],["2020-12-01","TD Waterhouse","236RY3J","C",100],
-["2020-12-03","TD Waterhouse","236RY3J","W",200],["2020-12-11","TD Waterhouse","236RY3J","C",18],["2020-12-17","TD Waterhouse","236RY3J","C",900],["2020-12-31","TD Waterhouse","236RY3J","W",845.91],
-["2021-01-04","TD Waterhouse","236RY3J","C",100],["2021-01-15","TD Waterhouse","236RY3J","C",1500],["2021-01-19","Questrade","5238539414","C",2000],
-["2021-02-01","TD Waterhouse","236RY3J","C",100],["2021-02-23","TD Waterhouse","236RY3J","C",1100],["2021-02-25","TD Waterhouse","236RY3J","C",45],
-["2021-03-01","TD Waterhouse","236RY3J","C",100],["2021-03-05","TD Waterhouse","236RY3J","C",620],["2021-03-17","TD Waterhouse","236RY3J","C",1300],["2021-03-18","TD Waterhouse","236RY3J","C",60],
-["2021-03-18","Canada Trust","001626489768","W",60.03],["2021-03-18","Canada Trust","001626489768","C",60],
-["2021-03-23","TD Waterhouse","236RY3J","C",1300],["2021-03-24","TD Waterhouse","236RY3J","C",1050],["2021-03-25","TD Waterhouse","236RY3J","C",1005],
-["2021-04-01","TD Waterhouse","236RY3J","C",100],["2021-04-07","TD Waterhouse","236RY3J","C",1200],["2021-04-09","TD Waterhouse","236RY3J","C",2200],["2021-04-14","TD Waterhouse","236RY3J","C",2000],["2021-04-19","TD Waterhouse","236RY3J","C",1000],["2021-04-23","TD Waterhouse","236RY3J","C",2200],
-["2021-05-03","TD Waterhouse","236RY3J","C",1600],["2021-05-17","Wealthsimple","HB03657K4CAD","C",250],["2021-05-25","Wealthsimple","HB03657K4CAD","C",250],["2021-05-27","TD Waterhouse","236RY3J","C",600],["2021-05-31","Wealthsimple","HB03657K4CAD","C",250],
-["2021-06-01","TD Waterhouse","236RY3J","C",100],["2021-06-16","Wealthsimple","HB03657K4CAD","C",250],["2021-06-24","Wealthsimple","HB03657K4CAD","C",250],
-["2021-07-02","TD Waterhouse","236RY3J","C",100],["2021-07-19","Wealthsimple","HB03657K4CAD","C",250],
-["2021-08-03","TD Waterhouse","236RY3J","C",100],["2021-08-18","Wealthsimple","HB03657K4CAD","C",250],
-["2021-09-01","TD Waterhouse","236RY3J","C",100],["2021-09-17","TD Waterhouse","236RY3J","C",2000],["2021-09-20","Wealthsimple","HB03657K4CAD","C",500],["2021-09-28","Wealthsimple","HB03657K4CAD","C",500],["2021-09-29","Wealthsimple","HB03657K4CAD","C",500],
-["2021-10-01","TD Waterhouse","236RY3J","C",100],["2021-10-06","TD Waterhouse","236RY3J","W",500],["2021-10-13","TD Waterhouse","236RY3J","W",1000],["2021-10-20","TD Waterhouse","236RY3J","C",600],["2021-10-25","TD Waterhouse","236RY3J","C",188.86],["2021-10-27","TD Waterhouse","236RY3J","W",100],
-["2021-11-01","TD Waterhouse","236RY3J","C",100],["2021-11-16","Wealthsimple","HB03657K4CAD","C",750],["2021-11-18","Wealthsimple","HB03657K4CAD","C",750],
-["2021-12-01","TD Waterhouse","236RY3J","C",100],["2021-12-03","Wealthsimple","HB03657K4CAD","C",300],
-["2022-01-04","TD Waterhouse","236RY3J","C",100],["2022-02-01","TD Waterhouse","236RY3J","C",100],["2022-02-07","TD Waterhouse","236RY3J","W",5000],["2022-02-07","Wealthsimple","HB03657K4CAD","C",5000],
-["2022-03-01","TD Waterhouse","236RY3J","C",100],["2022-04-01","TD Waterhouse","236RY3J","C",100],["2022-05-02","TD Waterhouse","236RY3J","C",100],["2022-05-24","TD Waterhouse","236RY3J","W",21980.6],
-["2022-06-01","TD Waterhouse","236RY3J","C",100],["2022-07-04","TD Waterhouse","236RY3J","C",100],["2022-08-02","TD Waterhouse","236RY3J","C",100],["2022-09-01","TD Waterhouse","236RY3J","C",100],["2022-10-03","TD Waterhouse","236RY3J","C",100],["2022-11-01","TD Waterhouse","236RY3J","C",100],["2022-12-01","TD Waterhouse","236RY3J","C",100],
-["2023-01-03","TD Waterhouse","236RY3J","C",100],["2023-02-01","TD Waterhouse","236RY3J","C",100],["2023-02-10","TD Waterhouse","236RY3J","W",3453],
-["2023-03-01","TD Waterhouse","236RY3J","C",100],["2023-04-03","TD Waterhouse","236RY3J","C",100],["2023-05-01","TD Waterhouse","236RY3J","C",100],["2023-06-01","TD Waterhouse","236RY3J","C",100],["2023-07-04","TD Waterhouse","236RY3J","C",100],["2023-07-31","TD Waterhouse","236RY3J","W",500],
-["2023-08-01","TD Waterhouse","236RY3J","C",100],["2023-09-01","TD Waterhouse","236RY3J","C",100],["2023-10-03","TD Waterhouse","236RY3J","C",100],["2023-11-01","TD Waterhouse","236RY3J","C",100],["2023-12-01","TD Waterhouse","236RY3J","C",100],
-["2024-01-02","TD Waterhouse","236RY3J","C",100],["2024-02-01","TD Waterhouse","236RY3J","C",100],["2024-03-01","TD Waterhouse","236RY3J","W",700],["2024-03-01","TD Waterhouse","236RY3J","C",100],
-["2024-03-11","Wealthsimple","HB03657K4CAD","C",3000],
-["2024-03-22","Wealthsimple","HB03657K4CAD","C",172.71],["2024-03-22","Wealthsimple","HB03657K4CAD","C",178.38],["2024-03-22","Wealthsimple","HB03657K4CAD","C",287.67],["2024-03-22","Wealthsimple","HB03657K4CAD","C",311.84],["2024-03-22","Wealthsimple","HB03657K4CAD","C",518.73],["2024-03-22","Wealthsimple","HB03657K4CAD","C",1156.16],
-["2024-03-25","Wealthsimple","HB03657K4CAD","C",310],["2024-03-25","Wealthsimple","HB03657K4CAD","C",310],["2024-03-25","Wealthsimple","HB03657K4CAD","C",462],["2024-03-25","Wealthsimple","HB03657K4CAD","C",463.83],
-["2024-03-26","Wealthsimple","HB03657K4CAD","C",147.5],["2024-03-26","Wealthsimple","HB03657K4CAD","C",301],["2024-03-26","Wealthsimple","HB03657K4CAD","C",502.48],
-["2024-03-27","Wealthsimple","HB03657K4CAD","C",145.47],["2024-03-27","Wealthsimple","HB03657K4CAD","C",214.26],["2024-03-27","Wealthsimple","HB03657K4CAD","C",281],["2024-03-27","Wealthsimple","HB03657K4CAD","C",284],["2024-03-27","Wealthsimple","HB03657K4CAD","C",284.04],["2024-03-27","Wealthsimple","HB03657K4CAD","C",287],["2024-03-27","Wealthsimple","HB03657K4CAD","C",373.27],["2024-03-27","Wealthsimple","HB03657K4CAD","C",382.61],["2024-03-27","Wealthsimple","HB03657K4CAD","C",438.57],
-["2024-03-28","Wealthsimple","HB03657K4CAD","C",250.5],["2024-03-28","Wealthsimple","HB03657K4CAD","C",583.76],["2024-03-28","Wealthsimple","HB03657K4CAD","C",590],
-["2024-04-01","TD Waterhouse","236RY3J","C",100],["2024-04-01","Wealthsimple","HB03657K4CAD","C",300],["2024-04-01","Wealthsimple","HB03657K4CAD","C",1887.6],["2024-04-01","Wealthsimple","HB03657K4CAD","C",2000],
-["2024-04-02","Wealthsimple","HB03657K4CAD","C",911.11],["2024-04-03","Wealthsimple","HB03657K4CAD","C",1000],["2024-04-03","Wealthsimple","HB03657K4CAD","C",1500],
-["2024-04-06","Wealthsimple","HB03657K4CAD","C",0.41],["2024-04-06","Wealthsimple","HB03657K4CAD","C",0.44],
-["2024-04-08","Wealthsimple","HB03657K4CAD","C",547.88],["2024-04-08","Wealthsimple","HB03657K4CAD","C",559.3],["2024-04-08","Wealthsimple","HB03657K4CAD","C",1219.41],["2024-04-08","Wealthsimple","HB03657K4CAD","C",1400],
-["2024-04-09","Wealthsimple","HB03657K4CAD","C",480],["2024-04-10","Wealthsimple","HB03657K4CAD","C",1000],["2024-04-10","Wealthsimple","HB03657K4CAD","C",2500],
-["2024-04-11","Wealthsimple","HB03657K4CAD","C",50],["2024-04-12","Wealthsimple","HB03657K4CAD","C",75],["2024-04-12","Wealthsimple","HB03657K4CAD","C",700],["2024-04-12","Wealthsimple","HB03657K4CAD","C",1500],
-["2024-04-15","Wealthsimple","HB03657K4CAD","C",424.68],["2024-04-28","Wealthsimple","HB03657K4CAD","C",0.04],["2024-04-28","Wealthsimple","HB03657K4CAD","C",0.35],
-["2024-04-29","Wealthsimple","HB03657K4CAD","C",600],["2024-04-30","Wealthsimple","HB03657K4CAD","C",1.5],["2024-04-30","Wealthsimple","HB03657K4CAD","C",800],
-["2024-05-01","TD Waterhouse","236RY3J","C",100],["2024-05-01","Wealthsimple","HB03657K4CAD","C",1.78],
-["2024-05-09","Wealthsimple","HB03657K4CAD","C",1000],["2024-05-10","Wealthsimple","HB03657K4CAD","C",700],["2024-05-10","Wealthsimple","HB03657K4CAD","C",1000],["2024-05-10","Wealthsimple","HB03657K4CAD","C",1000],
-["2024-05-15","Wealthsimple","HB03657K4CAD","C",2],["2024-05-15","Wealthsimple","HB03657K4CAD","C",3],["2024-05-15","Wealthsimple","HB03657K4CAD","C",750],["2024-05-15","Wealthsimple","HB03657K4CAD","C",750],
-["2024-05-16","Wealthsimple","HB03657K4CAD","C",201.72],["2024-05-16","Wealthsimple","HB03657K4CAD","C",243.26],["2024-05-16","Wealthsimple","HB03657K4CAD","C",1160],
-["2024-05-22","Wealthsimple","HB03657K4CAD","C",1500],["2024-05-24","TD Waterhouse","236RY3J","C",29.45],
-["2024-05-31","Wealthsimple","HB03657K4CAD","C",0.25],["2024-05-31","Wealthsimple","HB03657K4CAD","C",1.2],
-["2024-06-12","TD Waterhouse","236RY3J","C",1150.85],["2024-07-02","TD Waterhouse","236RY3J","C",101.6],["2024-07-29","Wealthsimple","HB03657K4CAD","C",15.9],["2024-08-01","Wealthsimple","HB03657K4CAD","C",533.45],
-["2024-10-10","Wealthsimple","HB03657K4CAD","C",3.33],
-["2024-11-07","Wealthsimple","HB03657K4CAD","C",0.11],["2024-11-08","Wealthsimple","HB03657K4CAD","C",3.56],["2024-11-09","Wealthsimple","HB03657K4CAD","C",0.11],
-["2024-11-12","Wealthsimple","HB03657K4CAD","C",0.51],["2024-11-12","Wealthsimple","HB03657K4CAD","C",0.51],
-["2024-11-13","Wealthsimple","HB03657K4CAD","C",0.02],["2024-11-13","Wealthsimple","HB03657K4CAD","C",0.76],
-["2024-11-14","Wealthsimple","HB03657K4CAD","C",0.51],["2024-11-14","Wealthsimple","HB03657K4CAD","C",0.51],
-["2024-11-15","Wealthsimple","HB03657K4CAD","C",0.25],["2024-11-15","Wealthsimple","HB03657K4CAD","C",0.85],
-["2024-11-19","Wealthsimple","HB03657K4CAD","C",5.84],["2024-11-21","Wealthsimple","HB03657K4CAD","C",1.02],
-["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.01],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.11],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.71],["2024-11-28","Wealthsimple","HB03657K4CAD","C",0.92],
-["2024-12-02","Wealthsimple","HB03657K4CAD","C",0.24],["2024-12-02","Wealthsimple","HB03657K4CAD","C",12.47],
-["2024-12-13","Wealthsimple","HB03657K4CAD","C",11.07],["2024-12-23","Wealthsimple","HB03657K4CAD","C",70.08],
-["2024-12-28","Wealthsimple","HB03657K4CAD","C",0.11],["2024-12-28","Wealthsimple","HB03657K4CAD","C",0.71],
-["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.03],["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.5],["2024-12-30","Wealthsimple","HB03657K4CAD","C",0.8],["2024-12-30","Wealthsimple","HB03657K4CAD","C",338.76],
-["2025-10-07","Wealthsimple","WK49QC1K9CAD","C",100],["2025-10-30","Wealthsimple","WK49QC1K9CAD","C",100],["2025-11-30","Wealthsimple","WK49QC1K9CAD","C",100],["2025-12-30","Wealthsimple","WK49QC1K9CAD","C",100],
-["2026-01-06","Wealthsimple","Grouped TFSA activity export","C",3],["2026-01-19","Wealthsimple","Grouped TFSA activity export","C",253.79],["2026-01-21","Wealthsimple","Grouped TFSA activity export","C",385.32],["2026-01-21","Wealthsimple","Grouped TFSA activity export","C",410],
-["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",348.45],["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",550],["2026-01-23","Wealthsimple","Grouped TFSA activity export","C",1001.2],
-["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",358.07],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",377.15],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",550],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",667],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",689.81],["2026-01-27","Wealthsimple","Grouped TFSA activity export","C",1044.39],
-["2026-01-28","Wealthsimple","Grouped TFSA activity export","C",20],["2026-01-28","Wealthsimple","Grouped TFSA activity export","C",345],
-["2026-02-02","Wealthsimple","Grouped TFSA activity export","C",475.02]];
+// 2018 — first year, modest contributions
+["2018-02-20","Maple Leaf Invest","MLI-8841","C",1800],["2018-04-22","Maple Leaf Invest","MLI-8841","C",600],
+["2018-07-09","Maple Leaf Invest","MLI-8841","C",850],["2018-09-18","Maple Leaf Invest","MLI-8841","C",450],
+["2018-11-05","Maple Leaf Invest","MLI-8841","C",550],
+// 2019 — regular monthly + withdrawal
+["2019-01-22","Maple Leaf Invest","MLI-8841","C",450],["2019-02-19","Maple Leaf Invest","MLI-8841","C",450],
+["2019-03-19","Maple Leaf Invest","MLI-8841","C",450],["2019-04-23","Maple Leaf Invest","MLI-8841","C",450],
+["2019-05-21","Maple Leaf Invest","MLI-8841","C",450],["2019-06-18","Maple Leaf Invest","MLI-8841","C",450],
+["2019-07-16","Maple Leaf Invest","MLI-8841","W",1350],
+["2019-08-20","Maple Leaf Invest","MLI-8841","C",550],["2019-09-17","Maple Leaf Invest","MLI-8841","C",550],
+["2019-10-22","Maple Leaf Invest","MLI-8841","C",550],["2019-11-19","Maple Leaf Invest","MLI-8841","C",550],
+["2019-12-17","Maple Leaf Invest","MLI-8841","C",550],
+// 2020 — opened second account
+["2020-01-14","Maple Leaf Invest","MLI-8841","C",1800],["2020-02-18","Northern Trust CA","NT-3356","C",1100],
+["2020-03-17","Northern Trust CA","NT-3356","C",900],["2020-05-12","Northern Trust CA","NT-3356","C",1100],
+["2020-07-14","Northern Trust CA","NT-3356","C",600],["2020-09-08","Northern Trust CA","NT-3356","C",500],
+// 2021 — aggressive year with over-contribution
+["2021-01-12","Northern Trust CA","NT-3356","C",2800],["2021-02-16","Northern Trust CA","NT-3356","C",2200],
+["2021-03-29","Maple Leaf Invest","MLI-8841","C",1800],["2021-04-20","Northern Trust CA","NT-3356","C",1600],
+["2021-05-18","Northern Trust CA","NT-3356","C",1400],["2021-06-22","Northern Trust CA","NT-3356","C",900],
+["2021-07-20","Northern Trust CA","NT-3356","C",850],["2021-08-17","Maple Leaf Invest","MLI-8841","C",450],
+["2021-09-14","Northern Trust CA","NT-3356","W",1800],["2021-10-19","Northern Trust CA","NT-3356","C",550],
+["2021-11-23","Northern Trust CA","NT-3356","C",1100],
+// 2022 — steady contributions + third institution
+["2022-01-18","Pacific Savings","PS-TFSA-07","C",1400],["2022-02-22","Pacific Savings","PS-TFSA-07","C",550],
+["2022-03-22","Pacific Savings","PS-TFSA-07","C",550],["2022-04-19","Pacific Savings","PS-TFSA-07","C",550],
+["2022-05-17","Northern Trust CA","NT-3356","W",2800],["2022-06-14","Pacific Savings","PS-TFSA-07","C",1100],
+["2022-07-19","Pacific Savings","PS-TFSA-07","C",550],["2022-08-16","Pacific Savings","PS-TFSA-07","C",550],
+["2022-09-20","Pacific Savings","PS-TFSA-07","C",550],["2022-10-18","Pacific Savings","PS-TFSA-07","C",550],
+["2022-11-22","Pacific Savings","PS-TFSA-07","C",550],["2022-12-20","Pacific Savings","PS-TFSA-07","C",550],
+// 2023 — consistent monthly
+["2023-01-17","Pacific Savings","PS-TFSA-07","C",540],["2023-02-14","Pacific Savings","PS-TFSA-07","C",540],
+["2023-03-14","Pacific Savings","PS-TFSA-07","C",540],["2023-04-18","Pacific Savings","PS-TFSA-07","C",540],
+["2023-05-16","Pacific Savings","PS-TFSA-07","C",540],["2023-06-13","Pacific Savings","PS-TFSA-07","C",540],
+["2023-07-18","Pacific Savings","PS-TFSA-07","C",540],["2023-08-15","Pacific Savings","PS-TFSA-07","C",540],
+["2023-09-19","Pacific Savings","PS-TFSA-07","C",540],["2023-10-17","Pacific Savings","PS-TFSA-07","C",540],
+["2023-11-14","Pacific Savings","PS-TFSA-07","C",480],["2023-12-12","Pacific Savings","PS-TFSA-07","C",420],
+// 2024 — lump sum + monthly
+["2024-01-09","Pacific Savings","PS-TFSA-07","C",2800],["2024-02-13","Pacific Savings","PS-TFSA-07","C",550],
+["2024-03-12","Pacific Savings","PS-TFSA-07","C",550],["2024-04-16","Pacific Savings","PS-TFSA-07","C",550],
+["2024-05-14","Pacific Savings","PS-TFSA-07","C",550],["2024-06-11","Pacific Savings","PS-TFSA-07","C",550],
+["2024-07-16","Pacific Savings","PS-TFSA-07","C",550],["2024-08-13","Pacific Savings","PS-TFSA-07","C",550],
+["2024-09-17","Pacific Savings","PS-TFSA-07","W",1800],
+["2024-10-22","Pacific Savings","PS-TFSA-07","C",275],["2024-11-20","Pacific Savings","PS-TFSA-07","C",275],
+// 2025 — monthly contributions
+["2025-01-14","Pacific Savings","PS-TFSA-07","C",580],["2025-02-11","Pacific Savings","PS-TFSA-07","C",580],
+["2025-03-11","Pacific Savings","PS-TFSA-07","C",580],["2025-04-15","Pacific Savings","PS-TFSA-07","C",580],
+["2025-05-13","Pacific Savings","PS-TFSA-07","C",580],["2025-06-17","Pacific Savings","PS-TFSA-07","C",580],
+["2025-07-15","Pacific Savings","PS-TFSA-07","C",580],["2025-08-12","Pacific Savings","PS-TFSA-07","C",580],
+["2025-09-16","Pacific Savings","PS-TFSA-07","C",580],["2025-10-14","Pacific Savings","PS-TFSA-07","C",580],
+["2025-11-11","Pacific Savings","PS-TFSA-07","C",580],["2025-12-16","Pacific Savings","PS-TFSA-07","C",580],
+// 2026 — year-to-date
+["2026-01-14","Pacific Savings","PS-TFSA-07","C",650],["2026-02-10","Pacific Savings","PS-TFSA-07","C",650],
+["2026-03-11","Pacific Savings","PS-TFSA-07","C",650]];
 
 const INIT_F=[
-["2023-12-22","Questrade","53122590",250],["2023-12-31","Questrade","53122590",1750],["2023-12-31","Questrade","53122590",3000],["2023-12-31","Questrade","53122590",3000],
-["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],["2024-03-28","Wealthsimple","HQ5XRTH65CAD",1000],
-["2024-04-02","Wealthsimple","HQ5XRTH65CAD",1000],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",568.82],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",559],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",739.1],["2024-04-05","Wealthsimple","HQ5XRTH65CAD",869.67],
-["2024-04-09","Wealthsimple","HQ5XRTH65CAD",269],["2024-04-09","Wealthsimple","HQ5XRTH65CAD",271],
-["2024-05-22","Wealthsimple","HQ5XRTH65CAD",500],["2024-05-31","Wealthsimple","HQ5XRTH65CAD",223],
-["2024-08-02","Wealthsimple","HQ5XRTH65CAD",469.1],["2024-10-10","Wealthsimple","HQ5XRTH65CAD",0.32],["2024-10-31","Wealthsimple","HQ5XRTH65CAD",5.83],["2024-12-13","Wealthsimple","HQ5XRTH65CAD",9.16],
-["2025-03-13","Wealthsimple","HQ5XRTH65CAD",54.87],["2025-03-18","Wealthsimple","HQ5XRTH65CAD",3.93],
-["2025-10-28","Wealthsimple","HQ5XRTH65CAD",5],["2025-11-01","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-08","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-15","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-22","Wealthsimple","HQ5XRTH65CAD",20],["2025-11-29","Wealthsimple","HQ5XRTH65CAD",20],
-["2025-12-06","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-13","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-20","Wealthsimple","HQ5XRTH65CAD",20],["2025-12-27","Wealthsimple","HQ5XRTH65CAD",20],
-["2026-01-03","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-10","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-17","Wealthsimple","HQ5XRTH65CAD",20],["2026-01-24","Wealthsimple","HQ5XRTH65CAD",30],["2026-01-31","Wealthsimple","HQ5XRTH65CAD",30],
-["2026-02-07","Wealthsimple","HQ5XRTH65CAD",30],["2026-02-11","Wealthsimple","HQ5XRTH65CAD",254.07],["2026-02-11","Wealthsimple","HQ5XRTH65CAD",473.81],
-["2026-02-12","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-12","Wealthsimple","HQ5XRTH65CAD",315],
-["2026-02-13","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-14","Wealthsimple","HQ5XRTH65CAD",30],["2026-02-17","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-18","Wealthsimple","HQ5XRTH65CAD",50],
-["2026-02-19","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-20","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-21","Wealthsimple","HQ5XRTH65CAD",30],
-["2026-02-23","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-24","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-25","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-26","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-27","Wealthsimple","HQ5XRTH65CAD",50],["2026-02-28","Wealthsimple","HQ5XRTH65CAD",30],
-["2026-03-02","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-03","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-04","Wealthsimple","HQ5XRTH65CAD",50],["2026-03-07","Wealthsimple","HQ5XRTH65CAD",30],["2026-03-14","Wealthsimple","HQ5XRTH65CAD",30],["2026-03-21","Wealthsimple","HQ5XRTH65CAD",30]];
+// 2024 — first year, big initial deposit + monthly
+["2024-01-22","Horizon Direct","HD-FHSA-44",3800],["2024-02-19","Horizon Direct","HD-FHSA-44",1100],
+["2024-03-19","Horizon Direct","HD-FHSA-44",550],["2024-04-23","Horizon Direct","HD-FHSA-44",550],
+["2024-05-21","Horizon Direct","HD-FHSA-44",550],["2024-06-18","Horizon Direct","HD-FHSA-44",550],
+["2024-07-23","Horizon Direct","HD-FHSA-44",550],["2024-08-20","Horizon Direct","HD-FHSA-44",550],
+// 2025 — monthly contributions
+["2025-01-14","Horizon Direct","HD-FHSA-44",680],["2025-02-18","Horizon Direct","HD-FHSA-44",680],
+["2025-03-19","Horizon Direct","HD-FHSA-44",680],["2025-04-15","Horizon Direct","HD-FHSA-44",680],
+["2025-05-20","Horizon Direct","HD-FHSA-44",680],["2025-06-17","Horizon Direct","HD-FHSA-44",680],
+["2025-07-22","Horizon Direct","HD-FHSA-44",680],["2025-08-19","Horizon Direct","HD-FHSA-44",680],
+["2025-09-16","Horizon Direct","HD-FHSA-44",620],["2025-10-21","Horizon Direct","HD-FHSA-44",520],
+["2025-11-18","Horizon Direct","HD-FHSA-44",520],["2025-12-16","Horizon Direct","HD-FHSA-44",520],
+// 2026 — year-to-date
+["2026-01-20","Horizon Direct","HD-FHSA-44",720],["2026-02-22","Horizon Direct","HD-FHSA-44",720],
+["2026-03-17","Horizon Direct","HD-FHSA-44",720]];
 
 function expandT(arr){return arr.map(a=>({d:a[0],inst:a[1],acct:a[2],type:a[3]==='C'?'Contribution':a[3]==='W'?'Withdrawal':a[3],amt:a[4],treat:'Include',note:''}))}
 function expandF(arr){return arr.map(a=>({d:a[0],inst:a[1],acct:a[2],type:'Contribution',status:'Include',amt:a[3],note:''}))}
@@ -843,30 +866,63 @@ function calcFHSA(txns){
 }
 
 // ═══════════════════════════════════════════════════
-// SELF-TEST ENGINE — Regression checks
+// SELF-TEST ENGINE — Structural validation
+// Tests engine logic regardless of loaded data
 // ═══════════════════════════════════════════════════
 function runSelfTest(){
-  const testT=expandT(INIT_T), testF=expandF(INIT_F);
   const oldConfig=clone(trackerConfig);
   trackerConfig=clone(CONFIG_DEFAULTS);
-  const tfsa=calcTFSA(testT), fhsa=calcFHSA(testF);
-  trackerConfig=oldConfig;
+  trackerConfig.tfsaEligibleStartYear=2024;
+  trackerConfig.currentYear=2025;
+  trackerConfig.fhsaFirstYear=2024;
 
-  const checks=[
-    {label:'TFSA 2021 addback',actual:tfsa.years[2021]?.addbackWD,expected:1624.41,tol:0.02},
-    {label:'TFSA 2021 qual WD',actual:tfsa.years[2021]?.qualifyingWD,expected:35.62,tol:0.02},
-    {label:'TFSA 2021 excess',actual:tfsa.years[2021]?.yeExcess,expected:2000,tol:0.02},
-    {label:'TFSA 2022 excess',actual:tfsa.years[2022]?.yeExcess,expected:575.59,tol:0.02},
-    {label:'TFSA 2024 excess',actual:tfsa.years[2024]?.yeExcess,expected:135.36,tol:0.02},
-    {label:'TFSA 2026 room',actual:tfsa.years[2026]?.yeRoom,expected:6686.44,tol:0.02},
-    {label:'FHSA 2024 excess',actual:fhsa.years[2024]?.yeExcess,expected:484.00,tol:0.10},
-    {label:'FHSA 2026 room',actual:fhsa.years[2026]?.yeRoom,expected:13199.32,tol:1.00},
+  const checks=[];
+
+  // Test 1: Empty data → no excess, no tax
+  const e1=calcTFSA([]);
+  checks.push({label:'Empty TFSA → zero excess',actual:safeNum(e1.years[2024]?.yeExcess),expected:0,tol:0.01});
+  checks.push({label:'Empty TFSA → zero tax',actual:e1.monthlyTax.length,expected:0,tol:0});
+
+  // Test 2: Contribution within limit → room reduced, no excess
+  const t2=[{d:'2024-03-01',inst:'Test',acct:'A',type:'Contribution',amt:5000,treat:'Include',note:''}];
+  const e2=calcTFSA(t2);
+  checks.push({label:'$5K into $7K limit → $2K room',actual:safeNum(e2.years[2024]?.yeRoom),expected:2000,tol:0.01});
+  checks.push({label:'$5K into $7K limit → zero excess',actual:safeNum(e2.years[2024]?.yeExcess),expected:0,tol:0.01});
+
+  // Test 3: Over-contribution → correct excess
+  const t3=[{d:'2024-03-01',inst:'Test',acct:'A',type:'Contribution',amt:9000,treat:'Include',note:''}];
+  const e3=calcTFSA(t3);
+  checks.push({label:'$9K into $7K limit → $2K excess',actual:safeNum(e3.years[2024]?.yeExcess),expected:2000,tol:0.01});
+  checks.push({label:'$9K into $7K limit → zero room',actual:safeNum(e3.years[2024]?.yeRoom),expected:0,tol:0.01});
+
+  // Test 4: Withdrawal reduces excess
+  const t4=[
+    {d:'2024-03-01',inst:'Test',acct:'A',type:'Contribution',amt:9000,treat:'Include',note:''},
+    {d:'2024-06-01',inst:'Test',acct:'A',type:'Withdrawal',amt:1000,treat:'Include',note:''}
   ];
-  const tTot=tfsa.monthlyTax.reduce((s,t)=>s+t.tax,0);
-  const fTot=fhsa.monthlyTax.reduce((s,t)=>s+t.tax,0);
-  checks.push({label:'TFSA tax total',actual:tTot,expected:57.27,tol:2.00}); // tolerance widened: peak-tracking fix may reduce tax slightly
-  checks.push({label:'FHSA tax total',actual:fTot,expected:23.72,tol:1.00});
-  checks.push({label:'Combined tax',actual:tTot+fTot,expected:80.99,tol:3.00});
+  const e4=calcTFSA(t4);
+  checks.push({label:'$1K WD on $2K excess → $1K excess left',actual:safeNum(e4.years[2024]?.yeExcess),expected:1000,tol:0.01});
+
+  // Test 5: FHSA within limit → no excess
+  const f5=[{d:'2024-06-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:6000,note:''}];
+  const e5=calcFHSA(f5);
+  checks.push({label:'FHSA $6K into $8K → $2K room',actual:safeNum(e5.years[2024]?.yeRoom),expected:2000,tol:0.01});
+  checks.push({label:'FHSA $6K → zero excess',actual:safeNum(e5.years[2024]?.yeExcess),expected:0,tol:0.01});
+
+  // Test 6: FHSA over-contribution
+  const f6=[{d:'2024-06-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:10000,note:''}];
+  const e6=calcFHSA(f6);
+  checks.push({label:'FHSA $10K into $8K → $2K excess',actual:safeNum(e6.years[2024]?.yeExcess),expected:2000,tol:0.01});
+
+  // Test 7: Transfer In is room-neutral
+  const t7=[{d:'2024-03-01',inst:'Test',acct:'A',type:'Transfer In',amt:50000,treat:'Include',note:''}];
+  const e7=calcTFSA(t7);
+  checks.push({label:'Transfer In room-neutral',actual:safeNum(e7.years[2024]?.yeExcess),expected:0,tol:0.01});
+
+  // Test 8: Tax is 1% of peak excess
+  checks.push({label:'$2K excess → $20/month tax',actual:safeNum(e3.monthlyTax.find(t=>t.month==='2024-03')?.tax),expected:20,tol:0.01});
+
+  trackerConfig=oldConfig;
 
   let allPass=true;
   const results=checks.map(c=>{
@@ -880,7 +936,7 @@ function runSelfTest(){
 // ═══════════════════════════════════════════════════
 // PERSISTENCE — with localStorage error handling
 // ═══════════════════════════════════════════════════
-const STORAGE_KEY='tfsa-fhsa-v6-html';
+const STORAGE_KEY='tfsa-fhsa-v7-demo';
 function save(){
   try{
     _cachedSelfTest=null; // invalidate on data change
@@ -1001,8 +1057,20 @@ function runReconciliation(){
 // ═══════════════════════════════════════════════════
 // RENDERING — Dashboard
 // ═══════════════════════════════════════════════════
-function card(label,value,sub,warn){
-  return `<div class="card${warn?' warn':''}"><div class="card-label">${label}</div><div class="card-val">${value}</div>${sub?`<div class="card-sub">${sub}</div>`:''}</div>`}
+function card(label,value,sub,warn,opts){
+  const o=opts||{};
+  const cls=['card'];
+  if(warn)cls.push('warn');
+  if(o.accent&&!warn)cls.push('accent-'+o.accent);
+  let h=`<div class="${cls.join(' ')}"><div class="card-label">${label}</div><div class="card-val">${value}</div>`;
+  if(sub)h+=`<div class="card-sub">${sub}</div>`;
+  if(o.progress!==undefined){
+    const pct=Math.max(0,Math.min(100,o.progress));
+    h+=`<div class="card-progress-wrap"><div class="card-progress"><div class="card-progress-fill fill-${o.progressColor||'blue'}" style="width:${pct}%"></div></div></div>`;
+  }
+  h+=`</div>`;
+  return h;
+}
 
 function render(){
   const tfsa=calcTFSA(tT), fhsa=calcFHSA(fT);
@@ -1031,18 +1099,41 @@ function render(){
 
   // Dashboard
   let h=backupBanner;
-  h+=`<div class="section-head"><h2 class="sec">TFSA — ${cy}</h2>${badge}</div><div class="cards">`;
-  h+=card('Room Remaining',F(tc.yeRoom),'Opening: '+F(tc.openRoom));
-  h+=card('YTD Contributions',F(tc.contribs),tT.filter(t=>String(t.d||'').startsWith(String(cy))&&normalizeTfsaType(t.type)==='Contribution').length+' contribution txns');
+  h+='<div class="disclaimer" style="margin-bottom:16px;border-color:#2563eb;color:#7dd3fc">📋 <b>Demo mode.</b> This tracker is loaded with fictional sample data to demonstrate features. Clear all data via Reset and import your own transactions to use it for real tracking.</div>';
+  h+=`<div class="section-head"><h2 class="sec">TFSA — ${cy}</h2>${badge}</div><div class="cards cards-4">`;
+  const tfsaUtilPct=safeNum(tc.openRoom)>0?Math.min(100,(safeNum(tc.contribs)/safeNum(tc.openRoom))*100):100;
+  h+=card('Room Remaining',F(tc.yeRoom),'Opening: '+F(tc.openRoom),false,{accent:'blue',progress:100-tfsaUtilPct,progressColor:'blue'});
+  h+=card('YTD Contributions',F(tc.contribs),tT.filter(t=>String(t.d||'').startsWith(String(cy))&&normalizeTfsaType(t.type)==='Contribution').length+' contribution txns',false,{accent:'green',progress:tfsaUtilPct,progressColor:'green'});
   h+=card('Peak Monthly Excess',tfsa.monthlyTax.length?F(Math.max(...tfsa.monthlyTax.map(t=>safeNum(t.peak)))):'None',tfsa.monthlyTax.length?tfsa.monthlyTax.length+' taxed months':'No excess months',tfsa.monthlyTax.length>0);
   h+=card('Indicative 1% Tax',tTot>0?F(tTot):'None',tTot>0?'RC243 / Schedule A if assessed':'No modeled tax',tTot>0);
-  h+=`</div><h2 class="sec">FHSA — ${cy}${fhsa15Note}</h2><div class="cards">`;
-  h+=card('Room Remaining',F(fc.yeRoom),'Participation room: '+F(fc.participationRoom));
-  h+=card('Counted YTD Inflows',F(fc.countedInflows),'Life left: '+F(fc.lifetimeLeft));
+  h+=`</div><h2 class="sec">FHSA — ${cy}${fhsa15Note}</h2><div class="cards cards-3">`;
+  const fhsaUtilPct=safeNum(fc.participationRoom)>0?Math.min(100,(safeNum(fc.countedInflows)/safeNum(fc.participationRoom))*100):100;
+  const fhsaLifePct=Math.min(100,(safeNum(fc.lifetimeUsed)/safeNum(trackerConfig.fhsaLifetimeLimit||40000))*100);
+  h+=card('Room Remaining',F(fc.yeRoom),'Participation room: '+F(fc.participationRoom),false,{accent:'green',progress:100-fhsaUtilPct,progressColor:'green'});
+  h+=card('Counted YTD Inflows',F(fc.countedInflows),'Life left: '+F(fc.lifetimeLeft),false,{accent:'blue',progress:fhsaUtilPct,progressColor:'blue'});
   h+=card('Year-End Excess',fc.yeExcess>0.01?F(fc.yeExcess):'None','',fc.yeExcess>0.01);
   h+=card('Indicative 1% Tax',fTot>0?F(fTot):'None',fTot>0?'RC728 / Schedule A if assessed':'No modeled tax',fTot>0);
-  h+=card('15-Year Limit',fhsa15Left+' years left','Year '+fhsaYearsActive+' of 15',fhsa15Left<=3);
+  h+=card('15-Year Limit',fhsa15Left+' yrs left','Year '+fhsaYearsActive+' of 15',fhsa15Left<=3,{accent:'purple',progress:((fhsaYearsActive)/15)*100,progressColor:'purple'});
+  h+=card('Lifetime Progress',fhsaLifePct.toFixed(0)+'%',F(fc.lifetimeUsed)+' of '+F(trackerConfig.fhsaLifetimeLimit),false,{accent:'gold',progress:fhsaLifePct,progressColor:'gold'});
   h+=`</div>`;
+
+  // Smart Tips
+  const monthsLeft=currentMonthSlotsRemaining(cy);
+  const tPM=monthsLeft>0?safeNum(tc.yeRoom)/monthsLeft:0;
+  const fPM=monthsLeft>0?safeNum(fc.yeRoom)/monthsLeft:0;
+  const tips=[];
+  if(safeNum(tc.yeRoom)>0&&safeNum(tc.yeRoom)<500)tips.push({icon:'🎯',text:`<b>Almost maxed:</b> Only ${F(tc.yeRoom)} TFSA room left for ${cy}. One more contribution could max it out.`});
+  else if(tfsaUtilPct<30&&cy===actualCalendarYear())tips.push({icon:'💡',text:`<b>Room available:</b> You've used only ${tfsaUtilPct.toFixed(0)}% of your ${cy} TFSA room. Consider contributing ${F(tPM)}/month to max out.`});
+  if(safeNum(fc.yeRoom)>0&&safeNum(fc.yeRoom)<500)tips.push({icon:'🎯',text:`<b>Almost maxed:</b> Only ${F(fc.yeRoom)} FHSA room left for ${cy}.`});
+  if(fhsa15Left<=3&&fhsa15Left>0)tips.push({icon:'⏰',text:`<b>FHSA closing soon:</b> ${fhsa15Left} participation year(s) remaining. Plan your remaining ${F(fc.lifetimeLeft)} lifetime room.`});
+  if(tTot>0||fTot>0)tips.push({icon:'📋',text:`<b>Tax exposure:</b> ${F(tTot+fTot)} indicative excess tax modeled. Review the Tax tab and consider filing ${tTot>0?'RC243 ':''}${fTot>0?'RC728 ':''}by June 30.`});
+  if(safeNum(tc.yeRoom)===0&&safeNum(fc.yeRoom)===0)tips.push({icon:'✅',text:`<b>Fully maxed:</b> Both TFSA and FHSA room for ${cy} are fully utilized.`});
+  if(tips.length===0)tips.push({icon:'👍',text:`<b>On track:</b> No urgent actions. Current contribution pace of ${F(tPM)}/month for TFSA.`});
+  h+='<div class="smart-tips"><h3>💡 Smart Tips</h3>';
+  tips.forEach(t=>{h+=`<div class="tip"><span class="tip-icon">${t.icon}</span><span>${t.text}</span></div>`});
+  h+='</div>';
+
+  h+='<div class="section-divider"></div>';
 
   // Dashboard charts
   h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">TFSA Room & Contributions</h3><canvas id="c1"></canvas></div>';
@@ -1122,18 +1213,52 @@ function render(){
 }
 
 // ═══════════════════════════════════════════════════
-// INSIGHTS — Improved Charts + What-If + Reconciliation
+// CONTRIBUTION HEATMAP
+// ═══════════════════════════════════════════════════
+function buildHeatmap(cy){
+  const allTxns=[...tT.map(t=>({d:t.d,amt:safeNum(t.amt),plan:'TFSA',type:normalizeTfsaType(t.type)})),...fT.map(t=>({d:t.d,amt:safeNum(t.amt),plan:'FHSA',type:normalizeFhsaType(t.type)}))];
+  // Build daily totals for last 365 days
+  const today=new Date();
+  const dayMap={};
+  allTxns.forEach(t=>{const d=t.d;if(!d)return;dayMap[d]=(dayMap[d]||0)+t.amt});
+  const maxAmt=Math.max(1,...Object.values(dayMap));
+  let h='<div class="heatmap"><h3 class="heatmap-title">Contribution Activity (Last 12 Months)</h3><div class="heatmap-grid">';
+  for(let i=364;i>=0;i--){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    const key=d.toISOString().split('T')[0];
+    const amt=dayMap[key]||0;
+    const intensity=amt>0?Math.max(0.2,Math.min(1,amt/maxAmt)):0;
+    const bg=amt>0?`rgba(37,99,235,${intensity})`:'#12121f';
+    const title=amt>0?`${key}: ${F(amt)}`:`${key}: No activity`;
+    h+=`<div class="heatmap-cell" style="background:${bg}" title="${title}"></div>`;
+  }
+  h+='</div>';
+  h+='<div class="heatmap-legend"><span>Less</span>';
+  [0,.25,.5,.75,1].forEach(v=>{h+=`<div class="heatmap-cell" style="background:${v===0?'#12121f':`rgba(37,99,235,${v})`}"></div>`});
+  h+='<span>More</span></div></div>';
+  return h;
+}
+
+// ═══════════════════════════════════════════════════
+// INSIGHTS — Charts + What-If + Reconciliation + Analytics
 // ═══════════════════════════════════════════════════
 function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
   const fhsaYearsActive=cy-getFhsaStartYear()+1;
   const fhsa15Left=Math.max(0,15-fhsaYearsActive);
   let h='<h2 class="view-title">Insights & Analytics</h2>';
 
-  // Charts row 1: Velocity + Excess History
+  // Contribution Heatmap (last 12 months)
+  h+=buildHeatmap(cy);
+
+  // Charts row 1: Velocity + Institution Breakdown
   h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">Annual Contribution Velocity</h3><canvas id="c4"></canvas></div>';
+  h+='<div class="chrt"><h3 class="chrt-title">Contributions by Institution</h3><canvas id="c-inst"></canvas></div></div>';
+
+  // Charts row 2: Cumulative Timeline + Excess History
+  h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">Cumulative Contributions Over Time</h3><canvas id="c-cum"></canvas></div>';
   h+='<div class="chrt"><h3 class="chrt-title">Monthly Excess & Tax History</h3><canvas id="c6"></canvas></div></div>';
 
-  // Charts row 2: Room Utilization + FHSA Trajectory
+  // Charts row 3: Room Utilization + FHSA Trajectory
   h+='<div class="g2"><div class="chrt"><h3 class="chrt-title">TFSA Room Utilization by Year</h3><canvas id="c7"></canvas></div>';
   h+='<div class="chrt"><h3 class="chrt-title">FHSA Lifetime Trajectory</h3><canvas id="c5"></canvas></div></div>';
 
@@ -1144,10 +1269,10 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
   const fhsaPct=((safeNum(fc.lifetimeUsed)/(safeNum(trackerConfig.fhsaLifetimeLimit)||40000))*100).toFixed(1);
   const tUtil=safeNum(tc.openRoom)>0?((safeNum(tc.contribs)/safeNum(tc.openRoom))*100).toFixed(1):'100';
   h+='<div class="cards">';
-  h+=card('Total Invested',F(totInv),'TFSA + FHSA counted inflows');
-  h+=card('Avg Monthly Rate',F(avgM),'across active years');
-  h+=card('TFSA '+cy+' Utilization',tUtil+'%',F(tc.contribs)+' of '+F(tc.openRoom));
-  h+=card('FHSA Lifetime Used',fhsaPct+'%',F(fc.lifetimeUsed)+' of '+F(trackerConfig.fhsaLifetimeLimit));
+  h+=card('Total Invested',F(totInv),'TFSA + FHSA counted inflows',false,{accent:'blue'});
+  h+=card('Avg Monthly Rate',F(avgM),'across active years',false,{accent:'green'});
+  h+=card('TFSA '+cy+' Utilization',tUtil+'%',F(tc.contribs)+' of '+F(tc.openRoom),false,{accent:'blue',progress:parseFloat(tUtil),progressColor:parseFloat(tUtil)>100?'red':'blue'});
+  h+=card('FHSA Lifetime Used',fhsaPct+'%',F(fc.lifetimeUsed)+' of '+F(trackerConfig.fhsaLifetimeLimit),false,{accent:'gold',progress:parseFloat(fhsaPct),progressColor:parseFloat(fhsaPct)>=90?'gold':'green'});
   h+='</div>';
 
   // Contribution Planner
@@ -1220,7 +1345,35 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
       {label:'FHSA',data:yrs.map(y=>fhsa.years[y]?safeNum(fhsa.years[y].countedInflows):0),backgroundColor:'#4ade80'}
     ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}))}
 
-    // Excess History chart (monthly excess and tax over time)
+    // Institution Breakdown (donut)
+    const ctxInst=document.getElementById('c-inst');
+    if(ctxInst&&window._charts){
+      const instTotals={};
+      [...tT,...fT].forEach(t=>{const inst=t.inst||'Unknown';const tp=tT.includes(t)?normalizeTfsaType(t.type):normalizeFhsaType(t.type);if(tp==='Contribution'||tp==='RRSP Transfer In')instTotals[inst]=(instTotals[inst]||0)+safeNum(t.amt)});
+      const sorted=Object.entries(instTotals).sort((a,b)=>b[1]-a[1]);
+      const instLabels=sorted.map(([k])=>k);
+      const instData=sorted.map(([,v])=>v);
+      const instColors=['#2563eb','#4ade80','#fbbf24','#a78bfa','#f87171','#7dd3fc','#fb923c','#e879f9'];
+      window._charts.push(new Chart(ctxInst,{type:'doughnut',data:{labels:instLabels,datasets:[{data:instData,backgroundColor:instColors.slice(0,instLabels.length),borderWidth:0}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#889',font:{size:11},padding:12}}}}}));
+    }
+
+    // Cumulative Contributions Timeline
+    const ctxCum=document.getElementById('c-cum');
+    if(ctxCum&&window._charts){
+      let cumT=0,cumF=0;
+      const cumLabels=[],cumTfsa=[],cumFhsa=[];
+      yrs.forEach(y=>{
+        cumT+=safeNum(tfsa.years[y]?.contribs);
+        cumF+=fhsa.years[y]?safeNum(fhsa.years[y]?.countedInflows):0;
+        cumLabels.push(y);cumTfsa.push(cumT);cumFhsa.push(cumF);
+      });
+      window._charts.push(new Chart(ctxCum,{type:'line',data:{labels:cumLabels,datasets:[
+        {label:'TFSA Cumulative',data:cumTfsa,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.3},
+        {label:'FHSA Cumulative',data:cumFhsa,borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,.08)',fill:true,tension:.3}
+      ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{ticks:{color:'#667',callback:v=>'$'+v.toLocaleString()},grid:{color:'#111'}}}}}));
+    }
+
+    // Excess History chart
     const ctx6=document.getElementById('c6');
     if(ctx6&&window._charts){
       const allMonths=[...tfsa.monthlyTax.map(t=>({...t,plan:'TFSA'})),...fhsa.monthlyTax.map(t=>({...t,plan:'FHSA'}))].sort((a,b)=>a.month.localeCompare(b.month));
@@ -1241,7 +1394,7 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
         {label:'% Room Used',data:utilData,backgroundColor:utilData.map(v=>v>100?'#dc2626':v>80?'#fbbf24':'#2563eb')}
       ]},options:{responsive:true,plugins:{legend:{labels:{color:'#889'}}},scales:{x:{ticks:{color:'#667'},grid:{color:'#111'}},y:{max:120,ticks:{color:'#667',callback:v=>v+'%'},grid:{color:'#111'}}}}}))}
 
-    // FHSA Trajectory chart (line showing cumulative + projection)
+    // FHSA Trajectory chart
     const ctx5=document.getElementById('c5');
     if(ctx5&&window._charts){
       const fhsaYrs=Object.keys(fhsa.years).filter(y=>+y>=getFhsaStartYear()&&+y<=cy+5).sort();
