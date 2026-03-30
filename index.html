@@ -3686,7 +3686,7 @@ function render(){
   // ── Tax View ──
   let tx=`<h2 class="view-title">Monthly Excess Tax Breakdown</h2>`;
   tx+=`<p class="annual-desc">Modeled at 1% of the highest excess in each month. TFSA and FHSA excess returns are generally due by June 30 of the following year.</p>`;
-  tx+=`<div class="cards">${card('TFSA Tax',tTot>0?F(tTot):'None',tfsa.monthlyTax.length+' months',tTot>0)}${card('FHSA Tax',fTot>0?F(fTot):'None',fhsa.monthlyTax.length+' months',fTot>0)}${card('Combined',F(tTot+fTot),'modeled exposure',tTot+fTot>0)}</div>`;
+  tx+=`<div class="cards cards-2">${card('TFSA Tax',tTot>0?F(tTot):'None',tfsa.monthlyTax.length+' months',tTot>0)}${card('FHSA Tax',fTot>0?F(fTot):'None',fhsa.monthlyTax.length+' months',fTot>0)}</div>`;
   const allTax=[...tfsa.monthlyTax.map(t=>({...t,plan:'TFSA'})),...fhsa.monthlyTax.map(t=>({...t,plan:'FHSA'}))].sort((a,b)=>a.month.localeCompare(b.month));
   if(allTax.length){
     tx+=`<div class="overflow"><table class="mobile-stack"><thead><tr><th>Month</th><th>Plan</th><th class="r">Start</th><th class="r">Peak</th><th class="r">End</th><th class="r">1% Tax</th><th>Form</th></tr></thead><tbody>`;
@@ -4612,7 +4612,87 @@ function buildPrintableReportHtml(tfsa,fhsa,cy,tc,fc,tTot,fTot){
     .snapshot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .foot{margin-top:18px;font-size:11px;color:#555;line-height:1.5}
     @media print{body{margin:16px}.no-print{display:none}.grid{break-inside:avoid}.card,.snapshot,table{break-inside:avoid}}
-  </style></head><body>
+  
+
+/* ── v14.13 mobile layout + tax card cleanup overrides ── */
+@media (max-width:768px) and (pointer:coarse){
+  .search-wrap{width:100%;margin-bottom:14px}
+  .search-input{display:block;width:100% !important;max-width:none !important}
+
+  .filter-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+    align-items:start !important;
+  }
+  .filter-field,.filter-actions{min-width:0;width:100%}
+  .filter-grid .filter-field:nth-child(5),
+  .filter-grid .filter-actions{grid-column:1 / -1}
+  .filter-field label{margin-bottom:6px}
+  .filter-input,.filter-clear-btn{width:100%;min-height:48px}
+  .filter-meta{margin:0;line-height:1.5}
+
+  .tool-panel{padding:16px}
+  .tool-panel h3{margin-bottom:14px}
+  .tool-panel p.desc{margin-bottom:14px}
+  .tool-row{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    align-items:stretch !important;
+  }
+  .tool-row>div,
+  .tool-row>.tool-action{
+    width:100% !important;
+    min-width:0 !important;
+    flex:none !important;
+  }
+  .tool-row .t-input,
+  .tool-row .add-btn{width:100% !important}
+  .tool-row .tool-action .add-btn{min-height:48px}
+
+  .mobile-actions-shell{display:block !important;width:100%}
+  .mobile-actions-shell>.mobile-actions-toggle{
+    display:block !important;
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    min-height:46px;
+  }
+  .mobile-actions-shell>.mobile-actions-body{display:none !important;width:100%;padding-top:10px}
+  .mobile-actions-shell[open]>.mobile-actions-body{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+    align-items:stretch !important;
+  }
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu{display:contents !important}
+  .action-cluster-more .more-toggle{display:none !important}
+  .mobile-actions-shell>.mobile-actions-body button,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu button{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:48px !important;
+    margin:0 !important;
+    padding:0 12px !important;
+    font-size:12px !important;
+    line-height:1.25 !important;
+    text-align:center !important;
+    white-space:normal !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    justify-self:stretch !important;
+  }
+}
+
+html.light .search-input,
+html.light .filter-input{background:#fff;border-color:#d8dbe8;color:#334}
+
+</style></head><body>
   <div class="topbar"><div><h1>TFSA & FHSA Summary Report</h1><div class="muted"><b>Profile:</b> ${escapeHtml(getActiveProfileLabel())}<br><b>Generated:</b> ${escapeHtml(formatDateTime(Date.now()))}<br><b>Planning year:</b> ${cy}</div></div><div class="no-print"><button onclick="window.print()" style="padding:10px 14px;border-radius:10px;border:1px solid #c9cfe5;background:#fff;cursor:pointer">Print / Save as PDF</button></div></div>
   <div class="grid">
     <div class="card"><div class="eyebrow">TFSA room remaining</div><div class="value">${F(tc.yeRoom)}</div><div class="muted">Opening room ${F(tc.openRoom)} • YTD contributions ${F(tc.contribs)}</div></div>
@@ -4884,6 +4964,21 @@ if(_loadWarnings.length){setTimeout(()=>{_loadWarnings.forEach((msg,i)=>setTimeo
 if(!_cachedSelfTest) _cachedSelfTest=runSelfTest();
 console.log('Engine self-test:',_cachedSelfTest.allPass?'ALL PASSED':'FAILURES DETECTED');
 _cachedSelfTest.results.forEach(r=>console.log(`  ${r.pass?'✓':'✗'} ${r.label}: expected=${r.expected} actual=${safeNum(r.actual).toFixed(2)}`));
+</script>
+<script>
+
+/* v14.13 mobile action shell hardening */
+window.addEventListener('DOMContentLoaded',()=>{
+  const shell=document.getElementById('mobile-actions-shell');
+  if(!shell) return;
+  const apply=()=>{
+    const compact=(window.innerWidth<=768) && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    shell.open=!compact;
+  };
+  apply();
+  window.addEventListener('orientationchange',()=>setTimeout(apply,120));
+  window.addEventListener('pageshow',()=>setTimeout(apply,60));
+});
 </script>
 </body>
 </html>
