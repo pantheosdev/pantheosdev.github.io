@@ -304,11 +304,21 @@ tr.excess{background:#1a0808}
   .main{padding:14px}
   .g2{grid-template-columns:1fr}
 
-  /* ── Mobile nav: 3-column centered grids ── */
+  /* ── Mobile nav: compact tabs + collapsible actions ── */
+  .hdr{position:static}
   .nav-main{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:6px}
-  .nav-actions{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:6px}
+  .nav-actions{display:grid;grid-template-columns:1fr;width:100%;gap:8px;justify-items:stretch}
   .nav button{width:100%;padding:11px 8px;font-size:12px;text-align:center;min-height:44px}
   .nav button.sec{width:100%;padding:10px 8px;font-size:11px;text-align:center;min-height:44px}
+  .profile-cluster{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 12px}
+  .profile-chip{padding:0;white-space:nowrap}
+  .profile-select{grid-column:2;min-width:0;width:100%}
+  .profile-rename-btn{grid-column:3;min-width:40px}
+  .mobile-actions-shell{width:100%;padding:0;border:none;background:transparent}
+  .mobile-actions-toggle{display:block;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2a2a4a;background:#12121f;color:#dde;font-family:'DM Sans',sans-serif;text-align:center;min-height:46px;font-weight:700;list-style:none;cursor:pointer}
+  .mobile-actions-toggle::-webkit-details-marker{display:none}
+  .mobile-actions-body{display:grid;gap:8px;padding-top:8px}
+  .mobile-actions-shell:not([open]) .mobile-actions-body{display:none}
 
   /* ── Mobile inline button groups ── */
   .inline-btns{display:flex;flex-wrap:wrap;gap:8px;width:100%}
@@ -380,7 +390,8 @@ tr.excess{background:#1a0808}
 
 /* ── Small phones ── */
 @media(max-width:380px){
-  .nav-main,.nav-actions{grid-template-columns:repeat(2,1fr)}
+  .nav-main{grid-template-columns:repeat(2,1fr)}
+  .action-cluster-primary,.action-cluster-more .more-menu{grid-template-columns:1fr}
   .cards{grid-template-columns:1fr}
   .cards-4{grid-template-columns:1fr}
   .cards-3{grid-template-columns:1fr}
@@ -522,7 +533,7 @@ html.light .backup-banner{background:#fffbeb;border-color:#fde68a;color:#92400e}
 
 /* ── Print Stylesheet ── */
 /* ── Premium polish additions ── */
-.nav-actions{justify-content:center;gap:10px}
+.nav-actions{justify-content:center;gap:10px;align-items:center}
 .action-cluster{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 8px;border:1px solid #1f1f35;border-radius:12px;background:rgba(18,18,31,.55)}
 .profile-cluster{background:linear-gradient(135deg,rgba(9,18,38,.92),rgba(10,10,26,.92));border-color:#28406b;box-shadow:0 0 0 1px rgba(37,99,235,.08) inset}
 .action-cluster-secondary{border-color:#3a2a42}
@@ -531,23 +542,41 @@ html.light .backup-banner{background:#fffbeb;border-color:#fde68a;color:#92400e}
 .action-cluster-more .more-toggle{font-size:13px;font-weight:600;cursor:pointer;list-style:none;color:#667;-webkit-tap-highlight-color:transparent}
 .action-cluster-more .more-toggle::-webkit-details-marker{display:none}
 .action-cluster-more .more-menu{display:contents}
-/* Desktop: auto-open, hide summary */
-@media(min-width:769px){
-  .action-cluster-more{border:none;background:transparent;padding:0}
+.mobile-actions-shell{display:contents}
+.mobile-actions-shell>.mobile-actions-toggle{display:none}
+.mobile-actions-shell>.mobile-actions-body{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* Desktop and fine-pointer layouts: keep the full action bar visible even on narrow windows */
+@media (pointer:fine), (min-width:769px){
+  .mobile-actions-shell{display:contents}
+  .mobile-actions-shell>.mobile-actions-toggle{display:none}
+  .mobile-actions-shell>.mobile-actions-body{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster{width:auto}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary{display:flex;grid-template-columns:none}
+  .action-cluster-more{border:none;background:transparent;padding:0;width:auto}
   .action-cluster-more .more-toggle{display:none}
   .action-cluster-more .more-menu{display:contents !important}
 }
-/* Mobile: show summary, wrap menu items in a grid */
-@media(max-width:768px){
+/* True mobile/touch layout: collapse the actions tray */
+@media (max-width:768px) and (pointer:coarse){
+  .mobile-actions-shell{display:block;width:100%}
+  .mobile-actions-shell>.mobile-actions-toggle{display:block;width:100%;padding:10px 14px;border-radius:10px;border:1px solid #2a2a4a;background:#12121f;color:#aab;font-family:'DM Sans',sans-serif;text-align:center;min-height:44px}
+  .mobile-actions-shell>.mobile-actions-toggle:hover{border-color:#2563eb;color:#dde}
+  .mobile-actions-shell>.mobile-actions-body{display:block;width:100%;padding-top:8px}
+  .mobile-actions-shell:not([open])>.mobile-actions-body{display:none}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster{width:100%;justify-content:flex-start}
   .action-cluster-more{padding:0;border:none;background:transparent;width:100%}
-  .action-cluster-more .more-toggle{display:block;width:100%;padding:10px 14px;border-radius:8px;border:1px solid #2a2a4a;background:#12121f;color:#aab;font-family:'DM Sans',sans-serif;text-align:center;min-height:44px}
+  .action-cluster-more .more-toggle{display:block;width:100%;padding:10px 14px;border-radius:10px;border:1px solid #2a2a4a;background:#12121f;color:#aab;font-family:'DM Sans',sans-serif;text-align:center;min-height:44px}
   .action-cluster-more .more-toggle:hover{border-color:#2563eb;color:#dde}
-  .action-cluster-more .more-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%;padding-top:6px}
+  .action-cluster-more .more-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;padding-top:8px}
   .action-cluster-more .more-menu button{width:100%;min-height:44px}
   .action-cluster-more:not([open]) .more-menu{display:none}
 }
+html.light .mobile-actions-shell>.mobile-actions-toggle,
 html.light .action-cluster-more .more-toggle{background:#f0f0f4;border-color:#e0e0e8;color:#667}
+html.light .mobile-actions-shell>.mobile-actions-toggle:hover,
 html.light .action-cluster-more .more-toggle:hover{border-color:#2563eb;color:#333}
+html.light .mobile-actions-toggle{background:#f8fafc;border-color:#d0d8e8;color:#1f2937}
+html.light .mobile-actions-toggle:hover{border-color:#2563eb;color:#1d4ed8;background:rgba(37,99,235,.04)}
 .profile-chip{font-size:10px;text-transform:uppercase;letter-spacing:1.6px;color:#7dd3fc;padding:0 2px}
 .filter-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;align-items:end;margin:0 0 16px}
 .filter-field{min-width:0}
@@ -590,11 +619,16 @@ html.light .import-history-item{background:transparent;border:none;border-bottom
 html.light .import-history-item-title{color:#1a1a2e}
 html.light .pill-warn{background:#fef3c7;color:#92400e}
 @media(max-width:768px){
-  .nav-actions{display:grid;grid-template-columns:1fr;justify-items:stretch}
   .action-cluster{width:100%;justify-content:flex-start}
   .action-cluster button,.action-cluster select{min-height:40px}
-  .action-cluster-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .action-cluster-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0;border:none;background:transparent}
   .action-cluster-primary button{width:100%}
+  .action-cluster-more{padding:0;border:none;background:transparent;width:100%}
+  .action-cluster-more .more-toggle{display:block;width:100%;padding:10px 14px;border-radius:10px;border:1px solid #2a2a4a;background:#12121f;color:#aab;font-family:'DM Sans',sans-serif;text-align:center;min-height:44px}
+  .action-cluster-more .more-toggle:hover{border-color:#2563eb;color:#dde}
+  .action-cluster-more .more-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;padding-top:8px}
+  .action-cluster-more .more-menu button{width:100%;min-height:44px}
+  .action-cluster-more:not([open]) .more-menu{display:none}
   .filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .filter-actions{grid-column:1/-1}
   .filter-clear-btn{width:100%}
@@ -875,19 +909,24 @@ html.light .pwa-note b{color:#1a1a2e}
         <select id="profile-select" class="profile-select" onchange="onProfileSelectChange(this.value)" title="Switch between separate profile ledgers stored inside this file."></select>
         <button class="sec icon-btn profile-rename-btn" onclick="renameActiveProfile()" title="Rename the active profile." aria-label="Rename active profile">✎</button>
       </div>
-      <div class="action-cluster action-cluster-primary">
-        <button class="sec" onclick="openImportAssistant()">Import Data</button>
-        <button class="sec" onclick="openSettings()">Settings</button>
-      </div>
-      <details class="action-cluster action-cluster-more" open>
-        <summary class="sec more-toggle">More ▾</summary>
-        <div class="more-menu">
-          <button class="sec" onclick="exportCSV()">Export CSV</button>
-          <button class="sec" onclick="exportJSON()">Export JSON</button>
-          <button class="sec" onclick="exportPdfReport()">Print / PDF</button>
-          <button class="sec" onclick="importJSON()">Import JSON</button>
-          <button class="sec" onclick="startEmpty()" title="Clear all transactions and leave an empty tracker so you can import only your own data.">Start Empty</button>
-          <button class="sec" onclick="resetData()" title="Restore the bundled seeded data for this file.">Reset</button>
+      <details class="mobile-actions-shell" id="mobile-actions-shell" open>
+        <summary class="sec mobile-actions-toggle">Actions ▾</summary>
+        <div class="mobile-actions-body">
+          <div class="action-cluster action-cluster-primary">
+            <button class="sec" onclick="openImportAssistant()">Import Data</button>
+            <button class="sec" onclick="openSettings()">Settings</button>
+          </div>
+          <details class="action-cluster action-cluster-more" open>
+            <summary class="sec more-toggle">More ▾</summary>
+            <div class="more-menu">
+              <button class="sec" onclick="exportCSV()">Export CSV</button>
+              <button class="sec" onclick="exportJSON()">Export JSON</button>
+              <button class="sec" onclick="exportPdfReport()">Print / PDF</button>
+              <button class="sec" onclick="importJSON()">Import JSON</button>
+              <button class="sec" onclick="startEmpty()" title="Clear all transactions and leave an empty tracker so you can import only your own data.">Start Empty</button>
+              <button class="sec" onclick="resetData()" title="Restore the bundled seeded data for this file.">Reset</button>
+            </div>
+          </details>
         </div>
       </details>
     </div>
@@ -4601,6 +4640,41 @@ function importJSON(){
   inp.click();
 }
 
+function isCompactActionUI(){
+  return window.innerWidth<=768 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+}
+function getActionShellEls(){
+  return {
+    outer:document.getElementById('mobile-actions-shell'),
+    inner:document.querySelector('.action-cluster-more')
+  };
+}
+function syncResponsiveActionShell(){
+  const {outer,inner}=getActionShellEls();
+  const compact=isCompactActionUI();
+  if(outer) outer.open=!compact;
+  if(inner) inner.open=!compact;
+}
+function closeMobileActionMenus(force=false){
+  if(!force && !isCompactActionUI())return;
+  const {outer,inner}=getActionShellEls();
+  if(inner) inner.open=false;
+  if(outer) outer.open=false;
+}
+
+document.addEventListener('click',e=>{
+  const navBtn=e.target.closest('.nav-main button,.nav-actions button');
+  if(navBtn) setTimeout(()=>closeMobileActionMenus(false),120);
+  const summary=e.target.closest('.mobile-actions-toggle,.more-toggle');
+  if(summary && isCompactActionUI()){
+    const isOuter=summary.classList.contains('mobile-actions-toggle');
+    if(isOuter){
+      const inner=document.querySelector('.action-cluster-more');
+      if(inner) inner.open=false;
+    }
+  }
+});
+window.addEventListener('resize',()=>{ syncResponsiveActionShell(); });
 function exportSettingsCSV(){
   const rows=[["setting","key","value"],["tfsa_start_year","",trackerConfig.tfsaEligibleStartYear],["current_year","",trackerConfig.currentYear],["fhsa_first_year","",trackerConfig.fhsaFirstYear],["fhsa_annual_limit","",trackerConfig.fhsaAnnualLimit],["fhsa_lifetime_limit","",trackerConfig.fhsaLifetimeLimit],["fhsa_carryforward_cap","",trackerConfig.fhsaCarryforwardCap],["","",""],["tfsa_limit","year","limit"]];
   Object.keys(trackerConfig.tfsaAnnualLimits).sort().forEach(y=>rows.push(["tfsa_limit",y,trackerConfig.tfsaAnnualLimits[y]]));
@@ -4740,6 +4814,7 @@ captureCurrentProfile();
 if(isFirstLoad) save(); // only write to localStorage on first-ever load (seeding defaults)
 loadTheme();
 registerPwaSupport();
+syncResponsiveActionShell();
 render();
 if(_loadWarnings.length){setTimeout(()=>{_loadWarnings.forEach((msg,i)=>setTimeout(()=>showToast(msg,null,6500),i*300));},150)}
 
