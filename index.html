@@ -636,6 +636,28 @@ html.light .pill-warn{background:#fef3c7;color:#92400e}
   .import-history-item-side{text-align:left}
 }
 
+
+/* ── Mobile layout refinement: compact profile row + even action grids ── */
+@media (max-width:768px) and (pointer:coarse){
+  .hdr{position:static}
+  .nav-rows{align-items:stretch}
+  .nav.nav-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
+  .nav.nav-main button{width:100%;min-height:44px;padding:12px 10px}
+  .nav.nav-actions{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
+  .profile-cluster{display:grid;grid-template-columns:auto minmax(0,1fr) 48px;gap:10px;align-items:center;padding:10px 12px}
+  .profile-chip{padding:0;white-space:nowrap}
+  .profile-select{width:100%;min-width:0}
+  .profile-rename-btn{width:44px;min-width:44px;padding:0}
+  .mobile-actions-shell>.mobile-actions-body{padding-top:10px}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster{justify-content:stretch}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary button{width:100%;min-width:0}
+  .action-cluster-more .more-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;padding-top:10px}
+  .action-cluster-more .more-menu button{width:100%;min-width:0}
+}
+@media (max-width:430px) and (pointer:coarse){
+  .action-cluster-more .more-menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media print{
   .hdr,.nav-rows,.nav,.inline-btns,.yr-btns,.pg,.tool-panel,.search-wrap,.backup-banner,.toast,.theme-toggle,.del-btn,.add-btn,.modal-bg{display:none !important}
   body{background:#fff !important;color:#000 !important;font-size:11px}
