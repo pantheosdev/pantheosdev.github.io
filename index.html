@@ -37,6 +37,13 @@ body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif
 .nav button.sec{background:#1a1a2e;color:#889;border:1px solid #2a2a4a;padding:6px 12px;font-size:11px}
 .nav button.sec:hover{border-color:#2563eb;color:#aab}
 
+@media(min-width:769px){
+  .mobile-actions-shell{display:flex;flex:1 1 auto;align-items:center;padding:0;border:none;background:transparent}
+  .mobile-actions-toggle{display:none}
+  .mobile-actions-body{display:flex !important;gap:6px;align-items:center;flex-wrap:wrap;padding-top:0}
+  .mobile-actions-body>.mobile-action-btn{width:auto;min-height:auto;padding:6px 12px;white-space:nowrap;display:inline-flex}
+}
+
 /* ── Layout ── */
 .main{padding:24px;max-width:1200px;margin:0 auto}
 .hidden{display:none !important}
@@ -312,13 +319,14 @@ tr.excess{background:#1a0808}
   .nav button.sec{width:100%;padding:10px 8px;font-size:11px;text-align:center;min-height:44px}
   .profile-cluster{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 12px}
   .profile-chip{padding:0;white-space:nowrap}
-  .profile-select{grid-column:2;min-width:0;width:100%}
-  .profile-rename-btn{grid-column:3;min-width:40px}
+  .profile-select{grid-column:2;min-width:0;width:100%;height:48px}
+  .profile-rename-btn{grid-column:3;min-width:48px;height:48px}
   .mobile-actions-shell{width:100%;padding:0;border:none;background:transparent}
   .mobile-actions-toggle{display:block;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2a2a4a;background:#12121f;color:#dde;font-family:'DM Sans',sans-serif;text-align:center;min-height:46px;font-weight:700;list-style:none;cursor:pointer}
   .mobile-actions-toggle::-webkit-details-marker{display:none}
-  .mobile-actions-body{display:grid;gap:8px;padding-top:8px}
+  .mobile-actions-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-top:10px}
   .mobile-actions-shell:not([open]) .mobile-actions-body{display:none}
+  .mobile-actions-body>.mobile-action-btn{width:100%;min-width:0;min-height:48px;padding:10px 8px;display:flex;align-items:center;justify-content:center;text-align:center;white-space:normal;line-height:1.2}
 
   /* ── Mobile inline button groups ── */
   .inline-btns{display:flex;flex-wrap:wrap;gap:8px;width:100%}
@@ -391,7 +399,7 @@ tr.excess{background:#1a0808}
 /* ── Small phones ── */
 @media(max-width:380px){
   .nav-main{grid-template-columns:repeat(2,1fr)}
-  .action-cluster-primary,.action-cluster-more .more-menu{grid-template-columns:1fr}
+  .mobile-actions-body{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cards{grid-template-columns:1fr}
   .cards-4{grid-template-columns:1fr}
   .cards-3{grid-template-columns:1fr}
@@ -637,26 +645,34 @@ html.light .pill-warn{background:#fef3c7;color:#92400e}
 }
 
 
-/* ── Mobile layout refinement: compact profile row + even action grids ── */
+/* ── Mobile layout refinement: compact profile row + unified action grid ── */
 @media (max-width:768px) and (pointer:coarse){
   .hdr{position:static}
   .nav-rows{align-items:stretch}
   .nav.nav-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
   .nav.nav-main button{width:100%;min-height:44px;padding:12px 10px}
-  .nav.nav-actions{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
-  .profile-cluster{display:grid;grid-template-columns:auto minmax(0,1fr) 48px;gap:10px;align-items:center;padding:10px 12px}
-  .profile-chip{padding:0;white-space:nowrap}
-  .profile-select{width:100%;min-width:0}
-  .profile-rename-btn{width:44px;min-width:44px;padding:0}
-  .mobile-actions-shell>.mobile-actions-body{padding-top:10px}
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster{justify-content:stretch}
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary button{width:100%;min-width:0}
-  .action-cluster-more .more-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;padding-top:10px}
-  .action-cluster-more .more-menu button{width:100%;min-width:0}
+  .nav.nav-actions{display:grid;grid-template-columns:1fr;gap:14px;width:100%}
+  .profile-cluster{display:grid;grid-template-columns:74px minmax(0,1fr) 56px;gap:12px;align-items:center;padding:12px}
+  .profile-chip{padding:0;white-space:nowrap;font-size:10px;letter-spacing:2px;align-self:center}
+  .profile-select{width:100%;min-width:0;height:52px;padding:0 36px 0 14px;font-size:12px}
+  .profile-rename-btn{width:56px;min-width:56px;min-height:52px;padding:0}
+  .mobile-actions-shell>.mobile-actions-body{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch;padding-top:12px}
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu{display:contents !important}
+  .action-cluster-more .more-toggle{display:none !important}
+  .mobile-actions-shell>.mobile-actions-body button,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu button{width:100%;min-width:0;min-height:48px;margin:0;padding:0 12px;font-size:12px;line-height:1.25;text-align:center;white-space:normal;display:flex;align-items:center;justify-content:center;justify-self:stretch}
+  .mobile-actions-shell>.mobile-actions-body button.sec{padding:0 12px}
 }
-@media (max-width:430px) and (pointer:coarse){
-  .action-cluster-more .more-menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:359px) and (pointer:coarse){
+  .profile-cluster{grid-template-columns:68px minmax(0,1fr) 52px;gap:10px;padding:10px}
+  .profile-select{height:48px}
+  .profile-rename-btn{width:52px;min-width:52px;min-height:48px}
+}
+  .profile-select{height:48px}
+  .profile-rename-btn{width:52px;min-width:52px;min-height:48px}
 }
 @media print{
   .hdr,.nav-rows,.nav,.inline-btns,.yr-btns,.pg,.tool-panel,.search-wrap,.backup-banner,.toast,.theme-toggle,.del-btn,.add-btn,.modal-bg{display:none !important}
@@ -931,24 +947,17 @@ html.light .pwa-note b{color:#1a1a2e}
         <select id="profile-select" class="profile-select" onchange="onProfileSelectChange(this.value)" title="Switch between separate profile ledgers stored inside this file."></select>
         <button class="sec icon-btn profile-rename-btn" onclick="renameActiveProfile()" title="Rename the active profile." aria-label="Rename active profile">✎</button>
       </div>
-      <details class="mobile-actions-shell" id="mobile-actions-shell" open>
+      <details class="mobile-actions-shell" id="mobile-actions-shell">
         <summary class="sec mobile-actions-toggle">Actions ▾</summary>
         <div class="mobile-actions-body">
-          <div class="action-cluster action-cluster-primary">
-            <button class="sec" onclick="openImportAssistant()">Import Data</button>
-            <button class="sec" onclick="openSettings()">Settings</button>
-          </div>
-          <details class="action-cluster action-cluster-more" open>
-            <summary class="sec more-toggle">More ▾</summary>
-            <div class="more-menu">
-              <button class="sec" onclick="exportCSV()">Export CSV</button>
-              <button class="sec" onclick="exportJSON()">Export JSON</button>
-              <button class="sec" onclick="exportPdfReport()">Print / PDF</button>
-              <button class="sec" onclick="importJSON()">Import JSON</button>
-              <button class="sec" onclick="startEmpty()" title="Clear all transactions and leave an empty tracker so you can import only your own data.">Start Empty</button>
-              <button class="sec" onclick="resetData()" title="Restore the bundled seeded data for this file.">Reset</button>
-            </div>
-          </details>
+          <button class="sec mobile-action-btn" onclick="openImportAssistant()">Import Data</button>
+          <button class="sec mobile-action-btn" onclick="openSettings()">Settings</button>
+          <button class="sec mobile-action-btn" onclick="exportCSV()">Export CSV</button>
+          <button class="sec mobile-action-btn" onclick="exportJSON()">Export JSON</button>
+          <button class="sec mobile-action-btn" onclick="exportPdfReport()">Print / PDF</button>
+          <button class="sec mobile-action-btn" onclick="importJSON()">Import JSON</button>
+          <button class="sec mobile-action-btn" onclick="startEmpty()" title="Clear all transactions and leave an empty tracker so you can import only your own data.">Start Empty</button>
+          <button class="sec mobile-action-btn" onclick="resetData()" title="Restore the bundled seeded data for this file.">Reset</button>
         </div>
       </details>
     </div>
@@ -1123,29 +1132,69 @@ function hasSeededDemoData(){ return !!(uiPrefs && uiPrefs.demoSeedActive); }
 
 // ─── Initial Seeded Data ───
 const INIT_T=[
+["2022-01-14", "Maple Bank", "TFSA-DEMO-01", "C", 1800],
+["2022-03-11", "Maple Bank", "TFSA-DEMO-01", "C", 950],
+["2022-05-27", "Maple Bank", "TFSA-DEMO-01", "C", 1250],
+["2022-09-09", "Maple Bank", "TFSA-DEMO-01", "W", 600],
+["2022-11-18", "Maple Bank", "TFSA-DEMO-01", "C", 700],
 ["2023-01-12", "Maple Bank", "TFSA-DEMO-01", "C", 2500],
+["2023-02-24", "Maple Bank", "TFSA-DEMO-01", "C", 900],
 ["2023-04-07", "Maple Bank", "TFSA-DEMO-01", "C", 1200],
+["2023-06-16", "Maple Bank", "TFSA-DEMO-01", "W", 350],
 ["2023-09-15", "Maple Bank", "TFSA-DEMO-01", "W", 400],
+["2023-11-10", "Maple Bank", "TFSA-DEMO-01", "C", 650],
+["2024-01-19", "Northstar Invest", "TFSA-DEMO-02", "C", 2200],
 ["2024-02-20", "Northstar Invest", "TFSA-DEMO-02", "C", 3000],
+["2024-04-12", "Northstar Invest", "TFSA-DEMO-02", "C", 850],
 ["2024-05-10", "Northstar Invest", "TFSA-DEMO-02", "C", 1800],
+["2024-07-26", "Northstar Invest", "TFSA-DEMO-02", "W", 500],
+["2024-09-13", "Northstar Invest", "TFSA-DEMO-02", "C", 725],
 ["2024-11-01", "Northstar Invest", "TFSA-DEMO-02", "W", 950],
+["2024-12-06", "Northstar Invest", "TFSA-DEMO-02", "C", 400],
 ["2025-01-08", "Demo Brokerage", "TFSA-DEMO-03", "C", 4200],
+["2025-02-14", "Demo Brokerage", "TFSA-DEMO-03", "C", 650],
 ["2025-03-21", "Demo Brokerage", "TFSA-DEMO-03", "C", 950],
+["2025-05-30", "Demo Brokerage", "TFSA-DEMO-03", "W", 600],
+["2025-07-11", "Demo Brokerage", "TFSA-DEMO-03", "C", 1100],
 ["2025-08-29", "Demo Brokerage", "TFSA-DEMO-03", "W", 1200],
-["2026-01-10", "Demo Brokerage", "TFSA-DEMO-03", "C", 600],
-["2026-02-14", "Demo Brokerage", "TFSA-DEMO-03", "C", 425],
-["2026-03-07", "Demo Brokerage", "TFSA-DEMO-03", "C", 500]
+["2025-10-17", "Demo Brokerage", "TFSA-DEMO-03", "C", 500],
+["2025-12-05", "Demo Brokerage", "TFSA-DEMO-03", "C", 450],
+["2026-01-10", "Summit Direct", "TFSA-DEMO-04", "C", 600],
+["2026-02-14", "Summit Direct", "TFSA-DEMO-04", "C", 425],
+["2026-03-07", "Summit Direct", "TFSA-DEMO-04", "C", 500],
+["2026-04-18", "Summit Direct", "TFSA-DEMO-04", "W", 250],
+["2026-05-22", "Summit Direct", "TFSA-DEMO-04", "C", 375],
+["2026-07-10", "Summit Direct", "TFSA-DEMO-04", "C", 425],
+["2026-09-04", "Summit Direct", "TFSA-DEMO-04", "W", 300]
 ];
 
 const INIT_F=[
-["2023-12-22", "Maple Bank", "FHSA-DEMO-01", 4000],
-["2024-02-15", "Maple Bank", "FHSA-DEMO-01", 2000],
-["2024-09-20", "Maple Bank", "FHSA-DEMO-01", 1500],
-["2025-01-10", "Northstar Invest", "FHSA-DEMO-02", 2500],
-["2025-06-18", "Northstar Invest", "FHSA-DEMO-02", 1500],
-["2025-11-30", "Northstar Invest", "FHSA-DEMO-02", 1000],
-["2026-01-25", "Demo Brokerage", "FHSA-DEMO-03", 750],
-["2026-03-12", "Demo Brokerage", "FHSA-DEMO-03", 500]
+["2023-01-20", "Maple Bank", "FHSA-DEMO-01", 2000],
+["2023-04-14", "Maple Bank", "FHSA-DEMO-01", 1500],
+["2023-07-21", "Maple Bank", "FHSA-DEMO-01", 2250],
+["2023-11-24", "Maple Bank", "FHSA-DEMO-01", 2250],
+["2024-01-26", "Maple Bank", "FHSA-DEMO-01", 1000],
+["2024-02-23", "Maple Bank", "FHSA-DEMO-01", 1000],
+["2024-03-22", "Maple Bank", "FHSA-DEMO-01", 850],
+["2024-04-19", "Maple Bank", "FHSA-DEMO-01", 900],
+["2024-05-24", "Maple Bank", "FHSA-DEMO-01", 1100],
+["2024-06-21", "Maple Bank", "FHSA-DEMO-01", 1200],
+["2024-08-16", "Maple Bank", "FHSA-DEMO-01", 750],
+["2024-09-20", "Maple Bank", "FHSA-DEMO-01", 800],
+["2024-10-18", "Maple Bank", "FHSA-DEMO-01", 450],
+["2024-11-22", "Maple Bank", "FHSA-DEMO-01", 400],
+["2025-01-10", "Northstar Invest", "FHSA-DEMO-02", 1200],
+["2025-03-14", "Northstar Invest", "FHSA-DEMO-02", 900],
+["2025-05-09", "Northstar Invest", "FHSA-DEMO-02", 1000],
+["2025-06-18", "Northstar Invest", "FHSA-DEMO-02", 850],
+["2025-08-22", "Northstar Invest", "FHSA-DEMO-02", 700],
+["2025-09-26", "Northstar Invest", "FHSA-DEMO-02", 600],
+["2025-11-07", "Northstar Invest", "FHSA-DEMO-02", 500],
+["2025-12-12", "Northstar Invest", "FHSA-DEMO-02", 450],
+["2026-01-25", "Demo Brokerage", "FHSA-DEMO-03", 500],
+["2026-03-12", "Demo Brokerage", "FHSA-DEMO-03", 450],
+["2026-05-16", "Demo Brokerage", "FHSA-DEMO-03", 400],
+["2026-07-18", "Demo Brokerage", "FHSA-DEMO-03", 350]
 ];
 
 function expandT(arr){return arr.map((a,i)=>({id:'TFSA-SEED-'+String(i+1).padStart(5,'0'),seq:i+1,d:a[0],inst:a[1],acct:a[2],type:a[3]==='C'?'Contribution':a[3]==='W'?'Withdrawal':a[3],amt:a[4],treat:'Include',note:''}))}
@@ -4666,35 +4715,26 @@ function isCompactActionUI(){
   return window.innerWidth<=768 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
 }
 function getActionShellEls(){
-  return {
-    outer:document.getElementById('mobile-actions-shell'),
-    inner:document.querySelector('.action-cluster-more')
-  };
+  return { outer:document.getElementById('mobile-actions-shell') };
 }
 function syncResponsiveActionShell(){
-  const {outer,inner}=getActionShellEls();
-  const compact=isCompactActionUI();
-  if(outer) outer.open=!compact;
-  if(inner) inner.open=!compact;
+  const {outer}=getActionShellEls();
+  if(!outer) return;
+  if(isCompactActionUI()){
+    outer.open=false;
+  }else{
+    outer.open=true;
+  }
 }
 function closeMobileActionMenus(force=false){
-  if(!force && !isCompactActionUI())return;
-  const {outer,inner}=getActionShellEls();
-  if(inner) inner.open=false;
+  if(!force && !isCompactActionUI()) return;
+  const {outer}=getActionShellEls();
   if(outer) outer.open=false;
 }
-
+window.addEventListener('DOMContentLoaded',()=>{ syncResponsiveActionShell(); });
 document.addEventListener('click',e=>{
-  const navBtn=e.target.closest('.nav-main button,.nav-actions button');
+  const navBtn=e.target.closest('.nav-main button,.mobile-actions-body button');
   if(navBtn) setTimeout(()=>closeMobileActionMenus(false),120);
-  const summary=e.target.closest('.mobile-actions-toggle,.more-toggle');
-  if(summary && isCompactActionUI()){
-    const isOuter=summary.classList.contains('mobile-actions-toggle');
-    if(isOuter){
-      const inner=document.querySelector('.action-cluster-more');
-      if(inner) inner.open=false;
-    }
-  }
 });
 window.addEventListener('resize',()=>{ syncResponsiveActionShell(); });
 function exportSettingsCSV(){
