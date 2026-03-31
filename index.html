@@ -975,6 +975,7 @@ html.light .pwa-note b{color:#1a1a2e}
       <button data-nav-view="tax" onclick="showView('tax')">Tax</button>
       <button data-nav-view="insights" onclick="showView('insights')">Insights</button>
     </div>
+    <div class="nav-scroll-hint" id="nav-scroll-hint" aria-hidden="true"><span class="nav-scroll-hint-text">Swipe for more</span><span class="nav-scroll-hint-icon">→</span></div>
     <div class="nav nav-actions" role="navigation" aria-label="Actions">
       <div class="action-cluster profile-cluster">
         <span class="profile-chip">Profile</span>
@@ -1296,7 +1297,7 @@ async function registerPwaSupport(){
   if(!_pwaState.supported)return;
   if(_pwaState.localFile){_pwaState.lastError='Offline install activates after hosting on HTTPS or localhost. Local file mode still works, but service-worker caching is unavailable.';return;}
   try{
-    _pwaReg=await navigator.serviceWorker.register('./tfsa-fhsa-tracker_sw.js');
+    _pwaReg=await navigator.serviceWorker.register('./tfsa-fhsa-tracker_demo_sw.js');
     _pwaState.registered=true;
     _pwaState.controller=!!navigator.serviceWorker.controller;
     _pwaState.scope=_pwaReg&&_pwaReg.scope?_pwaReg.scope:'';
@@ -1333,7 +1334,7 @@ function buildPwaPanel(){
   const s=_pwaState||{};
   const statusText=!s.supported?'Unsupported browser':s.localFile?'Local file mode':(s.registered?'Offline-ready shell active':'Hosted mode detected');
   const statusClass=!s.supported?'warn':s.localFile?'warn':(s.registered?'ok':'neutral');
-  const detail=s.lastError?escapeHtml(s.lastError):(s.scope?`Service-worker scope: <b>${escapeHtml(s.scope)}</b>.`:(s.localFile?'Open this same tracker from a hosted HTTPS URL to enable install and offline caching.':'Hosted mode detected. If offline support is not active yet, make sure <b>tfsa-fhsa-tracker_sw.js</b>, the matching manifest, and the icon files are deployed in the same folder as this HTML.'));
+  const detail=s.lastError?escapeHtml(s.lastError):(s.scope?`Service-worker scope: <b>${escapeHtml(s.scope)}</b>.`:(s.localFile?'Open this same tracker from a hosted HTTPS URL to enable install and offline caching.':'Hosted mode detected. If offline support is not active yet, make sure the matching <b>service worker</b>, <b>manifest</b>, and the icon files are deployed in the same folder as this HTML.'));
   return `<div class="panel mt-lg pwa-panel"><div class="panel-head"><div><h3 class="panel-title">Offline / Install Hardening</h3><div class="panel-sub">For GitHub Pages or any HTTPS deployment. Keep the HTML, manifest, service worker, and icons together in the same hosted folder.</div></div><div class="panel-head-actions">${s.installReady?'<button type="button" onclick="promptInstallPwa()">Install App</button>':''}${s.supported&&!s.localFile?'<button type="button" onclick="refreshOfflineCache()">Refresh Offline Cache</button>':''}</div></div><div class="pwa-status-row"><span class="status-pill ${statusClass}">${statusText}</span><span class="status-pill ${s.online?'ok':'warn'}">${s.online?'Online':'Offline'}</span>${s.registered?'<span class="status-pill ok">Service worker registered</span>':''}${s.installed?'<span class="status-pill ok">Installed</span>':''}</div><div class="pwa-note">${detail}</div><div class="pwa-note" style="margin-top:8px">Local <b>file://</b> usage still works as a normal HTML tracker. PWA install and offline caching become active after you publish the files to <b>localhost</b> or any <b>HTTPS</b> host such as GitHub Pages.</div></div>`;
 }
 
@@ -1436,12 +1437,18 @@ function updateProfileBar(){
   const p1=profileState.profiles.p1||normalizeProfileBundle(null,'p1');
   const p2=profileState.profiles.p2||normalizeProfileBundle(null,'p2');
   const sel=document.getElementById('profile-select');
+  const chip=document.querySelector('.profile-chip');
   if(sel){
     const active=profileState.active||'p1';
-    const currentVal=sel.value||active;
     sel.innerHTML=`<option value="p1">${escapeHtml(p1.label||'Profile 1')}</option><option value="p2">${escapeHtml(p2.label||SECOND_PROFILE_LABEL)}</option>`;
     sel.value=['p1','p2'].includes(active)?active:'p1';
     sel.title=`Active profile: ${getActiveProfileLabel()}.`;
+  }
+  if(chip){
+    const label=getActiveProfileLabel();
+    chip.textContent=label;
+    chip.title=`Active profile: ${label}`;
+    chip.setAttribute('aria-label',`Active profile: ${label}`);
   }
 }
 function onProfileSelectChange(value){
@@ -4139,7 +4146,7 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
     const ctxInst=document.getElementById('c-inst');
     if(ctxInst&&window._charts){
       const instTotals={};
-      [...tT,...fT].forEach(t=>{const inst=t.inst||'Unknown';const tp=tT.includes(t)?normalizeTfsaType(t.type):normalizeFhsaType(t.type);if(tp==='Contribution'||tp==='RRSP Transfer In')instTotals[inst]=(instTotals[inst]||0)+safeNum(t.amt)});
+      ([{plan:'tfsa',rows:tT},{plan:'fhsa',rows:fT}]).forEach(group=>{group.rows.forEach(t=>{const inst=t.inst||'Unknown';const tp=group.plan==='tfsa'?normalizeTfsaType(t.type):normalizeFhsaType(t.type);if(tp==='Contribution'||tp==='RRSP Transfer In')instTotals[inst]=(instTotals[inst]||0)+safeNum(t.amt);});});
       const sorted=Object.entries(instTotals).sort((a,b)=>b[1]-a[1]);
       const instLabels=sorted.map(([k])=>k);
       const instData=sorted.map(([,v])=>v);
@@ -5237,5 +5244,97 @@ _cachedSelfTest.results.forEach(r=>console.log(`  ${r.pass?'✓':'✗'} ${r.labe
 })();
 </script>
 
+<style id="v15-6-final-cleanup-style">
+@media (max-width:768px) and (pointer:coarse){
+  .hdr{padding-left:12px;padding-right:12px;padding-bottom:8px}
+  .hdr-top{margin-bottom:6px}
+  .nav-rows{gap:8px}
+  .nav.nav-main{position:relative;padding-bottom:0;scroll-padding-right:56px}
+  .nav-scroll-hint{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    margin:-2px 2px 0 0;
+    min-height:16px;
+    color:#7d8aa5;
+    font-size:10px;
+    letter-spacing:.04em;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .nav-scroll-hint[hidden]{display:none !important}
+  .nav-scroll-hint-icon{font-size:12px;line-height:1}
+  .profile-cluster{
+    grid-template-columns:max-content minmax(0,1fr) 42px !important;
+    gap:8px !important;
+    padding:6px 8px !important;
+    border-radius:10px;
+  }
+  .profile-cluster .profile-chip{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    max-width:92px;
+    min-height:32px;
+    padding:0 10px !important;
+    border-radius:999px;
+    background:rgba(37,99,235,.12);
+    color:#bfdbfe;
+    font-size:10px !important;
+    letter-spacing:.08em !important;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .profile-cluster .profile-select{
+    min-height:40px !important;
+    height:40px !important;
+    padding:0 34px 0 12px !important;
+    font-size:12px !important;
+  }
+  .profile-cluster .profile-rename-btn{
+    width:42px !important;
+    min-width:42px !important;
+    min-height:40px !important;
+    height:40px !important;
+  }
+  .mobile-actions-shell>.mobile-actions-toggle{min-height:42px !important;padding:9px 14px !important}
+  .mobile-actions-shell>.mobile-actions-body{gap:12px !important;padding-top:10px !important}
+  .mobile-actions-shell>.mobile-actions-body>.mobile-action-btn{min-height:44px !important}
+  html.light .nav-scroll-hint{color:#64748b}
+  html.light .profile-cluster .profile-chip{background:rgba(37,99,235,.08);color:#1d4ed8}
+}
+</style>
+<script id="v15-6-final-cleanup-script">
+(function(){
+  function isCompactHeaderMode(){
+    return window.innerWidth<=768 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  }
+  function syncNavScrollHint(){
+    const nav=document.querySelector('.nav.nav-main');
+    const hint=document.getElementById('nav-scroll-hint');
+    if(!nav||!hint) return;
+    const canScroll=isCompactHeaderMode() && nav.scrollWidth > nav.clientWidth + 8;
+    const atEnd=(nav.scrollLeft + nav.clientWidth) >= (nav.scrollWidth - 8);
+    hint.hidden = !canScroll || atEnd;
+  }
+  function bindNavScrollHint(){
+    const nav=document.querySelector('.nav.nav-main');
+    if(!nav||nav.dataset.scrollHintBound==='1') return;
+    nav.dataset.scrollHintBound='1';
+    nav.addEventListener('scroll', syncNavScrollHint, {passive:true});
+  }
+  function syncFinalCleanup(){
+    bindNavScrollHint();
+    syncNavScrollHint();
+    if(typeof updateProfileBar==='function'){ try{ updateProfileBar(); }catch(_){} }
+  }
+  window.addEventListener('DOMContentLoaded', syncFinalCleanup);
+  window.addEventListener('pageshow', ()=>setTimeout(syncFinalCleanup, 60));
+  window.addEventListener('orientationchange', ()=>setTimeout(syncFinalCleanup, 140));
+  window.addEventListener('resize', ()=>setTimeout(syncFinalCleanup, 60));
+})();
+</script>
 </body>
 </html>
