@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="TFSA & FHSA Tracker">
 <link rel="icon" href="./tfsa-fhsa-tracker_icon_192.png">
 <link rel="apple-touch-icon" href="./tfsa-fhsa-tracker_icon_192.png">
-<link rel="manifest" href="./tfsa-fhsa-tracker_demo_v14_2_manifest.json">
+<link rel="manifest" href="./tfsa-fhsa-tracker_demo_manifest.json">
 <title>TFSA & FHSA Tracker — Demo Final</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -123,7 +123,7 @@ body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif
 .import-controls button{padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;background:#12121f;color:#aab;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
 .import-controls button:hover{border-color:#2563eb;color:#dde}
 .import-controls .stat{font-size:12px;color:#667}
-.import-preview-wrap{max-height:520px;overflow:auto;border:1px solid #1a1a3a;border-radius:12px}
+.import-preview-wrap{max-height:520px;overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid #1a1a3a;border-radius:12px}
 html.light .profile-select,html.light .heatmap-mode-select{background-color:#fff;border-color:#d8dbe8;color:#445;background-image:linear-gradient(45deg,transparent 50%,#889 50%),linear-gradient(135deg,#889 50%,transparent 50%)}
 html.light .profile-inline-label{color:#667}
 html.light .heatmap-month-label{color:#667}
@@ -164,6 +164,11 @@ th.r{text-align:right}
 td{padding:8px 12px;border-bottom:1px solid #0f0f1f}
 td.r{text-align:right}
 tr.excess{background:#1a0808}
+
+tr.summary-row td{border-top:1px solid #2a2a4a;background:rgba(37,99,235,.05);font-weight:700}
+tr.summary-row:hover{background:rgba(37,99,235,.07)}
+html.light tr.summary-row td{border-top-color:#d8dbe8;background:rgba(37,99,235,.06)}
+html.light tr.summary-row:hover{background:rgba(37,99,235,.08)}
 .overflow{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#2a2a4a transparent}
 .overflow::-webkit-scrollbar{height:6px}
 .overflow::-webkit-scrollbar-track{background:transparent}
@@ -205,12 +210,10 @@ tr.excess{background:#1a0808}
 .note-box p{font-size:13px;color:#667;line-height:1.8;margin:4px 0}
 .demo-banner{margin-bottom:18px;border-color:#1d4ed8;background:linear-gradient(135deg,#091226,#0a0a1a)}
 .demo-banner h3{color:#60a5fa}
-.import-preview-wrap{max-height:520px;overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid #1a1a3a;border-radius:12px}
 .import-preview-wrap table{margin:0}
 .import-select-cell{text-align:center;width:64px}
 .import-select-cell input{width:16px;height:16px;cursor:pointer}
 .import-select-cell input:disabled{cursor:not-allowed;opacity:.45}
-.import-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
 .import-controls button{padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;background:#12121f;color:#aab;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
 .import-controls button:hover{border-color:#2563eb;color:#dde}
 .import-controls .stat{font-size:12px;color:#667;margin-left:auto}
@@ -494,7 +497,7 @@ html.light .pill-w{background:#fee2e2;color:#991b1b}
 html.light .pill-tfsa{background:#dbeafe;color:#1e40af}
 html.light .pill-fhsa{background:#dcfce7;color:#166534}
 html.light .pill-t{background:#ede9fe;color:#5b21b6}
-html.light .green{color:#16a34a}.light .red{color:#dc2626}.light .blue{color:#2563eb}.light .gold{color:#d97706}.light .dim{color:#889}.light .mute{color:#667}.light .bright{color:#1a1a2e}.light .purple{color:#7c3aed}
+html.light .green{color:#16a34a}html.light .red{color:#dc2626}html.light .blue{color:#2563eb}html.light .gold{color:#d97706}html.light .dim{color:#889}html.light .mute{color:#667}html.light .bright{color:#1a1a2e}html.light .purple{color:#7c3aed}
 html.light .nav-actions{border-color:#e0e0e8}
 html.light .theme-toggle{border-color:#d0d0e0;color:#667}
 html.light .theme-toggle:hover{border-color:#2563eb;color:#333}
@@ -979,7 +982,7 @@ html.light .pwa-note b{color:#1a1a2e}
         <button class="sec icon-btn profile-rename-btn" onclick="renameActiveProfile()" title="Rename the active profile." aria-label="Rename active profile">✎</button>
       </div>
       <details class="mobile-actions-shell" id="mobile-actions-shell">
-        <summary class="sec mobile-actions-toggle">Actions ▾</summary>
+        <summary class="sec mobile-actions-toggle">Actions</summary>
         <div class="mobile-actions-body">
           <button class="sec mobile-action-btn" onclick="openImportAssistant()">Import Data</button>
           <button class="sec mobile-action-btn" onclick="openSettings()">Settings</button>
@@ -1097,7 +1100,7 @@ html.light .pwa-note b{color:#1a1a2e}
         <label for="i-paste">Paste CRA export, CSV / TSV statement, or OFX / QFX text</label>
         <textarea id="i-paste" rows="10" placeholder="Paste CRA table text, bank statement CSV / TSV, or OFX / QFX content here."></textarea>
       </div>
-      <div class="note-inline">Supported in this assistant: tracker CSV, copied CRA tables / room text, CSV / TSV / XLSX bank or broker statements, OFX / QFX text, and direct PDF imports for supported CRA layouts only. Wealthsimple imports should use CSV/XLSX instead of PDF.</div>
+      <div class="note-inline">Supported in this assistant: tracker CSV, copied CRA tables / room text, CSV / TSV / XLSX bank or broker statements, OFX / QFX text, and direct PDF imports for supported CRA layouts only. Wealthsimple imports should use CSV/XLSX instead of PDF — in Wealthsimple, open Activity and use Export to download CSV or XLSX.</div>
       <div id="import-busy" class="import-busy hidden" aria-live="polite"></div>
       <div id="import-preview" class="tool-result"><p class="dim">Choose a file or paste text, then click Analyze. Nothing is imported until you confirm.</p></div>
       <div class="btns">
@@ -1137,7 +1140,7 @@ const OFFICIAL_TFSA_LIMITS = {
 };
 
 const CONFIG_DEFAULTS = {
-  tfsaEligibleStartYear: 2015,
+  tfsaEligibleStartYear: 2022,
   currentYear: 2026,
   fhsaFirstYear: 2023,
   fhsaAnnualLimit: 8000,
@@ -1181,7 +1184,9 @@ const INIT_T=[
 ["2024-07-26", "Northstar Invest", "TFSA-DEMO-02", "W", 500],
 ["2024-09-13", "Northstar Invest", "TFSA-DEMO-02", "C", 725],
 ["2024-11-01", "Northstar Invest", "TFSA-DEMO-02", "W", 950],
+["2024-11-15", "Northstar Invest", "TFSA-DEMO-02", "C", 900],
 ["2024-12-06", "Northstar Invest", "TFSA-DEMO-02", "C", 400],
+["2024-12-13", "Northstar Invest", "TFSA-DEMO-02", "C", 1200],
 ["2025-01-08", "Demo Brokerage", "TFSA-DEMO-03", "C", 4200],
 ["2025-02-14", "Demo Brokerage", "TFSA-DEMO-03", "C", 650],
 ["2025-03-21", "Demo Brokerage", "TFSA-DEMO-03", "C", 950],
@@ -1218,6 +1223,8 @@ const INIT_F=[
 ["2025-03-14", "Northstar Invest", "FHSA-DEMO-02", 900],
 ["2025-05-09", "Northstar Invest", "FHSA-DEMO-02", 1000],
 ["2025-06-18", "Northstar Invest", "FHSA-DEMO-02", 850],
+["2025-07-19", "Northstar Invest", "FHSA-DEMO-02", "FHSA Direct Transfer Out", 600],
+["2025-07-19", "Northstar Invest", "FHSA-DEMO-USD", "FHSA Direct Transfer In", 600],
 ["2025-08-22", "Northstar Invest", "FHSA-DEMO-02", 700],
 ["2025-09-26", "Northstar Invest", "FHSA-DEMO-02", 600],
 ["2025-11-07", "Northstar Invest", "FHSA-DEMO-02", 500],
@@ -1229,7 +1236,19 @@ const INIT_F=[
 ];
 
 function expandT(arr){return arr.map((a,i)=>({id:'TFSA-SEED-'+String(i+1).padStart(5,'0'),seq:i+1,d:a[0],inst:a[1],acct:a[2],type:a[3]==='C'?'Contribution':a[3]==='W'?'Withdrawal':a[3],amt:a[4],treat:'Include',note:''}))}
-function expandF(arr){return arr.map((a,i)=>({id:'FHSA-SEED-'+String(i+1).padStart(5,'0'),seq:i+1,d:a[0],inst:a[1],acct:a[2],type:'Contribution',status:'Include',amt:a[3],note:''}))}
+function expandF(arr){
+  return arr.map((a,i)=>({
+    id:'FHSA-SEED-'+String(i+1).padStart(5,'0'),
+    seq:i+1,
+    d:a[0],
+    inst:a[1],
+    acct:a[2],
+    type:a.length>=5?normalizeFhsaType(a[3]):'Contribution',
+    status:'Include',
+    amt:a.length>=5?a[4]:a[3],
+    note:''
+  }))
+}
 
 // ─── State ───
 let tT=[], fT=[];
@@ -1277,7 +1296,7 @@ async function registerPwaSupport(){
   if(!_pwaState.supported)return;
   if(_pwaState.localFile){_pwaState.lastError='Offline install activates after hosting on HTTPS or localhost. Local file mode still works, but service-worker caching is unavailable.';return;}
   try{
-    _pwaReg=await navigator.serviceWorker.register('./tfsa-fhsa-tracker_v14_2_sw.js');
+    _pwaReg=await navigator.serviceWorker.register('./tfsa-fhsa-tracker_sw.js');
     _pwaState.registered=true;
     _pwaState.controller=!!navigator.serviceWorker.controller;
     _pwaState.scope=_pwaReg&&_pwaReg.scope?_pwaReg.scope:'';
@@ -1314,8 +1333,8 @@ function buildPwaPanel(){
   const s=_pwaState||{};
   const statusText=!s.supported?'Unsupported browser':s.localFile?'Local file mode':(s.registered?'Offline-ready shell active':'Hosted mode detected');
   const statusClass=!s.supported?'warn':s.localFile?'warn':(s.registered?'ok':'neutral');
-  const detail=s.lastError?escapeHtml(s.lastError):(s.scope?`Service-worker scope: <b>${escapeHtml(s.scope)}</b>.`:'Keeps the hosted tracker available when the network is flaky and exposes browser install support where available.');
-  return `<div class="panel mt-lg pwa-panel"><div class="panel-head"><div><h3 class="panel-title">Offline / Install Hardening</h3><div class="panel-sub">For GitHub Pages or any HTTPS deployment. This closes the biggest remaining resilience gap from the audit roadmap.</div></div><div class="panel-head-actions">${s.installReady?'<button type="button" onclick="promptInstallPwa()">Install App</button>':''}${s.supported&&!s.localFile?'<button type="button" onclick="refreshOfflineCache()">Refresh Offline Cache</button>':''}</div></div><div class="pwa-status-row"><span class="status-pill ${statusClass}">${statusText}</span><span class="status-pill ${s.online?'ok':'warn'}">${s.online?'Online':'Offline'}</span>${s.registered?'<span class="status-pill ok">Service worker registered</span>':''}${s.installed?'<span class="status-pill ok">Installed</span>':''}</div><div class="pwa-note">${detail}</div><div class="pwa-note" style="margin-top:8px">Local <b>file://</b> usage still works as a normal HTML tracker. PWA install and offline caching become active after you publish the files to <b>localhost</b> or any <b>HTTPS</b> host such as GitHub Pages.</div></div>`;
+  const detail=s.lastError?escapeHtml(s.lastError):(s.scope?`Service-worker scope: <b>${escapeHtml(s.scope)}</b>.`:(s.localFile?'Open this same tracker from a hosted HTTPS URL to enable install and offline caching.':'Hosted mode detected. If offline support is not active yet, make sure <b>tfsa-fhsa-tracker_sw.js</b>, the matching manifest, and the icon files are deployed in the same folder as this HTML.'));
+  return `<div class="panel mt-lg pwa-panel"><div class="panel-head"><div><h3 class="panel-title">Offline / Install Hardening</h3><div class="panel-sub">For GitHub Pages or any HTTPS deployment. Keep the HTML, manifest, service worker, and icons together in the same hosted folder.</div></div><div class="panel-head-actions">${s.installReady?'<button type="button" onclick="promptInstallPwa()">Install App</button>':''}${s.supported&&!s.localFile?'<button type="button" onclick="refreshOfflineCache()">Refresh Offline Cache</button>':''}</div></div><div class="pwa-status-row"><span class="status-pill ${statusClass}">${statusText}</span><span class="status-pill ${s.online?'ok':'warn'}">${s.online?'Online':'Offline'}</span>${s.registered?'<span class="status-pill ok">Service worker registered</span>':''}${s.installed?'<span class="status-pill ok">Installed</span>':''}</div><div class="pwa-note">${detail}</div><div class="pwa-note" style="margin-top:8px">Local <b>file://</b> usage still works as a normal HTML tracker. PWA install and offline caching become active after you publish the files to <b>localhost</b> or any <b>HTTPS</b> host such as GitHub Pages.</div></div>`;
 }
 
 
@@ -2525,7 +2544,7 @@ function buildImportSessionFromSource(text,fileName,opts,sourceMeta){
       if(retry.candidates.length)result=retry;
     }
   }
-  else if(detected==='ws_pdf_disabled')result={candidates:[],issues:[['row','reason'],['1','Wealthsimple PDF import has been disabled because it was not reliable enough. Use Wealthsimple CSV/XLSX exports instead.']],detected:'Wealthsimple PDF (disabled)'};
+  else if(detected==='ws_pdf_disabled')result={candidates:[],issues:[['row','reason'],['1','Wealthsimple PDF import has been disabled because it was not reliable enough. Use Wealthsimple CSV/XLSX exports instead. In Wealthsimple, open Activity and use Export to download CSV or XLSX.']],detected:'Wealthsimple PDF (disabled)'};
   const roomSnapshots=parseCraRoomSnapshots(text + (altPdfText?('\n\n'+altPdfText):''));
   const mergeMode=String(opts.mergeMode||'skip');
   const isCraPdf=result.detected==='CRA TFSA PDF'||result.detected==='CRA FHSA PDF';
@@ -2669,6 +2688,26 @@ function formatDeltaMoney(v){
   const cls=n>0.005?'red':(n<-0.005?'green':'dim');
   const sign=n>0.005?'+':(n<-0.005?'−':'');
   return `<span class="${cls}">${Math.abs(n)<=0.005?'0.00':(sign+F(Math.abs(n)))}</span>`;
+}
+function buildImportTotalsSummary(session){
+  if(!session||!Array.isArray(session.candidates)||!session.candidates.length)return '';
+  const totals={TFSA:{parsed:0,selected:0,rows:0,selectedRows:0},FHSA:{parsed:0,selected:0,rows:0,selectedRows:0}};
+  session.candidates.forEach(c=>{
+    const plan=(c.plan==='FHSA')?'FHSA':'TFSA';
+    const amt=safeNum(c.amt);
+    totals[plan].parsed+=amt;
+    totals[plan].rows++;
+    if(c.selected && !(c.duplicate||c.probableDuplicate)){
+      totals[plan].selected+=amt;
+      totals[plan].selectedRows++;
+    }
+  });
+  const tf=totals.TFSA, fh=totals.FHSA;
+  return `<div class="note-box mt-lg"><h3>Import totals preview</h3>
+    <p class="note-inline"><b>TFSA</b> — parsed ${tf.rows} row(s) totaling ${F(tf.parsed)} • currently selected ${tf.selectedRows} row(s) totaling ${F(tf.selected)} • selection delta ${formatDeltaMoney(tf.selected-tf.parsed)}</p>
+    <p class="note-inline"><b>FHSA</b> — parsed ${fh.rows} row(s) totaling ${F(fh.parsed)} • currently selected ${fh.selectedRows} row(s) totaling ${F(fh.selected)} • selection delta ${formatDeltaMoney(fh.selected-fh.parsed)}</p>
+    <p class="note-inline">For historical files that should already be embedded, the selected totals should usually stay near zero after duplicate filtering.</p>
+  </div>`;
 }
 function buildImportImpactSummary(session){
   if(!session)return null;
@@ -2822,6 +2861,7 @@ function renderImportPreview(){
   }
   if(importSession.duplicateRows&&importSession.duplicateRows.length)h+=`<p class="note-inline"><b>Duplicate skip preview:</b> ${importSession.duplicateRows.slice(0,6).map(escapeHtml).join(' • ')}${importSession.duplicateRows.length>6?' • …':''}</p>`;
   h+=buildCraImportBreakdown(importSession);
+  h+=buildImportTotalsSummary(importSession);
   h+=buildImportImpactHtml(importSession);
   if(importSession.issues&&importSession.issues.length>1)h+='<p class="note-inline">Some rows could not be parsed cleanly. Download the issues CSV for review.</p>';
   el.innerHTML=h;
@@ -3126,7 +3166,17 @@ function calcTFSA(txns){
 }
 
 // ═══════════════════════════════════════════════════
-// FHSA ENGINE — Simplified Carryforward Formula
+// FHSA ENGINE — Carryforward derived from prior-year unused participation room
+// CRA rule of thumb:
+//   next-year carryforward = min($8K cap, prior-year unused participation room)
+// This engine reconstructs that unused room algebraically from the prior-year state:
+//   annual limit + prior carryforward
+//   − two-years-prior excess effect
+//   − prior counted inflows
+//   + prior designated amounts
+//   + prior taxable withdrawals that reduced excess
+// The math is correct for the verified scenarios, but it is intentionally exposed below
+// via `priorYearUnusedRoom` / `debugPriorUnusedRoom` to make the carryforward easier to audit.
 // ═══════════════════════════════════════════════════
 
 function calcFHSA(txns){
@@ -3150,7 +3200,15 @@ function calcFHSA(txns){
   let cumRepUsed=0;
 
   for(let y=FS;y<=CY+5;y++){
-    const currentCarryforward=(y===FS)?0:Math.min(FC,Math.max(0,FA+carryforwardPrior-excessTwoPrior-safeNum(years[y-1]?.countedInflows)+safeNum(years[y-1]?.designatedAmounts)+safeNum(years[y-1]?.taxableReducedExcess)));
+    const priorYearUnusedRoom=(y===FS)?0:Math.max(0,
+      FA
+      + carryforwardPrior
+      - excessTwoPrior
+      - safeNum(years[y-1]?.countedInflows)
+      + safeNum(years[y-1]?.designatedAmounts)
+      + safeNum(years[y-1]?.taxableReducedExcess)
+    );
+    const currentCarryforward=(y===FS)?0:Math.min(FC,priorYearUnusedRoom);
     const annualRoomAfterExcess=Math.max(0,FA+currentCarryforward-excessPrior);
     const lifetimeRoomAfterAdjustments=Math.max(0,FL-cumCountedInflows+cumDesignatedAmounts+cumTaxableReducedExcess+cumRepUsed+excessPrior);
     const annualComponent=Math.min(annualRoomAfterExcess,lifetimeRoomAfterAdjustments);
@@ -3220,6 +3278,7 @@ function calcFHSA(txns){
       participationRoom,
       annualComponent,
       carryforward:currentCarryforward,
+      debugPriorUnusedRoom:priorYearUnusedRoom,
       reParticipationPrior:unusedRepPrior,
       reParticipationGenerated:taxableReParticipationGenerated,
       reParticipationUsed:repUsed,
@@ -3293,6 +3352,33 @@ function runSelfTest(){
   const f6=[{d:'2024-06-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:10000,note:'',seq:1,id:'F-6'}];
   const e6=calcFHSA(f6);
   checks.push({label:'FHSA $10K into $8K → $2K excess',actual:safeNum(e6.years[2024]?.yeExcess),expected:2000,tol:0.01});
+
+  const f6b=[{d:'2024-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:10000,note:'',seq:1,id:'F-6B'}];
+  const e6b=calcFHSA(f6b);
+  checks.push({label:'FHSA prior-year excess reduces next-year participation room to $6K',actual:safeNum(e6b.years[2025]?.participationRoom),expected:6000,tol:0.01});
+  checks.push({label:'FHSA prior-year excess leaves $4K usable opening room next year',actual:safeNum(e6b.years[2025]?.openRoom),expected:4000,tol:0.01});
+
+  const f6c=[{d:'2024-04-01',inst:'Test',acct:'F',type:'FHSA Direct Transfer In',status:'Include',amt:2500,note:'',seq:1,id:'F-6C1'},{d:'2024-04-15',inst:'Test',acct:'F',type:'FHSA Direct Transfer Out',status:'Include',amt:1200,note:'',seq:2,id:'F-6C2'}];
+  const e6c=calcFHSA(f6c);
+  checks.push({label:'FHSA direct transfers remain room-neutral',actual:safeNum(e6c.years[2024]?.yeRoom),expected:8000,tol:0.01});
+  checks.push({label:'FHSA direct transfers do not create excess',actual:safeNum(e6c.years[2024]?.yeExcess),expected:0,tol:0.01});
+
+  const f6d=[
+    {d:'2024-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:8000,note:'',seq:1,id:'F-6D1'},
+    {d:'2025-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:8000,note:'',seq:2,id:'F-6D2'},
+    {d:'2026-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:8000,note:'',seq:3,id:'F-6D3'},
+    {d:'2027-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:8000,note:'',seq:4,id:'F-6D4'},
+    {d:'2028-03-01',inst:'Test',acct:'F',type:'Contribution',status:'Include',amt:8000,note:'',seq:5,id:'F-6D5'},
+    {d:'2028-09-01',inst:'Test',acct:'F',type:'Designated Withdrawal',status:'Include',amt:5000,note:'',seq:6,id:'F-6D6'}
+  ];
+  const e6d=calcFHSA(f6d);
+  checks.push({label:'FHSA designated withdrawal restores $5K of lifetime room',actual:safeNum(e6d.years[2028]?.lifetimeLeft),expected:5000,tol:0.01});
+  checks.push({label:'FHSA designated withdrawal caps next-year participation room at restored lifetime room',actual:safeNum(e6d.years[2029]?.participationRoom),expected:5000,tol:0.01});
+
+
+  const f6e=[];
+  const e6e=calcFHSA(f6e);
+  checks.push({label:'FHSA empty first year leaves full $8K carryforward for year two',actual:safeNum(e6e.years[2025]?.carryforward),expected:8000,tol:0.01});
 
   const t7=[{d:'2024-03-01',inst:'Test',acct:'A',type:'Transfer In',amt:50000,treat:'Include',note:'',seq:1,id:'T-7'}];
   const e7=calcTFSA(t7);
@@ -3411,13 +3497,14 @@ function load(){
 // ═══════════════════════════════════════════════════
 let toastTimer=null;
 function showToast(msg,undoFn,duration=5000){
+  if(undoFn&&duration<10000)duration=10000;
   clearTimeout(toastTimer);
   const container=document.getElementById('toast-container');
   let html=`<div class="toast"><span>${msg}</span>`;
   if(undoFn){html+=`<button onclick="executeUndo()">Undo</button>`}
   html+=`</div>`;
   container.innerHTML=html;
-  toastTimer=setTimeout(()=>{container.innerHTML='';undoStack=[]},duration);
+  toastTimer=setTimeout(()=>{container.innerHTML='';},duration);
 }
 function executeUndo(){
   if(undoStack.length){
@@ -3478,22 +3565,71 @@ function runWhatIf(){
 // ═══════════════════════════════════════════════════
 // CRA RECONCILIATION HELPER
 // ═══════════════════════════════════════════════════
-function runReconciliation(){
-  const craRoom=safeNum(document.getElementById('recon-cra-room')?.value);
-  if(craRoom<=0){document.getElementById('recon-result').innerHTML='<p class="dim">Enter your CRA-stated room to compare.</p>';return}
-  const tfsa=calcTFSA(tT);
+
+function getReconciliationContext(plan){
   const cy=getCurrentYear();
-  const tc=tfsa.years[cy]||{};
-  // CRA states opening room for the year, before any current-year contributions
-  const trackerOpening=safeNum(tc.openRoom);
-  const diff=Math.abs(trackerOpening-craRoom);
-  const match=diff<1.00;
+  const snaps=(uiPrefs&&uiPrefs.craSnapshots)||{};
+  if(plan==='FHSA'){
+    const fhsa=calcFHSA(fT);
+    const yc=fhsa.years[cy]||{};
+    const snapshot=snaps.fhsa&&+snaps.fhsa.year===cy?snaps.fhsa:null;
+    return {
+      plan:'FHSA',
+      year:cy,
+      trackerValue:safeNum(yc.participationRoom),
+      trackerLabel:'Tracker computed participation room',
+      inputLabel:'CRA Stated Participation Room ($)',
+      placeholder:'e.g. 8000',
+      snapshot,
+      desc:`Enter your CRA-stated FHSA participation room for ${cy} to compare against this tracker\'s computed participation room. FHSA direct transfers should remain room-neutral.${snapshot?` Imported CRA snapshot detected for ${cy}: <b>${F(snapshot.amount)}</b>.`:''}`,
+      mismatchHint:'Common causes: a direct FHSA transfer classified as a contribution, a missing taxable or designated withdrawal, an opening-year mismatch, or duplicate counted inflows.'
+    };
+  }
+  const tfsa=calcTFSA(tT);
+  const yc=tfsa.years[cy]||{};
+  const snapshot=snaps.tfsa&&+snaps.tfsa.year===cy?snaps.tfsa:null;
+  return {
+    plan:'TFSA',
+    year:cy,
+    trackerValue:safeNum(yc.openRoom),
+    trackerLabel:'Tracker computed opening room',
+    inputLabel:'CRA Stated Room ($)',
+    placeholder:'e.g. 7000',
+    snapshot,
+    desc:`Enter your CRA-stated TFSA room (from My Account or your latest Notice of Assessment) to check against this tracker\'s computed opening room for ${cy}.${snapshot?` Imported CRA snapshot detected for ${cy}: <b>${F(snapshot.amount)}</b>.`:''}`,
+    mismatchHint:'Common causes: unrecorded transfers, CRA adjustments, timing differences on late-December transactions, or contributions not yet reflected in CRA systems.'
+  };
+}
+function syncReconciliationTool(preserveValue=false){
+  const planEl=document.getElementById('recon-plan');
+  if(!planEl) return;
+  const ctx=getReconciliationContext(planEl.value||'TFSA');
+  const descEl=document.getElementById('recon-desc');
+  const labelEl=document.getElementById('recon-room-label');
+  const inputEl=document.getElementById('recon-cra-room');
   const resultEl=document.getElementById('recon-result');
+  if(descEl) descEl.innerHTML=ctx.desc;
+  if(labelEl) labelEl.textContent=ctx.inputLabel;
+  if(inputEl){
+    inputEl.placeholder=ctx.placeholder;
+    if(!preserveValue || !String(inputEl.value||'').trim()) inputEl.value=ctx.snapshot?safeNum(ctx.snapshot.amount):'';
+  }
+  if(resultEl) resultEl.innerHTML='';
+}
+function runReconciliation(){
+  const plan=document.getElementById('recon-plan')?.value||'TFSA';
+  const craRoom=safeNum(document.getElementById('recon-cra-room')?.value);
+  const resultEl=document.getElementById('recon-result');
+  if(craRoom<=0){resultEl.innerHTML='<p class="dim">Enter your CRA-stated room to compare.</p>';return}
+  const ctx=getReconciliationContext(plan);
+  const diffSigned=ctx.trackerValue-craRoom;
+  const diff=Math.abs(diffSigned);
+  const match=diff<1.00;
   resultEl.innerHTML=`<div class="recon-diff ${match?'match':'mismatch'}">
-    <p><b>CRA stated opening room (${cy}):</b> ${F(craRoom)}</p>
-    <p><b>Tracker computed opening room:</b> ${F(trackerOpening)}</p>
-    <p><b>Difference:</b> ${F(diff)} ${match?'✅ Match (within $1)':'⚠️ Mismatch — review transactions or CRA adjustments'}</p>
-    ${!match?'<p class="dim" class="mt-sm">Common causes: unrecorded transfers, CRA adjustments, timing differences on late-December transactions, or contributions not yet reflected in CRA systems.</p>':''}
+    <p><b>${ctx.plan} CRA-stated room (${ctx.year}):</b> ${F(craRoom)}</p>
+    <p><b>${ctx.trackerLabel}:</b> ${F(ctx.trackerValue)}</p>
+    <p><b>Difference:</b> ${diffSigned>0?'+':''}${F(diffSigned)} ${match?'✅ Match (within $1)':'⚠️ Mismatch — review transactions or CRA adjustments'}</p>
+    ${!match?`<p class="dim mt-sm">${ctx.mismatchHint}</p>`:''}
   </div>`;
 }
 
@@ -3681,7 +3817,7 @@ function render(){
   setTimeout(()=>{
     if(window._charts)window._charts.forEach(c=>c.destroy());
     window._charts=[];
-    const _light=document.documentElement.classList.contains('light');
+    const _light=!_isDarkTheme;
     const _gc=_light?'#e4e6ec':'#1a1a2e';
     const _tc=_light?'#889':'#667';
     const _lc=_light?'#334':'#889';
@@ -3923,12 +4059,15 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
 
   // CRA Reconciliation Helper
   const tfsaSnapshot=uiPrefs.craSnapshots&&uiPrefs.craSnapshots.tfsa&&+uiPrefs.craSnapshots.tfsa.year===cy?uiPrefs.craSnapshots.tfsa:null;
+  const fhsaSnapshot=uiPrefs.craSnapshots&&uiPrefs.craSnapshots.fhsa&&+uiPrefs.craSnapshots.fhsa.year===cy?uiPrefs.craSnapshots.fhsa:null;
   h+=`<div class="tool-panel purple"><h3>🔍 CRA Room Reconciliation</h3>
-    <p class="desc">Enter your CRA-stated TFSA room (from My Account or your latest Notice of Assessment) to check against this tracker's computed opening room for ${cy}.${tfsaSnapshot?` Imported CRA snapshot detected for ${cy}: <b>${F(tfsaSnapshot.amount)}</b>.`:''}</p>
+    <p class="desc" id="recon-desc">Enter your CRA-stated TFSA room (from My Account or your latest Notice of Assessment) to check against this tracker's computed opening room for ${cy}.${tfsaSnapshot?` Imported CRA snapshot detected for ${cy}: <b>${F(tfsaSnapshot.amount)}</b>.`:''}</p>
     <div class="tool-row">
-      <div><label class="t-label" for="recon-cra-room">CRA Stated Room ($)</label><input type="number" step="0.01" id="recon-cra-room" class="t-input" placeholder="e.g. 7000" value="${tfsaSnapshot?safeNum(tfsaSnapshot.amount):''}"></div>
+      <div><label class="t-label" for="recon-plan">Plan</label><select id="recon-plan" class="t-input" onchange="syncReconciliationTool(true)"><option value="TFSA">TFSA</option><option value="FHSA">FHSA</option></select></div>
+      <div><label class="t-label" id="recon-room-label" for="recon-cra-room">CRA Stated Room ($)</label><input type="number" step="0.01" id="recon-cra-room" class="t-input" placeholder="e.g. 7000" value="${tfsaSnapshot?safeNum(tfsaSnapshot.amount):''}"></div>
       <div class="tool-action"><button class="add-btn" onclick="runReconciliation()">Compare</button></div>
     </div>
+    <div class="panel-sub" style="margin-top:-4px">${fhsaSnapshot?`Saved FHSA snapshot for ${cy}: <b>${F(fhsaSnapshot.amount)}</b>. `:''}Switch the plan selector to compare TFSA opening room or FHSA participation room.</div>
     <div id="recon-result"></div>
   </div>`;
 
@@ -3961,10 +4100,11 @@ function renderInsights(tfsa,fhsa,cy,tc,fc,tTot,fTot){
   h+=buildCraSnapshotPanel(cy);
   h+=buildDataHealthPanel(health,deadline);
   document.getElementById('v-insights').innerHTML=h;
+  syncReconciliationTool();
 
   // Render insight charts
   setTimeout(()=>{
-    const _light=document.documentElement.classList.contains('light');
+    const _light=!_isDarkTheme;
     const _gc=_light?'#e4e6ec':'#1a1a2e';
     const _tc=_light?'#889':'#667';
     const _lc=_light?'#334':'#889';
@@ -4189,6 +4329,29 @@ function renderAnnualTable(data,type){
     }
     h+=`</tr>`;
   });
+  if(rows.length){
+    const firstYr=rows[0][1], lastYr=rows[rows.length-1][1];
+    if(type==='TFSA'){
+      const totals=rows.reduce((acc,[,yr])=>{
+        acc.limit+=safeNum(yr.limit); acc.contribs+=safeNum(yr.contribs); acc.withdrawals+=safeNum(yr.withdrawals);
+        acc.qualifyingWD+=safeNum(yr.qualifyingWD); acc.addbackWD+=safeNum(yr.addbackWD);
+        acc.transferIn+=safeNum(yr.transferIn); acc.transferOut+=safeNum(yr.transferOut); acc.tax+=safeNum(yr.tax);
+        return acc;
+      },{limit:0,contribs:0,withdrawals:0,qualifyingWD:0,addbackWD:0,transferIn:0,transferOut:0,tax:0});
+      const tfSummary=totals.transferIn>0||totals.transferOut>0?`In ${F(totals.transferIn)} / Out ${F(totals.transferOut)}`:'—';
+      const endEx=safeNum(lastYr.yeExcess)>0.005;
+      h+=`<tr class="summary-row"><td data-label="Year" class="bright bold">All Years</td><td data-label="Limit" class="r dim">${F(totals.limit)}</td><td data-label="Contribs" class="r green">${F(totals.contribs)}</td><td data-label="W/D" class="r red">${F(totals.withdrawals)}</td><td data-label="Qual WD" class="r ${totals.qualifyingWD>0.005?'gold':'dim'}">${totals.qualifyingWD>0.005?F(totals.qualifyingWD):'—'}</td><td data-label="Addback" class="r ${totals.addbackWD>0?'blue':'dim'}">${F(totals.addbackWD)}</td><td data-label="Transfers" class="r ${totals.transferIn+totals.transferOut>0?'purple':'dim'}">${tfSummary}</td><td data-label="Open" class="r mute">${F(firstYr.openRoom)}</td><td data-label="YE Room" class="r blue">${F(lastYr.yeRoom)}</td><td data-label="YE Excess" class="r ${endEx?'red':'dim'}">${endEx?F(lastYr.yeExcess):'—'}</td><td data-label="Tax" class="r ${totals.tax>0?'gold':'dim'}">${totals.tax>0?F(totals.tax):'—'}</td></tr>`;
+    } else {
+      const totals=rows.reduce((acc,[,yr])=>{
+        acc.participationRoom+=safeNum(yr.participationRoom); acc.carryforward+=safeNum(yr.carryforward);
+        acc.countedInflows+=safeNum(yr.countedInflows); acc.taxableWithdrawals+=safeNum(yr.taxableWithdrawals);
+        acc.designatedAmounts+=safeNum(yr.designatedAmounts); acc.tax+=safeNum(yr.tax);
+        return acc;
+      },{participationRoom:0,carryforward:0,countedInflows:0,taxableWithdrawals:0,designatedAmounts:0,tax:0});
+      const endEx=safeNum(lastYr.yeExcess)>0.005;
+      h+=`<tr class="summary-row"><td data-label="Year" class="bright bold">All Years</td><td data-label="Part. Room" class="r mute">${F(totals.participationRoom)}</td><td data-label="Carry" class="r ${totals.carryforward>0?'blue':'dim'}">${F(totals.carryforward)}</td><td data-label="Counted In" class="r ${totals.countedInflows>0?'green':'dim'}">${F(totals.countedInflows)}</td><td data-label="Taxable WD" class="r ${totals.taxableWithdrawals>0?'red':'dim'}">${totals.taxableWithdrawals>0?F(totals.taxableWithdrawals):'—'}</td><td data-label="Designated" class="r ${totals.designatedAmounts>0?'gold':'dim'}">${totals.designatedAmounts>0?F(totals.designatedAmounts):'—'}</td><td data-label="YE Room" class="r blue">${F(lastYr.yeRoom)}</td><td data-label="YE Excess" class="r ${endEx?'red':'dim'}">${endEx?F(lastYr.yeExcess):'—'}</td><td data-label="Life Left" class="r mute">${F(lastYr.lifetimeLeft)}</td><td data-label="Tax" class="r ${totals.tax>0?'gold':'dim'}">${totals.tax>0?F(totals.tax):'—'}</td></tr>`;
+    }
+  }
   h+=`</tbody></table></div>`;
   return h;
 }
@@ -4436,7 +4599,7 @@ function downloadCSVTemplate(plan='ALL'){
   downloadCsvRows('tracker_'+String(plan).toLowerCase()+'_template.csv',rows);
 }
 function openCsvPicker(){const el=document.getElementById('csv-file');if(el){el.value='';el.click()}}
-function importCSVText(text){
+function importCSVText(text,fileName=''){
   const rows=parseCSV(text);
   if(rows.length<2){alert('CSV has no data rows.');return}
   const hdr=rows[0].map(h=>String(h||'').trim().toLowerCase());
@@ -4444,7 +4607,9 @@ function importCSVText(text){
   const missing=['plan','date','institution','account','type','amount'].filter(c=>idx(c)===-1);
   if(missing.length){alert('Missing CSV columns: '+missing.join(', '));return}
   const dateRe=/^\d{4}-\d{2}-\d{2}$/;
+  const detected=detectImportSource(text,fileName,{fileType:'text'});
   let added=0,skipped=0,dupes=0;
+  let tfsaParsedTotal=0, fhsaParsedTotal=0, tfsaAddedTotal=0, fhsaAddedTotal=0;
   const invalidRows=[['row','reason','id','sequence','plan','date','institution','account','type','amount','treatment','status','note']];
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
@@ -4473,15 +4638,21 @@ function importCSVText(text){
     if(plan==='TFSA'){
       const type=normalizeTfsaType(rawType,{strict:true});
       if(!type){skipped++; invalidRows.push([rowNo,'Unknown TFSA type',...common]); continue}
-      let txn=ensureTxnIdentity('TFSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,treat,note});
-      if(isDuplicateTxn('TFSA',txn,{respectDistinctIds:true})){dupes++; invalidRows.push([rowNo,'Duplicate TFSA transaction',...common]); continue}
-      tT.push(txn);added++;
+      const txn=ensureTxnIdentity('TFSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,treat,note});
+      const useProbableDateMatch=canonicalInstitutionName(inst)==='Wealthsimple'&&(detected!=='tracker_csv');
+      const dupOpts={respectDistinctIds:true,ignoreNote:true,canonicalize:true,useProbableDateMatch};
+      tfsaParsedTotal+=amt;
+      if(isDuplicateTxn('TFSA',txn,dupOpts)){dupes++; invalidRows.push([rowNo,'Duplicate TFSA transaction',...common]); continue}
+      tT.push(txn);added++; tfsaAddedTotal+=amt;
     } else if(plan==='FHSA'){
       const type=normalizeFhsaType(rawType,{strict:true});
       if(!type){skipped++; invalidRows.push([rowNo,'Unknown FHSA type',...common]); continue}
-      let txn=ensureTxnIdentity('FHSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,status,note});
-      if(isDuplicateTxn('FHSA',txn,{respectDistinctIds:true})){dupes++; invalidRows.push([rowNo,'Duplicate FHSA transaction',...common]); continue}
-      fT.push(txn);added++;
+      const txn=ensureTxnIdentity('FHSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,status,note});
+      const useProbableDateMatch=canonicalInstitutionName(inst)==='Wealthsimple'&&(detected!=='tracker_csv');
+      const dupOpts={respectDistinctIds:true,ignoreNote:true,canonicalize:true,useProbableDateMatch};
+      fhsaParsedTotal+=amt;
+      if(isDuplicateTxn('FHSA',txn,dupOpts)){dupes++; invalidRows.push([rowNo,'Duplicate FHSA transaction',...common]); continue}
+      fT.push(txn);added++; fhsaAddedTotal+=amt;
     } else {
       skipped++; invalidRows.push([rowNo,'Unknown plan',...common]);
     }
@@ -4491,12 +4662,13 @@ function importCSVText(text){
   let msg='Imported '+added+' transaction(s).';
   if(dupes>0)msg+=' Skipped '+dupes+' duplicate(s).';
   if(skipped>0)msg+=' Skipped '+skipped+' invalid row(s).';
+  msg+=` Parsed totals — TFSA: ${F(tfsaParsedTotal)}${Math.abs(tfsaAddedTotal-tfsaParsedTotal)>0.005?` (added ${F(tfsaAddedTotal)})`:''} • FHSA: ${F(fhsaParsedTotal)}${Math.abs(fhsaAddedTotal-fhsaParsedTotal)>0.005?` (added ${F(fhsaAddedTotal)})`:''}.`;
   if(invalidRows.length>1)msg+=' An issues CSV was downloaded for review.';
   alert(msg);
 }
 function handleCsvFile(evt){
   const f=evt.target.files&&evt.target.files[0];if(!f)return;
-  const reader=new FileReader();reader.onload=e=>importCSVText(String(e.target.result||''));reader.readAsText(f);
+  const reader=new FileReader();reader.onload=e=>importCSVText(String(e.target.result||''),f.name||'');reader.readAsText(f);
 }
 
 
@@ -4729,7 +4901,7 @@ function importJSON(){
           profileState.profiles[active]=current;
           applyProfileBundle(active);
         }
-        seedNormalizedData();appendActivityLog({kind:'json_import',fileName:f.name||'backup.json'});save();render();
+        appendActivityLog({kind:'json_import',fileName:f.name||'backup.json'});save();render();
         const today=todayISO();
         const futureT=tT.filter(t=>String(t.d||'')>today).length;
         const futureF=fT.filter(t=>String(t.d||'')>today).length;
@@ -4916,5 +5088,154 @@ if(!_cachedSelfTest) _cachedSelfTest=runSelfTest();
 console.log('Engine self-test:',_cachedSelfTest.allPass?'ALL PASSED':'FAILURES DETECTED');
 _cachedSelfTest.results.forEach(r=>console.log(`  ${r.pass?'✓':'✗'} ${r.label}: expected=${r.expected} actual=${safeNum(r.actual).toFixed(2)}`));
 </script>
+
+<style id="v15-4-mobile-header-redesign">
+/* v15.4 checkpoint 4 — coherent mobile header redesign */
+@media (max-width:768px) and (pointer:coarse){
+  .hdr{
+    padding-left:12px;
+    padding-right:12px;
+    padding-bottom:10px;
+  }
+  .hdr-top{margin-bottom:8px}
+  .hdr h1{font-size:18px}
+  .nav-rows{align-items:stretch;gap:10px}
+  .nav.nav-main{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:flex-start !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:8px;
+    width:100%;
+    padding-bottom:2px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .nav.nav-main::-webkit-scrollbar{display:none}
+  .nav.nav-main button{
+    flex:0 0 auto;
+    min-height:40px;
+    padding:0 14px;
+  }
+  .nav.nav-actions{
+    display:grid !important;
+    grid-template-columns:1fr;
+    gap:10px;
+    width:100%;
+    justify-items:stretch;
+    border-top:1px solid #1a1a2e;
+    padding-top:10px;
+  }
+  .profile-cluster{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 46px;
+    gap:8px;
+    align-items:center;
+    padding:8px;
+    width:100%;
+  }
+  .profile-cluster .profile-chip{display:none !important}
+  .profile-cluster .profile-select{
+    width:100%;
+    min-width:0;
+    min-height:44px;
+  }
+  .profile-cluster .profile-rename-btn{
+    width:46px;
+    min-width:46px;
+    min-height:44px;
+    padding:0;
+  }
+  .mobile-actions-shell{
+    display:block !important;
+    width:100%;
+    margin:0;
+    padding:0;
+    border:none;
+    background:transparent;
+  }
+  .mobile-actions-shell>.mobile-actions-toggle{
+    display:block !important;
+    width:100%;
+    min-height:44px;
+    margin:0;
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid #2a2a4a;
+    background:#12121f;
+    color:#aab;
+    font-family:'DM Sans',system-ui,sans-serif;
+    font-weight:700;
+    text-align:center;
+    list-style:none;
+    cursor:pointer;
+  }
+  .mobile-actions-shell>.mobile-actions-toggle::-webkit-details-marker{display:none}
+  .mobile-actions-shell>.mobile-actions-body{
+    display:none !important;
+    width:100%;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    padding-top:10px;
+    align-items:stretch;
+  }
+  .mobile-actions-shell[open]>.mobile-actions-body{display:grid !important}
+  .mobile-actions-shell>.mobile-actions-body>.mobile-action-btn{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    margin:0;
+    padding:10px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    line-height:1.2;
+    white-space:normal;
+    justify-self:stretch;
+  }
+  .mobile-actions-shell[open]>.mobile-actions-toggle{
+    border-color:#2563eb;
+    color:#dde;
+  }
+
+  html.light .nav.nav-actions{border-color:#e0e0e8}
+  html.light .profile-cluster{
+    background:linear-gradient(135deg,#eff6ff,#ffffff);
+    border:1px solid #93c5fd;
+    box-shadow:0 0 0 1px rgba(37,99,235,.06) inset;
+  }
+  html.light .mobile-actions-shell>.mobile-actions-toggle{
+    background:#f8fafc;
+    border-color:#d0d8e8;
+    color:#1f2937;
+  }
+  html.light .mobile-actions-shell[open]>.mobile-actions-toggle{
+    border-color:#2563eb;
+    color:#1d4ed8;
+    background:rgba(37,99,235,.04);
+  }
+}
+</style>
+
+
+<script id="v15-4-mobile-header-script">
+(function(){
+  function isCompactHeaderMode(){
+    return window.innerWidth<=768 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  }
+  function syncCheckpoint4Header(){
+    const shell=document.getElementById('mobile-actions-shell');
+    if(!shell) return;
+    shell.open = !isCompactHeaderMode() ? true : false;
+  }
+  window.addEventListener('DOMContentLoaded', syncCheckpoint4Header);
+  window.addEventListener('pageshow', ()=>setTimeout(syncCheckpoint4Header, 50));
+  window.addEventListener('orientationchange', ()=>setTimeout(syncCheckpoint4Header, 120));
+  window.addEventListener('resize', syncCheckpoint4Header);
+})();
+</script>
+
 </body>
 </html>
