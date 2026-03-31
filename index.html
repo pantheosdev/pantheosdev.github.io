@@ -224,6 +224,10 @@ tr.excess{background:#1a0808}
 .t-input{background:#12121f;border:1px solid #2a2a4a;border-radius:8px;padding:10px 14px;color:#e8e8f0;font-size:14px;width:100%;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
 .t-input:focus{border-color:#2563eb}
 .t-input::placeholder{color:#445}
+.t-input[type="date"]{-webkit-appearance:none;appearance:none;display:block;width:100%;max-width:100%;min-width:0;text-align:left;line-height:1.2;padding-right:14px}
+.t-input[type="date"]::-webkit-date-and-time-value{text-align:left}
+.t-input[type="date"]::-webkit-calendar-picker-indicator{opacity:.95;cursor:pointer}
+
 .t-label{font-size:11px;color:#667;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
 
 /* ── Buttons ── */
@@ -942,6 +946,8 @@ html.light .pwa-note b{color:#1a1a2e}
   .tool-panel .tool-row .t-input,
   .tool-panel .tool-row .add-btn{width:100% !important;max-width:none !important;min-width:0 !important}
   .tool-panel .tool-row .tool-action .add-btn{min-height:46px}
+  .tool-panel .t-input[type="date"]{width:100% !important;max-width:100% !important;min-width:0 !important;display:block !important}
+
   .tool-panel .desc{margin-bottom:14px}
 }
 
