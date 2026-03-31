@@ -1,0 +1,28 @@
+{
+  "id": "./tfsa-fhsa-tracker_demo_v15_5_checkpoint5_hosted_polish.html",
+  "name": "TFSA & FHSA Tracker Demo",
+  "short_name": "TFSA Demo",
+  "description": "Demo build of the Canadian TFSA & FHSA tracker with sample data and hosted offline support.",
+  "start_url": "./tfsa-fhsa-tracker_demo_v15_5_checkpoint5_hosted_polish.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080810",
+  "theme_color": "#080810",
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./tfsa-fhsa-tracker_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./tfsa-fhsa-tracker_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
