@@ -1690,6 +1690,91 @@ html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
 }
 
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
+}
+
 </style>
 </head>
 <body>
@@ -5995,6 +6080,91 @@ html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
 }
 
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
+}
+
 </style></head><body>
   <div class="topbar"><div><h1>TFSA & FHSA Summary Report</h1><div class="muted"><b>Profile:</b> ${escapeHtml(getActiveProfileLabel())}<br><b>Generated:</b> ${escapeHtml(formatDateTime(Date.now()))}<br><b>Planning year:</b> ${cy}</div></div><div class="no-print"><button onclick="window.print()" style="padding:10px 14px;border-radius:10px;border:1px solid #c9cfe5;background:#fff;cursor:pointer">Print / Save as PDF</button></div></div>
   <div class="grid">
@@ -6423,6 +6593,91 @@ html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
 }
 
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
+}
+
 </style>
 
 
@@ -6778,6 +7033,91 @@ html.light table.mobile-stack tr.summary-row td {
 }
 html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
+}
+
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
 }
 
 </style>
@@ -7482,6 +7822,91 @@ html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
 }
 
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
+}
+
 </style>
 
 
@@ -7883,6 +8308,91 @@ html.light table.mobile-stack tr.summary-row td {
 }
 html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
+}
+
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
 }
 
 </style>
@@ -8355,6 +8865,91 @@ html.light table.mobile-stack tr.summary-row td {
 }
 html.light table.mobile-stack tr.summary-row td::before {
   color: #1d4ed8 !important;
+}
+
+
+/* ===== v16.17 mobile header toggle placement + annual summary normalization ===== */
+@media (max-width: 768px), (pointer: coarse) {
+  .hdr {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+    padding-bottom: 8px !important;
+  }
+  .hdr-top {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 44px !important;
+    margin-bottom: 8px !important;
+    padding-right: 0 !important;
+  }
+  .title-block {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .brand-copy {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .theme-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: end !important;
+    align-self: center !important;
+    margin: 0 !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    z-index: 1 !important;
+  }
+  .nav-rows {
+    gap: 6px !important;
+  }
+  table.mobile-stack tr.summary-row {
+    border-radius: 18px !important;
+    border: 1px solid var(--rm-border-soft) !important;
+    background: linear-gradient(180deg,rgba(10,13,27,.95),rgba(9,12,24,.90)) !important;
+    box-shadow: 0 8px 20px rgba(3,7,18,.12) !important;
+    padding: 14px 16px !important;
+    margin-top: 10px !important;
+    overflow: visible !important;
+  }
+  table.mobile-stack tr.summary-row td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(88,101,141,.16) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child {
+    padding-top: 10px !important;
+  }
+  table.mobile-stack tr.summary-row td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 10px !important;
+    border-radius: 0 !important;
+  }
+  table.mobile-stack tr.summary-row td::before {
+    color: #7c87a2 !important;
+    font-weight: 600 !important;
+  }
+}
+html.light table.mobile-stack tr.summary-row {
+  border-color: #dde4f1 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(39,51,89,.06) !important;
+}
+html.light table.mobile-stack tr.summary-row td {
+  border-bottom-color: #e8edf6 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+html.light table.mobile-stack tr.summary-row td::before {
+  color: #667 !important;
 }
 
 </style>
