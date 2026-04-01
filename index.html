@@ -1819,6 +1819,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
 }
 
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
 </style>
 </head>
 <body>
@@ -6253,6 +6322,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
 }
 
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
 </style></head><body>
   <div class="topbar"><div><h1>TFSA & FHSA Summary Report</h1><div class="muted"><b>Profile:</b> ${escapeHtml(getActiveProfileLabel())}<br><b>Generated:</b> ${escapeHtml(formatDateTime(Date.now()))}<br><b>Planning year:</b> ${cy}</div></div><div class="no-print"><button onclick="window.print()" style="padding:10px 14px;border-radius:10px;border:1px solid #c9cfe5;background:#fff;cursor:pointer">Print / Save as PDF</button></div></div>
   <div class="grid">
@@ -6810,6 +6948,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
 }
 
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
 </style>
 
 
@@ -7291,6 +7498,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td{
     border-bottom-color:#e8edf6 !important;
     background:transparent !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
     color:inherit !important;
   }
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
@@ -8127,6 +8403,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
 }
 
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
 </style>
 
 
@@ -8654,6 +8999,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td{
     border-bottom-color:#e8edf6 !important;
     background:transparent !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
     color:inherit !important;
   }
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
@@ -9255,6 +9669,75 @@ html.light table.mobile-stack tr.summary-row td::before {
   html.light table.mobile-stack tr.summary-row td{
     border-bottom-color:#e8edf6 !important;
     background:transparent !important;
+    color:inherit !important;
+  }
+  html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+}
+
+
+
+/* ===== v16.19 mobile title centering + annual summary row normalization ===== */
+@media (max-width:768px){
+  .hdr{padding-top:calc(env(safe-area-inset-top,0px) + 18px) !important;}
+  .hdr-top{
+    position:relative !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:72px !important;
+    margin-bottom:10px !important;
+    padding-right:56px !important;
+  }
+  .title-block{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:12px !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .brand-copy{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  .hdr h1.brand-name{ text-align:center !important; }
+  .brand-sub{justify-content:center !important; text-align:center !important; width:auto !important;}
+  .theme-toggle{
+    position:absolute !important;
+    right:0 !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:42px !important;
+    height:42px !important;
+  }
+
+  table.mobile-stack tr.summary-row{
+    background:#0a0a1a !important;
+    border:1px solid #1a1a3a !important;
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+  table.mobile-stack tr.summary-row td{
+    border-top:none !important;
+    background:transparent !important;
+    font-weight:inherit !important;
+    color:inherit !important;
+  }
+  table.mobile-stack tr.summary-row td:first-child{padding-top:0 !important;}
+  table.mobile-stack tr.summary-row td:last-child{border-bottom:none !important;}
+  table.mobile-stack tr.summary-row td::before{color:#667 !important;}
+
+  html.light table.mobile-stack tr.summary-row{
+    background:#fff !important;
+    border:1px solid #e0e0e8 !important;
+    box-shadow:none !important;
+  }
+  html.light table.mobile-stack tr.summary-row td{
+    background:transparent !important;
+    border-top:none !important;
     color:inherit !important;
   }
   html.light table.mobile-stack tr.summary-row td::before{color:#667 !important;}
