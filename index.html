@@ -119,6 +119,8 @@ body{background:#080810;color:#e8e8f0;font-family:'DM Sans',system-ui,sans-serif
 .heatmap-cell{width:16px;height:16px;border-radius:4px;transition:transform .15s}
 .heatmap-cell.empty{background:transparent;border:1px solid transparent}
 .heatmap-note{font-size:11px;color:#667;margin-top:10px;line-height:1.5;max-width:980px}
+@media(min-width:769px){.heatmap-note{max-width:none;white-space:nowrap}}
+.trx-table-wrap{margin-top:12px}
 .import-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 12px}
 .import-controls button{padding:8px 12px;border-radius:8px;border:1px solid #2a2a4a;background:#12121f;color:#aab;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
 .import-controls button:hover{border-color:#2563eb;color:#dde}
@@ -5299,8 +5301,7 @@ function renderTxnView(plan,txns){
   } else {
     h+=`<div class="note-inline">Types: Contribution, Withdrawal, Transfer In (room-neutral), Transfer Out (room-neutral). Use transfers for institution-to-institution moves.</div>`;
   }
-  h+=`<div class="trx-shortcut-note">Keyboard in this table: <span class="kbd">↑</span>/<span class="kbd">↓</span> select • <span class="kbd">Enter</span> edit • <span class="kbd">Delete</span> remove</div>`;
-  h+=`<div class="overflow" id="tbl-${plan.toLowerCase()}">${renderTxnTable(plan,filtered.slice(pg*30,(pg+1)*30),pg,filtered.length)}</div>`;
+  h+=`<div class="overflow trx-table-wrap" id="tbl-${plan.toLowerCase()}">${renderTxnTable(plan,filtered.slice(pg*30,(pg+1)*30),pg,filtered.length)}</div>`;
   return h;
 }
 function filterYear(plan,yr,btn){txnFilters[plan]=yr;txnFilters[plan.toLowerCase()+'Pg']=0;btn.parentElement.querySelectorAll('.yr-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFilteredTxns(plan)}
