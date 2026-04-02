@@ -1838,6 +1838,50 @@ table.mobile-stack tr{overflow:hidden}
   #v-tax .tax-table td:nth-child(7){padding-left:22px !important}
 }
 
+@media(min-width:769px){
+  /* Transaction tables: prevent desktop column cramping between Amount / Treatment(Status) / Actions */
+  #tbl-tfsa table,
+  #tbl-fhsa table{
+    min-width:1080px !important;
+    table-layout:auto;
+  }
+  #tbl-tfsa th:nth-child(5),
+  #tbl-tfsa td:nth-child(5),
+  #tbl-fhsa th:nth-child(5),
+  #tbl-fhsa td:nth-child(5){
+    min-width:130px;
+    white-space:nowrap;
+    padding-right:24px !important;
+  }
+  #tbl-tfsa th:nth-child(6),
+  #tbl-tfsa td:nth-child(6),
+  #tbl-fhsa th:nth-child(6),
+  #tbl-fhsa td:nth-child(6){
+    min-width:120px;
+    white-space:nowrap;
+    padding-left:24px !important;
+  }
+  #tbl-tfsa th:nth-child(6),
+  #tbl-fhsa th:nth-child(6){text-align:left;}
+  #tbl-tfsa th:nth-child(7),
+  #tbl-tfsa td:nth-child(7),
+  #tbl-fhsa th:nth-child(7),
+  #tbl-fhsa td:nth-child(7){
+    min-width:88px;
+    white-space:nowrap;
+    text-align:center;
+    padding-left:18px !important;
+  }
+  #tbl-tfsa td:nth-child(7),
+  #tbl-fhsa td:nth-child(7){
+    border-left:1px solid rgba(103,115,156,.14);
+  }
+  html.light #tbl-tfsa td:nth-child(7),
+  html.light #tbl-fhsa td:nth-child(7){
+    border-left-color:#e0e6f2;
+  }
+}
+
 @media(max-width:768px){
   .hdr-top{
     grid-template-columns:minmax(36px,1fr) auto minmax(36px,1fr) !important;
