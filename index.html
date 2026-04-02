@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="RoomMap">
 <link rel="icon" href="./roommap_icon_192.png">
 <link rel="apple-touch-icon" href="./roommap_icon_192.png">
-<link rel="manifest" href="./roommap_personal_manifest.json">
-<title>RoomMap — Personal</title>
+<link rel="manifest" href="./roommap_demo_manifest.json">
+<title>RoomMap — Demo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -854,13 +854,10 @@ html.light .smart-tips{border-color:#bfcde8}
 
 /* ══ Missing light-theme rules for v13 features ══ */
 
-/* Recon banner */
 html.light .recon-banner{background:linear-gradient(135deg,#eff6ff,#fff);border-color:#93c5fd}
 html.light .recon-banner h3{color:#1d4ed8}
 html.light .recon-banner-actions button{background:#fff;border-color:#d0d8e8;color:#334}
 html.light .recon-banner-actions button:hover{border-color:#3b82f6;color:#1e40af;background:rgba(37,99,235,.04)}
-
-/* Recon cards */
 html.light .recon-card{background:linear-gradient(135deg,#f8fbff,#fff);border-color:#d8dbe8}
 html.light .recon-card.match{border-color:#86efac}
 html.light .recon-card.warn{border-color:#fcd34d}
@@ -870,37 +867,23 @@ html.light .recon-value{color:#1a1a2e}
 html.light .recon-detail{color:#556}
 html.light .recon-actions button{background:#fff;border-color:#d0d8e8;color:#334}
 html.light .recon-actions button:hover{border-color:#3b82f6;color:#1e40af}
-
-/* Activity log + import history */
 html.light .activity-log-item,html.light .import-history-item{border-color:#e8eaf0}
 html.light .activity-log-item-title,html.light .import-history-item-title{color:#1a1a2e}
 html.light .activity-log-item-meta,html.light .import-history-item-meta{color:#556}
 html.light .activity-log-item-side,html.light .import-history-item-side{color:#889}
 html.light .import-history-item:last-child{border-bottom:none}
-
-/* Panel head actions */
 html.light .panel-head-actions button{background:#fff;border-color:#d0d8e8;color:#334}
 html.light .panel-head-actions button:hover{border-color:#3b82f6;color:#1e40af;background:rgba(37,99,235,.04)}
-
-/* Drill KPI values */
 html.light .drill-kpi .value{color:#1a1a2e}
 html.light .drill-kpi .eyebrow{color:#667}
 html.light .drill-kpi .sub{color:#556}
-
-/* Filter inputs in light */
 html.light .filter-input::placeholder{color:#aab}
 html.light .filter-clear-btn:hover{border-color:#3b82f6;color:#1e40af}
-
-/* Import busy in light */
 html.light .import-busy b{color:#1e3a5f}
-
-/* Pacing panel in light */
 html.light .pacing-stat{color:#445}
 html.light .pacing-stat b{color:#1a1a2e}
 html.light .pacing-stat .good{color:#16a34a}
 html.light .pacing-stat .caution{color:#b45309}
-
-/* More menu in light */
 html.light .action-cluster-more .more-menu button{background:#f0f0f4;border-color:#e0e0e8;color:#667}
 html.light .action-cluster-more .more-menu button:hover{border-color:#3b82f6;color:#1e40af;background:rgba(37,99,235,.04)}
 
@@ -1811,6 +1794,94 @@ table.mobile-stack tr{overflow:hidden}
   #v-tax .tax-table-wrap{overflow-x:visible !important;}
 }
 
+
+/* ===== v16.20e final live-surface polish ===== */
+.overflow{background-clip:padding-box;scroll-padding-inline:18px}
+.overflow table{width:100%}
+.overflow tbody tr:last-child td{border-bottom:none}
+.theme-toggle{transition:background .2s,border-color .2s,color .2s,transform .2s,box-shadow .2s !important}
+.theme-toggle:hover{transform:translateY(-1px)}
+.action-cluster,.profile-cluster{border-radius:18px !important}
+.profile-select,.heatmap-mode-select{padding-inline:14px 36px !important}
+.profile-inline-label{letter-spacing:.12em}
+
+@media(min-width:769px){
+  .hdr-top{column-gap:14px !important}
+  .overflow{
+    border-radius:20px !important;
+    border-color:rgba(108,121,164,.18) !important;
+    background:linear-gradient(180deg,rgba(12,16,31,.94),rgba(10,14,27,.88)) !important;
+    box-shadow:0 12px 28px rgba(3,7,18,.10) !important;
+  }
+  html.light .overflow{
+    border-color:#dbe3f0 !important;
+    background:linear-gradient(180deg,rgba(252,253,255,.98),rgba(247,250,255,.97)) !important;
+    box-shadow:0 10px 24px rgba(31,41,55,.05) !important;
+  }
+  .overflow thead th{
+    font-size:10.5px !important;
+    letter-spacing:.11em !important;
+    color:var(--rm-text-subtle) !important;
+  }
+  .overflow th,.overflow td{
+    padding-top:12px !important;
+    padding-bottom:12px !important;
+  }
+  .overflow th:first-child,.overflow td:first-child{padding-left:18px !important}
+  .overflow th:last-child,.overflow td:last-child{padding-right:18px !important}
+  .overflow tbody tr:hover td{background:rgba(255,255,255,.015)}
+  html.light .overflow tbody tr:hover td{background:rgba(37,99,235,.025)}
+
+  #v-tax .tax-table th:nth-child(6),
+  #v-tax .tax-table td:nth-child(6){padding-right:22px !important}
+  #v-tax .tax-table th:nth-child(7),
+  #v-tax .tax-table td:nth-child(7){padding-left:22px !important}
+}
+
+@media(max-width:768px){
+  .hdr-top{
+    grid-template-columns:minmax(36px,1fr) auto minmax(36px,1fr) !important;
+    column-gap:10px !important;
+  }
+  .title-block{max-width:min(100%,286px) !important}
+  .brand-copy{gap:2px !important}
+  .theme-toggle{width:40px !important;height:40px !important}
+
+  table.mobile-stack tr{
+    border-radius:20px !important;
+    padding:14px 16px !important;
+    background:linear-gradient(180deg,rgba(9,13,27,.96),rgba(8,11,23,.92)) !important;
+    box-shadow:0 8px 20px rgba(3,7,18,.10) !important;
+  }
+  html.light table.mobile-stack tr{
+    background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(248,250,255,.98)) !important;
+    box-shadow:0 8px 18px rgba(31,41,55,.05) !important;
+  }
+  table.mobile-stack td{
+    gap:16px !important;
+    padding:11px 0 !important;
+    align-items:flex-start !important;
+  }
+  table.mobile-stack td::before{
+    font-size:10px !important;
+    letter-spacing:.14em !important;
+    color:var(--rm-text-muted) !important;
+    padding-right:10px !important;
+  }
+  html.light table.mobile-stack td::before{color:#73809b !important}
+  table.mobile-stack td>*{min-width:0}
+  table.mobile-stack td .pill{margin-left:auto !important}
+
+  .action-cluster,
+  .profile-cluster{border-radius:16px !important}
+  .profile-cluster{padding:10px !important;gap:10px !important}
+  .mobile-actions-shell>.mobile-actions-body{gap:12px !important;padding-top:12px !important}
+  .mobile-actions-shell>.mobile-actions-body button,
+  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu button{
+    border-radius:14px !important;
+    box-shadow:none !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1999,7 +2070,7 @@ table.mobile-stack tr{overflow:hidden}
 </div>
 
 <!-- Footer -->
-<div style="max-width:1200px;margin:32px auto 0;padding:0 24px 16px;text-align:center;font-size:10px;color:#334;letter-spacing:.5px;font-family:'DM Sans',sans-serif">RoomMap — Personal build with isolated local storage and iOS-style web-app presentation. Not tax advice. <span class="kbd">?</span> for keyboard shortcuts.</div>
+<div style="max-width:1200px;margin:32px auto 0;padding:0 24px 16px;text-align:center;font-size:10px;color:#334;letter-spacing:.5px;font-family:'DM Sans',sans-serif">RoomMap — Demo build with synthetic Canadian TFSA/FHSA data, polished for hosted use and iOS-style web-app presentation. Not tax advice. <span class="kbd">?</span> for keyboard shortcuts.</div>
 
 <!-- Hidden file input -->
 <input id="csv-file" type="file" accept=".csv,text/csv" class="hidden" aria-label="Choose a CSV file to import">
@@ -2022,7 +2093,7 @@ const OFFICIAL_TFSA_LIMITS = {
 };
 
 const CONFIG_DEFAULTS = {
-  tfsaEligibleStartYear: 2015,
+  tfsaEligibleStartYear: 2022,
   currentYear: 2026,
   fhsaFirstYear: 2023,
   fhsaAnnualLimit: 8000,
@@ -2033,410 +2104,88 @@ const CONFIG_DEFAULTS = {
 };
 
 const UI_DEFAULTS = {
-  TFSA: {inst:'Wealthsimple',acct:'manual',type:'Contribution',treat:'Include'},
-  FHSA: {inst:'Wealthsimple',acct:'HQ5XRTH65CAD',type:'Contribution',status:'Include'},
+  TFSA: {inst:'Demo Brokerage',acct:'TFSA-DEMO-03',type:'Contribution',treat:'Include'},
+  FHSA: {inst:'Demo Brokerage',acct:'FHSA-DEMO-03',type:'Contribution',status:'Include'},
   importDefaults: {sourceKind:'auto',plan:'AUTO',signMode:'positive_inflow',dateFormat:'AUTO',institution:'',account:'',mergeMode:'skip'},
   craSnapshots: {tfsa:null,fhsa:null},
   lastImportSummary: null,
   importHistory: [],
   postImportNotice: null,
-  activityLog: []
+  demoSeedActive: true,
+  heatmapMode: 'last12'
 };
+
+function hasSeededDemoData(){ return !!(uiPrefs && uiPrefs.demoSeedActive); }
 
 // ─── Initial Seeded Data ───
 const INIT_T=[
-["2016-11-30", "CIBC", "66540998", "C", 25],
-["2016-12-30", "CIBC", "66540998", "C", 25],
-["2017-01-30", "CIBC", "66540998", "C", 25],
-["2017-02-28", "CIBC", "66540998", "C", 25],
-["2017-03-30", "CIBC", "66540998", "C", 25],
-["2017-04-30", "CIBC", "66540998", "C", 25],
-["2017-05-30", "CIBC", "66540998", "C", 25],
-["2017-06-30", "CIBC", "66540998", "C", 25],
-["2017-07-30", "CIBC", "66540998", "C", 25],
-["2017-08-11", "Canada Trust", "001626489768", "C", 25],
-["2017-08-25", "Canada Trust", "001626489768", "C", 25],
-["2017-08-30", "CIBC", "66540998", "C", 25],
-["2017-09-08", "Canada Trust", "001626489768", "C", 25],
-["2017-09-22", "Canada Trust", "001626489768", "C", 25],
-["2017-09-30", "CIBC", "66540998", "C", 25],
-["2017-10-06", "Canada Trust", "001626489768", "C", 25],
-["2017-10-20", "Canada Trust", "001626489768", "C", 25],
-["2017-10-30", "CIBC", "66540998", "C", 25],
-["2017-11-02", "CIBC", "66540998", "W", 301.27],
-["2017-11-03", "Canada Trust", "001626489768", "C", 25],
-["2017-11-17", "Canada Trust", "001626489768", "C", 25],
-["2017-12-01", "Canada Trust", "001626489768", "C", 25],
-["2017-12-15", "Canada Trust", "001626489768", "C", 25],
-["2017-12-29", "Canada Trust", "001626489768", "C", 25],
-["2018-01-12", "Canada Trust", "001626489768", "C", 25],
-["2018-01-26", "Canada Trust", "001626489768", "C", 25],
-["2018-02-05", "Canada Trust", "001626489768", "C", 20],
-["2018-02-05", "Canada Trust", "001626489768", "W", 10],
-["2018-02-05", "Canada Trust", "001626489768", "W", 134],
-["2018-02-09", "Canada Trust", "001626489768", "C", 25],
-["2018-02-14", "Canada Trust", "001626489768", "W", 126.57],
-["2018-02-16", "Canada Trust", "001626489768", "W", 100],
-["2018-02-23", "Canada Trust", "001626489768", "C", 25],
-["2018-02-26", "Canada Trust", "001626489768", "W", 25],
-["2018-03-09", "Canada Trust", "001626489768", "C", 25],
-["2018-03-13", "Canada Trust", "001626489768", "W", 25],
-["2018-03-23", "Canada Trust", "001626489768", "C", 25],
-["2018-04-06", "Canada Trust", "001626489768", "C", 25],
-["2018-04-20", "Canada Trust", "001626489768", "C", 25],
-["2018-04-25", "Canada Trust", "001626489768", "W", 75.09],
-["2018-05-04", "TD Waterhouse", "236RY3J", "C", 2000],
-["2018-05-09", "TD Waterhouse", "236RY3J", "C", 50],
-["2018-05-14", "TD Waterhouse", "236RY3J", "C", 600],
-["2018-05-15", "TD Waterhouse", "236RY3J", "C", 1133.22],
-["2018-06-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2018-06-04", "TD Waterhouse", "236RY3J", "C", 1550],
-["2018-06-18", "TD Waterhouse", "236RY3J", "C", 1100],
-["2018-06-19", "TD Waterhouse", "236RY3J", "C", 1010],
-["2018-07-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2018-08-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2018-09-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2018-10-01", "TD Waterhouse", "236RY3J", "C", 943.56],
-["2018-11-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2018-12-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-01-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-02-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-03-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-04-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-04-16", "TD Waterhouse", "236RY3J", "C", 700],
-["2019-05-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-06-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-06-27", "TD Waterhouse", "236RY3J", "W", 300.01],
-["2019-07-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-07-03", "TD Waterhouse", "236RY3J", "W", 100],
-["2019-08-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-09-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-10-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-11-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-12-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2019-12-05", "TD Waterhouse", "236RY3J", "W", 500],
-["2020-01-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-02-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-02-03", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-03-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-04-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-04-22", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-05-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-06-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-06-03", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-07-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-08-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-08-10", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-09-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-10-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-10-08", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-10-19", "TD Waterhouse", "236RY3J", "C", 6001],
-["2020-10-19", "TD Waterhouse", "236RY3J", "W", 1.17],
-["2020-11-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-11-23", "TD Waterhouse", "236RY3J", "C", 700],
-["2020-12-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2020-12-03", "TD Waterhouse", "236RY3J", "W", 200],
-["2020-12-11", "TD Waterhouse", "236RY3J", "C", 18],
-["2020-12-17", "TD Waterhouse", "236RY3J", "C", 900],
-["2020-12-31", "TD Waterhouse", "236RY3J", "W", 845.91],
-["2021-01-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-01-15", "TD Waterhouse", "236RY3J", "C", 1500],
-["2021-01-19", "Questrade", "5238539414", "C", 2000],
-["2021-02-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-02-23", "TD Waterhouse", "236RY3J", "C", 1100],
-["2021-02-25", "TD Waterhouse", "236RY3J", "C", 45],
-["2021-03-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-03-05", "TD Waterhouse", "236RY3J", "C", 620],
-["2021-03-17", "TD Waterhouse", "236RY3J", "C", 1300],
-["2021-03-18", "Canada Trust", "001626489768", "C", 60],
-["2021-03-18", "Canada Trust", "001626489768", "W", 60.03],
-["2021-03-18", "TD Waterhouse", "236RY3J", "C", 60],
-["2021-03-23", "TD Waterhouse", "236RY3J", "C", 1300],
-["2021-03-24", "TD Waterhouse", "236RY3J", "C", 1050],
-["2021-03-25", "TD Waterhouse", "236RY3J", "C", 1005],
-["2021-04-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-04-07", "TD Waterhouse", "236RY3J", "C", 1200],
-["2021-04-09", "TD Waterhouse", "236RY3J", "C", 2200],
-["2021-04-14", "TD Waterhouse", "236RY3J", "C", 2000],
-["2021-04-19", "TD Waterhouse", "236RY3J", "C", 1000],
-["2021-04-23", "TD Waterhouse", "236RY3J", "C", 2200],
-["2021-05-03", "TD Waterhouse", "236RY3J", "C", 1600],
-["2021-05-17", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-05-25", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-05-27", "TD Waterhouse", "236RY3J", "C", 600],
-["2021-05-31", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-06-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-06-16", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-06-24", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-07-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-07-19", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-08-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-08-18", "Wealthsimple", "HB03657K4CAD", "C", 250],
-["2021-09-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-09-17", "TD Waterhouse", "236RY3J", "C", 2000],
-["2021-09-20", "Wealthsimple", "HB03657K4CAD", "C", 500],
-["2021-09-28", "Wealthsimple", "HB03657K4CAD", "C", 500],
-["2021-09-29", "Wealthsimple", "HB03657K4CAD", "C", 500],
-["2021-10-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-10-06", "TD Waterhouse", "236RY3J", "W", 500],
-["2021-10-13", "TD Waterhouse", "236RY3J", "W", 1000],
-["2021-10-20", "TD Waterhouse", "236RY3J", "C", 600],
-["2021-10-25", "TD Waterhouse", "236RY3J", "C", 188.86],
-["2021-10-27", "TD Waterhouse", "236RY3J", "W", 100],
-["2021-11-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-11-16", "Wealthsimple", "HB03657K4CAD", "C", 750],
-["2021-11-18", "Wealthsimple", "HB03657K4CAD", "C", 750],
-["2021-12-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2021-12-03", "Wealthsimple", "HB03657K4CAD", "C", 300],
-["2022-01-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-02-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-02-07", "TD Waterhouse", "236RY3J", "W", 5000],
-["2022-02-07", "Wealthsimple", "HB03657K4CAD", "C", 5000],
-["2022-03-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-04-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-05-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-05-24", "TD Waterhouse", "236RY3J", "W", 21980.6],
-["2022-06-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-07-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-08-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-09-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-10-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-11-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2022-12-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-01-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-02-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-02-10", "TD Waterhouse", "236RY3J", "W", 3453],
-["2023-03-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-04-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-05-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-06-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-07-04", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-07-31", "TD Waterhouse", "236RY3J", "W", 500],
-["2023-08-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-09-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-10-03", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-11-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2023-12-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-01-02", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-02-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-03-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-03-01", "TD Waterhouse", "236RY3J", "W", 700],
-["2024-03-11", "Wealthsimple", "HB03657K4CAD", "C", 3000],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 172.71],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 178.38],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 287.67],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 311.84],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 518.73],
-["2024-03-22", "Wealthsimple", "HB03657K4CAD", "C", 1156.16],
-["2024-03-25", "Wealthsimple", "HB03657K4CAD", "C", 310],
-["2024-03-25", "Wealthsimple", "HB03657K4CAD", "C", 310],
-["2024-03-25", "Wealthsimple", "HB03657K4CAD", "C", 462],
-["2024-03-25", "Wealthsimple", "HB03657K4CAD", "C", 463.83],
-["2024-03-26", "Wealthsimple", "HB03657K4CAD", "C", 147.5],
-["2024-03-26", "Wealthsimple", "HB03657K4CAD", "C", 301],
-["2024-03-26", "Wealthsimple", "HB03657K4CAD", "C", 502.48],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 145.47],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 214.26],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 281],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 284],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 284.04],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 287],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 373.27],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 382.61],
-["2024-03-27", "Wealthsimple", "HB03657K4CAD", "C", 438.57],
-["2024-03-28", "Wealthsimple", "HB03657K4CAD", "C", 250.5],
-["2024-03-28", "Wealthsimple", "HB03657K4CAD", "C", 583.76],
-["2024-03-28", "Wealthsimple", "HB03657K4CAD", "C", 590],
-["2024-04-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-04-01", "Wealthsimple", "HB03657K4CAD", "C", 300],
-["2024-04-01", "Wealthsimple", "HB03657K4CAD", "C", 1887.6],
-["2024-04-01", "Wealthsimple", "HB03657K4CAD", "C", 2000],
-["2024-04-02", "Wealthsimple", "HB03657K4CAD", "C", 911.11],
-["2024-04-03", "Wealthsimple", "HB03657K4CAD", "C", 1000],
-["2024-04-03", "Wealthsimple", "HB03657K4CAD", "C", 1500],
-["2024-04-06", "Wealthsimple", "HB03657K4CAD", "C", 0.41],
-["2024-04-06", "Wealthsimple", "HB03657K4CAD", "C", 0.44],
-["2024-04-08", "Wealthsimple", "HB03657K4CAD", "C", 547.88],
-["2024-04-08", "Wealthsimple", "HB03657K4CAD", "C", 559.3],
-["2024-04-08", "Wealthsimple", "HB03657K4CAD", "C", 1219.41],
-["2024-04-08", "Wealthsimple", "HB03657K4CAD", "C", 1400],
-["2024-04-09", "Wealthsimple", "HB03657K4CAD", "C", 480],
-["2024-04-10", "Wealthsimple", "HB03657K4CAD", "C", 1000],
-["2024-04-10", "Wealthsimple", "HB03657K4CAD", "C", 2500],
-["2024-04-11", "Wealthsimple", "HB03657K4CAD", "C", 50],
-["2024-04-12", "Wealthsimple", "HB03657K4CAD", "C", 75],
-["2024-04-12", "Wealthsimple", "HB03657K4CAD", "C", 700],
-["2024-04-12", "Wealthsimple", "HB03657K4CAD", "C", 1500],
-["2024-04-15", "Wealthsimple", "HB03657K4CAD", "C", 424.68],
-["2024-04-28", "Wealthsimple", "HB03657K4CAD", "C", 0.04],
-["2024-04-28", "Wealthsimple", "HB03657K4CAD", "C", 0.35],
-["2024-04-29", "Wealthsimple", "HB03657K4CAD", "C", 600],
-["2024-04-30", "Wealthsimple", "HB03657K4CAD", "C", 1.5],
-["2024-04-30", "Wealthsimple", "HB03657K4CAD", "C", 800],
-["2024-05-01", "TD Waterhouse", "236RY3J", "C", 100],
-["2024-05-01", "Wealthsimple", "HB03657K4CAD", "C", 1.78],
-["2024-05-09", "Wealthsimple", "HB03657K4CAD", "C", 1000],
-["2024-05-10", "Wealthsimple", "HB03657K4CAD", "C", 700],
-["2024-05-10", "Wealthsimple", "HB03657K4CAD", "C", 1000],
-["2024-05-10", "Wealthsimple", "HB03657K4CAD", "C", 1000],
-["2024-05-15", "Wealthsimple", "HB03657K4CAD", "C", 2],
-["2024-05-15", "Wealthsimple", "HB03657K4CAD", "C", 3],
-["2024-05-15", "Wealthsimple", "HB03657K4CAD", "C", 750],
-["2024-05-15", "Wealthsimple", "HB03657K4CAD", "C", 750],
-["2024-05-16", "Wealthsimple", "HB03657K4CAD", "C", 201.72],
-["2024-05-16", "Wealthsimple", "HB03657K4CAD", "C", 243.26],
-["2024-05-16", "Wealthsimple", "HB03657K4CAD", "C", 1160],
-["2024-05-22", "Wealthsimple", "HB03657K4CAD", "C", 1500],
-["2024-05-24", "TD Waterhouse", "236RY3J", "C", 29.45],
-["2024-05-31", "Wealthsimple", "HB03657K4CAD", "C", 0.25],
-["2024-05-31", "Wealthsimple", "HB03657K4CAD", "C", 1.2],
-["2024-06-12", "TD Waterhouse", "236RY3J", "C", 1150.85],
-["2024-07-02", "TD Waterhouse", "236RY3J", "C", 101.6],
-["2024-07-29", "Wealthsimple", "HB03657K4CAD", "C", 15.9],
-["2024-08-01", "Wealthsimple", "HB03657K4CAD", "C", 533.45],
-["2024-10-10", "Wealthsimple", "HB03657K4CAD", "C", 3.33],
-["2024-11-07", "Wealthsimple", "HB03657K4CAD", "C", 0.11],
-["2024-11-08", "Wealthsimple", "HB03657K4CAD", "C", 3.56],
-["2024-11-09", "Wealthsimple", "HB03657K4CAD", "C", 0.11],
-["2024-11-12", "Wealthsimple", "HB03657K4CAD", "C", 0.51],
-["2024-11-12", "Wealthsimple", "HB03657K4CAD", "C", 0.51],
-["2024-11-13", "Wealthsimple", "HB03657K4CAD", "C", 0.02],
-["2024-11-13", "Wealthsimple", "HB03657K4CAD", "C", 0.76],
-["2024-11-14", "Wealthsimple", "HB03657K4CAD", "C", 0.51],
-["2024-11-14", "Wealthsimple", "HB03657K4CAD", "C", 0.51],
-["2024-11-15", "Wealthsimple", "HB03657K4CAD", "C", 0.25],
-["2024-11-15", "Wealthsimple", "HB03657K4CAD", "C", 0.85],
-["2024-11-19", "Wealthsimple", "HB03657K4CAD", "C", 5.84],
-["2024-11-21", "Wealthsimple", "HB03657K4CAD", "C", 1.02],
-["2024-11-28", "Wealthsimple", "HB03657K4CAD", "C", 0.01],
-["2024-11-28", "Wealthsimple", "HB03657K4CAD", "C", 0.11],
-["2024-11-28", "Wealthsimple", "HB03657K4CAD", "C", 0.71],
-["2024-11-28", "Wealthsimple", "HB03657K4CAD", "C", 0.92],
-["2024-12-02", "Wealthsimple", "HB03657K4CAD", "C", 0.24],
-["2024-12-02", "Wealthsimple", "HB03657K4CAD", "C", 12.47],
-["2024-12-13", "Wealthsimple", "HB03657K4CAD", "C", 11.07],
-["2024-12-23", "Wealthsimple", "HB03657K4CAD", "C", 70.08],
-["2024-12-28", "Wealthsimple", "HB03657K4CAD", "C", 0.11],
-["2024-12-28", "Wealthsimple", "HB03657K4CAD", "C", 0.71],
-["2024-12-30", "Wealthsimple", "HB03657K4CAD", "C", 0.03],
-["2024-12-30", "Wealthsimple", "HB03657K4CAD", "C", 0.5],
-["2024-12-30", "Wealthsimple", "HB03657K4CAD", "C", 0.8],
-["2024-12-30", "Wealthsimple", "HB03657K4CAD", "C", 338.76],
-["2025-10-07", "Wealthsimple", "WK49QC1K9CAD", "C", 100],
-["2025-10-30", "Wealthsimple", "WK49QC1K9CAD", "C", 100],
-["2025-11-30", "Wealthsimple", "WK49QC1K9CAD", "C", 100],
-["2025-12-30", "Wealthsimple", "WK49QC1K9CAD", "C", 100],
-["2026-01-06", "Wealthsimple", "Grouped TFSA activity export", "C", 3],
-["2026-01-19", "Wealthsimple", "Grouped TFSA activity export", "C", 253.79],
-["2026-01-21", "Wealthsimple", "Grouped TFSA activity export", "C", 385.32],
-["2026-01-21", "Wealthsimple", "Grouped TFSA activity export", "C", 410],
-["2026-01-23", "Wealthsimple", "Grouped TFSA activity export", "C", 348.45],
-["2026-01-23", "Wealthsimple", "Grouped TFSA activity export", "C", 550],
-["2026-01-23", "Wealthsimple", "Grouped TFSA activity export", "C", 1001.2],
-["2026-01-27", "Wealthsimple", "Grouped TFSA activity export", "C", 377.15],
-["2026-01-27", "Wealthsimple", "Grouped TFSA activity export", "C", 667],
-["2026-01-27", "Wealthsimple", "Grouped TFSA activity export", "C", 689.81],
-["2026-01-27", "Wealthsimple", "Grouped TFSA activity export", "C", 1044.39],
-["2026-01-28", "Wealthsimple", "Grouped TFSA activity export", "C", 20],
-["2026-01-28", "Wealthsimple", "Grouped TFSA activity export", "C", 345],
-["2026-01-28", "Wealthsimple", "Grouped TFSA activity export", "C", 358.07],
-["2026-01-28", "Wealthsimple", "Grouped TFSA activity export", "C", 550.0],
-["2026-02-02", "Wealthsimple", "Grouped TFSA activity export", "C", 475.02],
-["2026-03-25", "Wealthsimple", "Grouped TFSA activity export", "C", 852.28],
-["2026-03-26", "Wealthsimple", "Grouped TFSA activity export", "C", 1000.0],
-["2026-03-27", "Wealthsimple", "Grouped TFSA activity export", "C", 341.6],
-["2026-03-27", "Wealthsimple", "Grouped TFSA activity export", "C", 703.0],
-["2026-03-27", "Wealthsimple", "Grouped TFSA activity export", "C", 796.1]
+["2022-01-14", "Maple Bank", "TFSA-DEMO-01", "C", 1800],
+["2022-03-11", "Maple Bank", "TFSA-DEMO-01", "C", 950],
+["2022-05-27", "Maple Bank", "TFSA-DEMO-01", "C", 1250],
+["2022-09-09", "Maple Bank", "TFSA-DEMO-01", "W", 600],
+["2022-11-18", "Maple Bank", "TFSA-DEMO-01", "C", 700],
+["2023-01-12", "Maple Bank", "TFSA-DEMO-01", "C", 2500],
+["2023-02-24", "Maple Bank", "TFSA-DEMO-01", "C", 900],
+["2023-04-07", "Maple Bank", "TFSA-DEMO-01", "C", 1200],
+["2023-06-16", "Maple Bank", "TFSA-DEMO-01", "W", 350],
+["2023-09-15", "Maple Bank", "TFSA-DEMO-01", "W", 400],
+["2023-11-10", "Maple Bank", "TFSA-DEMO-01", "C", 650],
+["2024-01-19", "RoomMap Invest", "TFSA-DEMO-02", "C", 2200],
+["2024-02-20", "RoomMap Invest", "TFSA-DEMO-02", "C", 3000],
+["2024-04-12", "RoomMap Invest", "TFSA-DEMO-02", "C", 850],
+["2024-05-10", "RoomMap Invest", "TFSA-DEMO-02", "C", 1800],
+["2024-07-26", "RoomMap Invest", "TFSA-DEMO-02", "W", 500],
+["2024-09-13", "RoomMap Invest", "TFSA-DEMO-02", "C", 725],
+["2024-11-01", "RoomMap Invest", "TFSA-DEMO-02", "W", 950],
+["2024-11-15", "RoomMap Invest", "TFSA-DEMO-02", "C", 900],
+["2024-12-06", "RoomMap Invest", "TFSA-DEMO-02", "C", 400],
+["2024-12-13", "RoomMap Invest", "TFSA-DEMO-02", "C", 1200],
+["2025-01-08", "Demo Brokerage", "TFSA-DEMO-03", "C", 4200],
+["2025-02-14", "Demo Brokerage", "TFSA-DEMO-03", "C", 650],
+["2025-03-21", "Demo Brokerage", "TFSA-DEMO-03", "C", 950],
+["2025-05-30", "Demo Brokerage", "TFSA-DEMO-03", "W", 600],
+["2025-07-11", "Demo Brokerage", "TFSA-DEMO-03", "C", 1100],
+["2025-08-29", "Demo Brokerage", "TFSA-DEMO-03", "W", 1200],
+["2025-10-17", "Demo Brokerage", "TFSA-DEMO-03", "C", 500],
+["2025-12-05", "Demo Brokerage", "TFSA-DEMO-03", "C", 450],
+["2026-01-10", "Summit Direct", "TFSA-DEMO-04", "C", 600],
+["2026-02-14", "Summit Direct", "TFSA-DEMO-04", "C", 425],
+["2026-03-07", "Summit Direct", "TFSA-DEMO-04", "C", 500],
+["2026-04-18", "Summit Direct", "TFSA-DEMO-04", "W", 250],
+["2026-05-22", "Summit Direct", "TFSA-DEMO-04", "C", 375],
+["2026-07-10", "Summit Direct", "TFSA-DEMO-04", "C", 425],
+["2026-09-04", "Summit Direct", "TFSA-DEMO-04", "W", 300]
 ];
 
 const INIT_F=[
-["2023-12-22", "Questrade", "53122590", 250],
-["2023-12-31", "Questrade", "53122590", 1750],
-["2023-12-31", "Questrade", "53122590", 3000],
-["2023-12-31", "Questrade", "53122590", 3000],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", 1000],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", 1000],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", 1000],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 942.18],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 508.47],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 370.82],
-["2024-03-28", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 173.29],
-["2024-03-28", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 170.12],
-["2024-03-28", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 499.07],
-["2024-03-28", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 364.06],
-["2024-03-28", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 924.68],
-["2024-04-02", "Wealthsimple", "HQ5XRTH65CAD", 1000],
-["2024-04-02", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 1049.13],
-["2024-04-02", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 1028.81],
-["2024-04-05", "Wealthsimple", "HQ5XRTH65CAD", 559],
-["2024-04-05", "Wealthsimple", "HQ5XRTH65CAD", 568.82],
-["2024-04-05", "Wealthsimple", "HQ5XRTH65CAD", 739.1],
-["2024-04-05", "Wealthsimple", "HQ5XRTH65CAD", 869.67],
-["2024-04-09", "Wealthsimple", "HQ5XRTH65CAD", 269],
-["2024-04-09", "Wealthsimple", "HQ5XRTH65CAD", 271],
-["2024-05-22", "Wealthsimple", "HQ5XRTH65CAD", 500],
-["2024-05-31", "Wealthsimple", "HQ5XRTH65CAD", 223],
-["2024-05-31", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 210.79],
-["2024-05-31", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 11.57],
-["2024-05-31", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 11.36],
-["2024-05-31", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 206.94],
-["2024-07-02", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer In", 131.58],
-["2024-07-02", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer Out", 133.91],
-["2024-08-02", "Wealthsimple", "HQ5XRTH65CAD", 469.1],
-["2024-08-02", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 466.25],
-["2024-08-02", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 0.61],
-["2024-08-02", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 0.60],
-["2024-08-02", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 457.48],
-["2024-10-10", "Wealthsimple", "HQ5XRTH65CAD", 0.32],
-["2024-10-31", "Wealthsimple", "HQ5XRTH65CAD", 5.83],
-["2024-10-31", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer Out", 7.88],
-["2024-10-31", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer In", 7.72],
-["2024-12-13", "Wealthsimple", "HQ5XRTH65CAD", 9.16],
-["2025-03-13", "Wealthsimple", "HQ5XRTH65CAD", 54.87],
-["2025-03-18", "Wealthsimple", "HQ5XRTH65CAD", 3.93],
-["2025-06-15", "Wealthsimple", "HQ5XRTH65CAD", "FHSA Direct Transfer In", 5916.75],
-["2025-06-15", "Wealthsimple", "HQ5XRTL60USD", "FHSA Direct Transfer Out", 5916.75],
-["2025-10-28", "Wealthsimple", "HQ5XRTH65CAD", 5],
-["2025-11-01", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-11-08", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-11-15", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-11-22", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-11-29", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-12-06", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-12-13", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-12-20", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2025-12-27", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2026-01-03", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2026-01-10", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2026-01-17", "Wealthsimple", "HQ5XRTH65CAD", 20],
-["2026-01-24", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-01-31", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-02-07", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-02-11", "Wealthsimple", "HQ5XRTH65CAD", 254.07],
-["2026-02-11", "Wealthsimple", "HQ5XRTH65CAD", 473.81],
-["2026-02-12", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-12", "Wealthsimple", "HQ5XRTH65CAD", 315],
-["2026-02-13", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-14", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-02-17", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-18", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-19", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-20", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-21", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-02-23", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-24", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-25", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-26", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-27", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-02-28", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-03-02", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-03-03", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-03-04", "Wealthsimple", "HQ5XRTH65CAD", 50],
-["2026-03-07", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-03-14", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-03-21", "Wealthsimple", "HQ5XRTH65CAD", 30],
-["2026-03-27", "Wealthsimple", "HQ5XRTH65CAD", 13.38],
-["2026-03-28", "Wealthsimple", "HQ5XRTH65CAD", 30.0]
+["2023-01-20", "Maple Bank", "FHSA-DEMO-01", 2000],
+["2023-04-14", "Maple Bank", "FHSA-DEMO-01", 1500],
+["2023-07-21", "Maple Bank", "FHSA-DEMO-01", 2250],
+["2023-11-24", "Maple Bank", "FHSA-DEMO-01", 2250],
+["2024-01-26", "Maple Bank", "FHSA-DEMO-01", 1000],
+["2024-02-23", "Maple Bank", "FHSA-DEMO-01", 1000],
+["2024-03-22", "Maple Bank", "FHSA-DEMO-01", 850],
+["2024-04-19", "Maple Bank", "FHSA-DEMO-01", 900],
+["2024-05-24", "Maple Bank", "FHSA-DEMO-01", 1100],
+["2024-06-21", "Maple Bank", "FHSA-DEMO-01", 1200],
+["2024-08-16", "Maple Bank", "FHSA-DEMO-01", 750],
+["2024-09-20", "Maple Bank", "FHSA-DEMO-01", 800],
+["2024-10-18", "Maple Bank", "FHSA-DEMO-01", 450],
+["2024-11-22", "Maple Bank", "FHSA-DEMO-01", 400],
+["2025-01-10", "RoomMap Invest", "FHSA-DEMO-02", 1200],
+["2025-03-14", "RoomMap Invest", "FHSA-DEMO-02", 900],
+["2025-05-09", "RoomMap Invest", "FHSA-DEMO-02", 1000],
+["2025-06-18", "RoomMap Invest", "FHSA-DEMO-02", 850],
+["2025-07-19", "RoomMap Invest", "FHSA-DEMO-02", "FHSA Direct Transfer Out", 600],
+["2025-07-19", "RoomMap Invest", "FHSA-DEMO-USD", "FHSA Direct Transfer In", 600],
+["2025-08-22", "RoomMap Invest", "FHSA-DEMO-02", 700],
+["2025-09-26", "RoomMap Invest", "FHSA-DEMO-02", 600],
+["2025-11-07", "RoomMap Invest", "FHSA-DEMO-02", 500],
+["2025-12-12", "RoomMap Invest", "FHSA-DEMO-02", 450],
+["2026-01-25", "Demo Brokerage", "FHSA-DEMO-03", 500],
+["2026-03-12", "Demo Brokerage", "FHSA-DEMO-03", 450],
+["2026-05-16", "Demo Brokerage", "FHSA-DEMO-03", 400],
+["2026-07-18", "Demo Brokerage", "FHSA-DEMO-03", 350]
 ];
 
 function expandT(arr){return arr.map((a,i)=>({id:'TFSA-SEED-'+String(i+1).padStart(5,'0'),seq:i+1,d:a[0],inst:a[1],acct:a[2],type:a[3]==='C'?'Contribution':a[3]==='W'?'Withdrawal':a[3],amt:a[4],treat:'Include',note:''}))}
@@ -2500,7 +2249,7 @@ async function registerPwaSupport(){
   if(!_pwaState.supported)return;
   if(_pwaState.localFile){_pwaState.lastError='Offline install activates after hosting on HTTPS or localhost. Local file mode still works, but service-worker caching is unavailable.';return;}
   try{
-    _pwaReg=await navigator.serviceWorker.register('./roommap_personal_sw.js');
+    _pwaReg=await navigator.serviceWorker.register('./roommap_demo_sw.js');
     _pwaState.registered=true;
     _pwaState.controller=!!navigator.serviceWorker.controller;
     _pwaState.scope=_pwaReg&&_pwaReg.scope?_pwaReg.scope:'';
@@ -4665,8 +4414,8 @@ function runSelfTest(){
   checks.push({label:'Flexible MDY import date parses',actual:parseFlexibleDate('03/28/2026','MDY')==='2026-03-28'?1:0,expected:1,tol:0});
   checks.push({label:'OFX parser reads one transaction',actual:parseOfxTransactions('<OFX><BANKMSGSRSV1><STMTTRN><DTPOSTED>20260328<TRNAMT>-125.50<FITID>1<NAME>ATM<MEMO>Withdrawal</STMTTRN></BANKMSGSRSV1></OFX>').length,expected:1,tol:0});
   checks.push({label:'CRA room snapshot parser finds TFSA room',actual:parseCraRoomSnapshots('Your 2026 TFSA contribution room is $7,000.00').length,expected:1,tol:0});
-  checks.push({label:'CRA TFSA PDF parser extracts contribution and withdrawal',actual:(()=>{const s=`Transactions for CIBC RSP CENTRE , 66540998\n2016-11-30 25.00 0.00\n2017-11-02 0.00 301.27`; const r=parseCraTfsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='Withdrawal';})()?1:0,expected:1,tol:0});
-  checks.push({label:'CRA FHSA PDF parser extracts contribution and transfer out',actual:(()=>{const s=`Financial Institution: Wealthsimple Investments Inc.\nFHSA contract number: HQ5XRTH65CAD\n2025-03-13 CONTRIBUTION 54.87\n2024-03-28 FHSA TRANSFER OUT 942.18`; const r=parseCraFhsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='FHSA Direct Transfer Out';})()?1:0,expected:1,tol:0});
+  checks.push({label:'CRA TFSA PDF parser extracts contribution and withdrawal',actual:(()=>{const s=`Transactions for CIBC RSP CENTRE , TFSA-DEMO-SAMPLE\n2016-11-30 25.00 0.00\n2017-11-02 0.00 301.27`; const r=parseCraTfsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='Withdrawal';})()?1:0,expected:1,tol:0});
+  checks.push({label:'CRA FHSA PDF parser extracts contribution and transfer out',actual:(()=>{const s=`Financial Institution: Wealthsimple Investments Inc.\nFHSA contract number: FHSA-DEMO-SAMPLE\n2025-03-13 CONTRIBUTION 54.87\n2024-03-28 FHSA TRANSFER OUT 942.18`; const r=parseCraFhsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='FHSA Direct Transfer Out';})()?1:0,expected:1,tol:0});
   checks.push({label:'Wealthsimple FHSA PDF parser treats transfer in as contribution',actual:(()=>{const meta={pages:[{pageNumber:1,refDate:'2026-03-22',lines:[{text:'Yesterday'},{text:'Transfer in'},{text:'FHSA'},{text:'$30.00 CAD'}]}]}; const r=parseWealthsimpleActivityPdf(meta,'FHSA'); return r.candidates.length===1 && r.candidates[0].d==='2026-03-21' && r.candidates[0].type==='Contribution';})()?1:0,expected:1,tol:0});
 
   trackerConfig=oldConfig;
@@ -4685,7 +4434,7 @@ function runSelfTest(){
 // PERSISTENCE — with localStorage error handling
 // ═══════════════════════════════════════════════════
 
-const STORAGE_KEY='tfsa-fhsa-personal-v11_1-20260329';
+const STORAGE_KEY='tfsa-fhsa-demo-v11_1-20260329';
 const TRACKER_SCHEMA_VERSION=12;
 function save(){
   try{
@@ -4994,8 +4743,9 @@ function render(){
 
   // Dashboard
   const isLedgerEmpty=!tT.length&&!fT.length;
+  const demoBanner=(typeof hasSeededDemoData==='function'&&hasSeededDemoData())?`<div class="note-box demo-banner"><h3>Demo mode active</h3><p>This file is currently showing bundled synthetic sample data. Click <b>Start Empty</b> to clear the demo ledger and import only your own transactions. Click <b>Reset</b> to restore the demo sample data.</p></div>`:'';
   const emptySetupBanner=isLedgerEmpty?`<div class="note-box empty-setup-banner"><h3>Set up your starting rules before importing</h3><p><b>${escapeHtml(getActiveProfileLabel())}</b> is currently empty. Before importing any files, review <b>Settings</b> so the opening room and planning year reflect the real account owner.</p><p>Recommended first checks: <b>TFSA Eligible Start Year</b>, <b>Dashboard / Planning Year</b>, <b>FHSA First Participation Year</b>, and <b>FHSA Birth Date</b> if you want the age-71 FHSA closure rule included.</p><div class="inline-btns"><button onclick="openSettings()">Open Settings</button><button onclick="openImportAssistant()">Import Data</button></div></div>`:'';
-  let h=emptySetupBanner+backupBanner+buildPostImportNotice();
+  let h=demoBanner+emptySetupBanner+backupBanner+buildPostImportNotice();
   h+=`<div class="section-head"><h2 class="sec">TFSA — ${cy}</h2><div style="display:flex;align-items:center;gap:10px">${badge}<span class="profile-inline-label" title="Active profile">${escapeHtml(getActiveProfileLabel())}</span></div></div><div class="cards cards-4">`;
   const tfsaUtilPct=safeNum(tc.openRoom)>0?Math.min(100,(safeNum(tc.contribs)/safeNum(tc.openRoom))*100):100;
   h+=card('Room Remaining',F(tc.yeRoom),'Opening: '+F(tc.openRoom),false,{accent:'blue',progress:100-tfsaUtilPct,progressColor:'blue'});
@@ -5109,7 +4859,7 @@ function render(){
   // ── Tax View ──
   let tx=`<h2 class="view-title">Monthly Excess Tax Breakdown</h2>`;
   tx+=`<p class="annual-desc">Modeled at 1% of the highest excess in each month. TFSA and FHSA excess returns are generally due by June 30 of the following year.</p>`;
-  tx+=`<div class="cards cards-2">${card('TFSA Tax',tTot>0?F(tTot):'None',tfsa.monthlyTax.length+' months',tTot>0)}${card('FHSA Tax',fTot>0?F(fTot):'None',fhsa.monthlyTax.length+' months',fTot>0)}</div>`;
+  tx+=`<div class="cards">${card('TFSA Tax',tTot>0?F(tTot):'None',tfsa.monthlyTax.length+' months',tTot>0)}${card('FHSA Tax',fTot>0?F(fTot):'None',fhsa.monthlyTax.length+' months',fTot>0)}</div>`;
   const allTax=[...tfsa.monthlyTax.map(t=>({...t,plan:'TFSA'})),...fhsa.monthlyTax.map(t=>({...t,plan:'FHSA'}))].sort((a,b)=>a.month.localeCompare(b.month));
   if(allTax.length){
     tx+=`<div class="overflow table-wrap tax-table-wrap"><table class="mobile-stack tax-table"><thead><tr><th>Month</th><th>Plan</th><th class="r">Start</th><th class="r">Peak</th><th class="r">End</th><th class="r">1% Tax</th><th>Form</th></tr></thead><tbody>`;
@@ -5892,9 +5642,9 @@ function downloadCSVTemplate(plan='ALL'){
     rows.push(["","","TFSA","2026-04-15","Wealthsimple","manual","Transfer In","5000.00","Include","Include","Direct TFSA-to-TFSA transfer (room-neutral)"]);
   }
   if(plan==='ALL'||plan==='FHSA'){
-    rows.push(["","","FHSA","2026-04-01","Wealthsimple","HQ5XRTH65CAD","Contribution","100.00","Include","Include","Optional note"]);
-    rows.push(["","","FHSA","2026-04-15","Wealthsimple","HQ5XRTH65CAD","RRSP Transfer In","500.00","Include","Include","Counts against FHSA participation room"]);
-    rows.push(["","","FHSA","2026-04-30","Wealthsimple","HQ5XRTH65CAD","Taxable Withdrawal","250.00","Include","Include","Can create re-participation for a future year"]);
+    rows.push(["","","FHSA","2026-04-01","Wealthsimple","FHSA-DEMO-SAMPLE","Contribution","100.00","Include","Include","Optional note"]);
+    rows.push(["","","FHSA","2026-04-15","Wealthsimple","FHSA-DEMO-SAMPLE","RRSP Transfer In","500.00","Include","Include","Counts against FHSA participation room"]);
+    rows.push(["","","FHSA","2026-04-30","Wealthsimple","FHSA-DEMO-SAMPLE","Taxable Withdrawal","250.00","Include","Include","Can create re-participation for a future year"]);
   }
   downloadCsvRows('tracker_'+String(plan).toLowerCase()+'_template.csv',rows);
 }
@@ -6116,86 +5866,6 @@ function buildPrintableReportHtml(tfsa,fhsa,cy,tc,fc,tTot,fTot){
     .foot{margin-top:18px;font-size:11px;color:#555;line-height:1.5}
     @media print{body{margin:16px}.no-print{display:none}.grid{break-inside:avoid}.card,.snapshot,table{break-inside:avoid}}
   
-
-/* ── v14.13 mobile layout + tax card cleanup overrides ── */
-@media (max-width:768px) and (pointer:coarse){
-  .search-wrap{width:100%;margin-bottom:14px}
-  .search-input{display:block;width:100% !important;max-width:none !important}
-
-  .filter-grid{
-    display:grid !important;
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:12px !important;
-    align-items:start !important;
-  }
-  .filter-field,.filter-actions{min-width:0;width:100%}
-  .filter-grid .filter-field:nth-child(5),
-  .filter-grid .filter-actions{grid-column:1 / -1}
-  .filter-field label{margin-bottom:6px}
-  .filter-input,.filter-clear-btn{width:100%;min-height:48px}
-  .filter-meta{margin:0;line-height:1.5}
-
-  .tool-panel{padding:16px}
-  .tool-panel h3{margin-bottom:14px}
-  .tool-panel p.desc{margin-bottom:14px}
-  .tool-row{
-    display:grid !important;
-    grid-template-columns:1fr !important;
-    gap:12px !important;
-    align-items:stretch !important;
-  }
-  .tool-row>div,
-  .tool-row>.tool-action{
-    width:100% !important;
-    min-width:0 !important;
-    flex:none !important;
-  }
-  .tool-row .t-input,
-  .tool-row .add-btn{width:100% !important}
-  .tool-row .tool-action .add-btn{min-height:48px}
-
-  .mobile-actions-shell{display:block !important;width:100%}
-  .mobile-actions-shell>.mobile-actions-toggle{
-    display:block !important;
-    width:100%;
-    padding:12px 14px;
-    border-radius:12px;
-    min-height:46px;
-  }
-  .mobile-actions-shell>.mobile-actions-body{display:none !important;width:100%;padding-top:10px}
-  .mobile-actions-shell[open]>.mobile-actions-body{
-    display:grid !important;
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:12px !important;
-    align-items:stretch !important;
-  }
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster,
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-primary,
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more,
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu{display:contents !important}
-  .action-cluster-more .more-toggle{display:none !important}
-  .mobile-actions-shell>.mobile-actions-body button,
-  .mobile-actions-shell>.mobile-actions-body>.action-cluster-more>.more-menu button{
-    width:100% !important;
-    min-width:0 !important;
-    min-height:48px !important;
-    margin:0 !important;
-    padding:0 12px !important;
-    font-size:12px !important;
-    line-height:1.25 !important;
-    text-align:center !important;
-    white-space:normal !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    justify-self:stretch !important;
-  }
-}
-
-html.light .search-input,
-html.light .filter-input{background:#fff;border-color:#d8dbe8;color:#334}
-
-
 /* ===== v16.1 Pure UI polish pass ===== */
 :root{
   --rm-surface-1:rgba(10,13,27,.90);
@@ -8131,7 +7801,7 @@ document.addEventListener('keydown',e=>{
 document.getElementById('csv-file').addEventListener('change',handleCsvFile);
 document.getElementById('import-file').addEventListener('change',handleImportSourceFile);
 const isFirstLoad=!load();
-if(isFirstLoad){tT=expandT(INIT_T);fT=expandF(INIT_F);trackerConfig=clone(CONFIG_DEFAULTS);uiPrefs=clone(UI_DEFAULTS);profileState=buildInitialProfileStateFromCurrent()}
+if(isFirstLoad){tT=expandT(INIT_T);fT=expandF(INIT_F);trackerConfig=clone(CONFIG_DEFAULTS);uiPrefs=clone(UI_DEFAULTS);uiPrefs.demoSeedActive=true;profileState=buildInitialProfileStateFromCurrent()}
 seedNormalizedData();
 if(!profileState) profileState=buildInitialProfileStateFromCurrent();
 captureCurrentProfile();
@@ -8146,21 +7816,6 @@ if(_loadWarnings.length){setTimeout(()=>{_loadWarnings.forEach((msg,i)=>setTimeo
 if(!_cachedSelfTest) _cachedSelfTest=runSelfTest();
 console.log('Engine self-test:',_cachedSelfTest.allPass?'ALL PASSED':'FAILURES DETECTED');
 _cachedSelfTest.results.forEach(r=>console.log(`  ${r.pass?'✓':'✗'} ${r.label}: expected=${r.expected} actual=${safeNum(r.actual).toFixed(2)}`));
-</script>
-<script>
-
-/* v14.13 mobile action shell hardening */
-window.addEventListener('DOMContentLoaded',()=>{
-  const shell=document.getElementById('mobile-actions-shell');
-  if(!shell) return;
-  const apply=()=>{
-    const compact=(window.innerWidth<=768) && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    shell.open=!compact;
-  };
-  apply();
-  window.addEventListener('orientationchange',()=>setTimeout(apply,120));
-  window.addEventListener('pageshow',()=>setTimeout(apply,60));
-});
 </script>
 
 <style id="v15-4-mobile-header-redesign">
