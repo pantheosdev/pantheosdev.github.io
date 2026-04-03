@@ -3315,7 +3315,9 @@ function buildGenericTableCandidates(text, fileName, opts, sourceKind){
     const rowNo=obj.__rowNo||0;
     const plan=normalizePlanValue(getHeaderValue(obj,aliases.plan))||defaultPlan;
     const d=parseFlexibleDate(getHeaderValue(obj,aliases.date),opts.dateFormat);
-    const inst=getHeaderValue(obj,aliases.inst)||defaultInst;
+    const explicitInst=getHeaderValue(obj,aliases.inst)||defaultInst;
+    const inferredInst=(sourceKind==='wealthsimple_export'&&!String(explicitInst||'').trim())?'Wealthsimple':explicitInst;
+    const inst=inferredInst;
     const acct=getHeaderValue(obj,aliases.acct)||defaultAcct;
     const desc=getHeaderValue(obj,aliases.desc);
     const rawType=getHeaderValue(obj,aliases.type);
@@ -3357,7 +3359,8 @@ function buildGenericTableCandidates(text, fileName, opts, sourceKind){
       else {const inferred=inferStatementType(plan,signedAmt,desc,rawType);type=inferred.type;reviewReason=inferred.reviewReason}
     }
     if(!type){issues.push([String(rowNo),'Could not classify transaction',plan,d,inst,acct,rawType||desc,signedAmt,note]);return}
-    const cand=normalizeImportedCandidate(plan,buildImportCandidateBase(plan,d,inst,acct,type,Math.abs(signedAmt),note,rowNo,sourceId,reviewReason),text);
+    const normalizeContext=sourceKind==='wealthsimple_export' ? (text+'\nWealthsimple activity export') : text;
+    const cand=normalizeImportedCandidate(plan,buildImportCandidateBase(plan,d,inst,acct,type,Math.abs(signedAmt),note,rowNo,sourceId,reviewReason),normalizeContext);
     candidates.push(cand);
   });
   return {candidates,issues,detected:sourceKind==='cra_export'?'CRA export / copied table':(sourceKind==='wealthsimple_export'?'Wealthsimple CSV / XLSX activity export':'Statement CSV / TSV')};
@@ -3571,10 +3574,10 @@ function buildImportSessionFromSource(text,fileName,opts,sourceMeta){
   const useProbableDateMatch=shouldUseProbableDateMatchForSession(previewSessionMeta);
   const dupOpts=mergeMode==='keep_distinct'?{respectDistinctIds:true,ignoreNote:true,canonicalize:true,useProbableDateMatch:useProbableDateMatch,allowDateTypeAmountMatch:isCraPdf}:{ignoreNote:true,canonicalize:true,useProbableDateMatch:useProbableDateMatch,allowDateTypeAmountMatch:isCraPdf};
   const today=todayISO();
-  const craPools=isCraPdf?{TFSA:buildLedgerMatchPool('TFSA',tT,dupOpts),FHSA:buildLedgerMatchPool('FHSA',fT,dupOpts)}:null;
+  const ledgerPools={TFSA:buildLedgerMatchPool('TFSA',tT,dupOpts),FHSA:buildLedgerMatchPool('FHSA',fT,dupOpts)};
   result.candidates=result.candidates.map((c,idx)=>{
     const temp=Object.assign({},c);
-    const dup=isCraPdf?consumeLedgerPoolMatch(c.plan,temp,craPools[c.plan]||[],dupOpts):findDuplicateTxn(c.plan,temp,dupOpts);
+    const dup=consumeLedgerPoolMatch(c.plan,temp,ledgerPools[c.plan]||[],dupOpts);
     const futureDateWarning=String(c.d||'')>today;
     let reviewReason=String(c.reviewReason||'').trim();
     if(futureDateWarning){
@@ -3587,7 +3590,7 @@ function buildImportSessionFromSource(text,fileName,opts,sourceMeta){
       result.issues.push([String(c.rowNo||c.previewSeq||''),'Future-dated row — confirm the booking or settlement date',c.plan,c.d,c.inst,c.acct,c.type,c.amt,c.note||'']);
     }
   });
-  if(!isCraPdf)flagIntraSessionDuplicates(result.candidates, result.issues);
+  if(!isCraPdf)flagIntraSessionDuplicates(result.candidates, result.issues, {disableProbable: detected==='wealthsimple_export'});
   const reviewCount=result.candidates.filter(c=>(c.treat||c.status)==='Review'||!!c.reviewReason).length;
   const duplicateCount=result.candidates.filter(c=>c.duplicate||c.probableDuplicate).length;
   const futureDateCount=result.candidates.filter(c=>c.futureDateWarning).length;
@@ -3609,8 +3612,9 @@ function buildImportSessionFromSource(text,fileName,opts,sourceMeta){
   };
 }
 
-function flagIntraSessionDuplicates(candidates, issues){
-  const strictSeen=new Map();
+function flagIntraSessionDuplicates(candidates, issues, opts){
+  const settings=opts||{};
+  const strictCounts=new Map();
   const probableSeen=[];
   (candidates||[]).forEach((c,idx)=>{
     const plan=c.plan||'';
@@ -3621,22 +3625,25 @@ function flagIntraSessionDuplicates(candidates, issues){
     const amount=safeNum(c.amt).toFixed(2);
     const strictKey=[plan,inst,acct,type,amount,String(c.d||''),flag].join('|');
     if(!(c.duplicate||c.probableDuplicate)){
-      if(strictSeen.has(strictKey)){
+      const seen=strictCounts.get(strictKey)||0;
+      if(seen>=1){
         c.duplicate=true;
         c.selected=false;
         c.duplicateReason='Duplicate within current import batch';
         issues.push([String(c.rowNo||idx+1),c.duplicateReason,c.plan,c.d,c.inst,c.acct,c.type,c.amt,c.note||'']);
-      } else {
-        strictSeen.set(strictKey,true);
-        const probableKey=[plan,inst,acct,type,amount,flag].join('|');
-        const hit=probableSeen.find(p=>p.key===probableKey && Math.abs(daysBetweenIso(p.date,String(c.d||'')))<=1);
-        if(hit){
-          c.probableDuplicate=true;
-          c.selected=false;
-          c.duplicateReason='Probable duplicate within current import batch (nearby date match)';
-          issues.push([String(c.rowNo||idx+1),c.duplicateReason,c.plan,c.d,c.inst,c.acct,c.type,c.amt,c.note||'']);
-        } else {
-          probableSeen.push({key:probableKey,date:String(c.d||'')});
+      }
+      strictCounts.set(strictKey,seen+1);
+      if(!c.duplicate && !settings.disableProbable){
+          const probableKey=[plan,inst,acct,type,amount,flag].join('|');
+          const hit=probableSeen.find(p=>p.key===probableKey && Math.abs(daysBetweenIso(p.date,String(c.d||'')))<=1);
+          if(hit){
+            c.probableDuplicate=true;
+            c.selected=false;
+            c.duplicateReason='Probable duplicate within current import batch (nearby date match)';
+            issues.push([String(c.rowNo||idx+1),c.duplicateReason,c.plan,c.d,c.inst,c.acct,c.type,c.amt,c.note||'']);
+          } else {
+            probableSeen.push({key:probableKey,date:String(c.d||'')});
+          }
         }
       }
     }
@@ -3658,7 +3665,8 @@ function mergeImportSessions(sessions, opts, bundleName){
     (sess.issues||[]).slice(1).forEach(r=>issues.push(r));
     (sess.candidates||[]).forEach(c=>candidates.push(Object.assign({},c,{sourceFile:sess.fileName||''})));
   });
-  flagIntraSessionDuplicates(candidates, issues);
+  const hasWealthsimpleSession=valid.some(s=>String(s.sourceDetected||'')==='Wealthsimple CSV / XLSX activity export');
+  flagIntraSessionDuplicates(candidates, issues, {disableProbable: hasWealthsimpleSession});
   candidates.forEach(c=>{
     if(c.duplicateReason==='Duplicate within current import batch')c.duplicateReason='Duplicate within selected files';
     if(c.duplicateReason==='Probable duplicate within current import batch (nearby date match)')c.duplicateReason='Probable duplicate within selected files (nearby date match)';
@@ -3972,7 +3980,7 @@ async function readSpreadsheetImportFile(file){
 function shouldUseProbableDateMatchForSession(session){
   if(!session||!Array.isArray(session.candidates)||!session.candidates.length)return false;
   const detected=String(session.sourceDetected||'');
-  if(detected==='tracker_csv'||detected==='CRA room snapshot'||/^CRA\s/.test(detected)||/disabled/i.test(detected))return false;
+  if(detected==='tracker_csv'||detected==='CRA room snapshot'||detected==='Wealthsimple CSV / XLSX activity export'||/^CRA\s/.test(detected)||/disabled/i.test(detected))return false;
   const fileName=String(session.fileName||'');
   const meta=session.sourceMeta||{};
   const looksLikeWorkbook=String(meta.fileType||'')==='spreadsheet'||/\.(xlsx|xls)$/i.test(fileName);
@@ -4102,8 +4110,8 @@ function commitImportSession(){
   const issues=[['row','reason','plan','date','institution','account','type','amount','note']];
   const originalTfsa=new Set(tT);
   const originalFhsa=new Set(fT);
-  const originalTfsaPool=isCra?buildLedgerMatchPool('TFSA',Array.from(originalTfsa),dupOpts):null;
-  const originalFhsaPool=isCra?buildLedgerMatchPool('FHSA',Array.from(originalFhsa),dupOpts):null;
+  const originalTfsaPool=buildLedgerMatchPool('TFSA',Array.from(originalTfsa),dupOpts);
+  const originalFhsaPool=buildLedgerMatchPool('FHSA',Array.from(originalFhsa),dupOpts);
   importSession.candidates.forEach((c,idx)=>{
     if(!c.selected){manualSkipped++; return}
     const base={id:c.sourceId||'',d:c.d,inst:c.inst,acct:c.acct,type:c.type,amt:c.amt,note:c.note||''};
@@ -4112,7 +4120,7 @@ function commitImportSession(){
     else txn=ensureTxnIdentity('FHSA',Object.assign(base,{status:c.status||'Include'}),nextTxnSeq());
     const arr=c.plan==='TFSA'?tT:fT;
     const originalSet=c.plan==='TFSA'?originalTfsa:originalFhsa;
-    const dup=isCra?consumeLedgerPoolMatch(c.plan,txn,c.plan==='TFSA'?originalTfsaPool:originalFhsaPool,dupOpts):findDuplicateTxn(c.plan,txn,dupOpts);
+    const dup=consumeLedgerPoolMatch(c.plan,txn,c.plan==='TFSA'?originalTfsaPool:originalFhsaPool,dupOpts);
     if(dup.match||dup.probable){
       dupes++;
       const matchedExisting=!!(dup.existing&&originalSet.has(dup.existing));
@@ -4463,6 +4471,21 @@ function runSelfTest(){
   checks.push({label:'CRA TFSA PDF parser extracts contribution and withdrawal',actual:(()=>{const s=`Transactions for CIBC RSP CENTRE , TFSA-DEMO-SAMPLE\n2016-11-30 25.00 0.00\n2017-11-02 0.00 301.27`; const r=parseCraTfsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='Withdrawal';})()?1:0,expected:1,tol:0});
   checks.push({label:'CRA FHSA PDF parser extracts contribution and transfer out',actual:(()=>{const s=`Financial Institution: Wealthsimple Investments Inc.\nFHSA contract number: FHSA-DEMO-SAMPLE\n2025-03-13 CONTRIBUTION 54.87\n2024-03-28 FHSA TRANSFER OUT 942.18`; const r=parseCraFhsaPdf(s); return r.candidates.length===2 && r.candidates[0].type==='Contribution' && r.candidates[1].type==='FHSA Direct Transfer Out';})()?1:0,expected:1,tol:0});
   checks.push({label:'Wealthsimple FHSA PDF parser treats transfer in as contribution',actual:(()=>{const meta={pages:[{pageNumber:1,refDate:'2026-03-22',lines:[{text:'Yesterday'},{text:'Transfer in'},{text:'FHSA'},{text:'$30.00 CAD'}]}]}; const r=parseWealthsimpleActivityPdf(meta,'FHSA'); return r.candidates.length===1 && r.candidates[0].d==='2026-03-21' && r.candidates[0].type==='Contribution';})()?1:0,expected:1,tol:0});
+  checks.push({label:'Flexible MDY import date parses 2-digit year',actual:parseFlexibleDate('1/21/26','MDY')==='2026-01-21'?1:0,expected:1,tol:0});
+  checks.push({label:'Wealthsimple export detection recognizes net_cash_amount schema',actual:detectImportSource('transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount\n1/21/26,HB03657K4CAD,TFSA,Contribution,Cash,IN,410.00','wealthsimple_activity.csv',{fileType:'text'})==='wealthsimple_export'?1:0,expected:1,tol:0});
+  checks.push({label:'Wealthsimple TFSA CSV import parses M/D/YY net cash row',actual:(()=>{const text='transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount\n1/21/26,HB03657K4CAD,TFSA,Contribution,Cash,IN,410.00'; const r=buildGenericTableCandidates(text,'wealthsimple_tfsa.csv',{plan:'TFSA'},'wealthsimple_export'); return r.candidates.length===1 && r.candidates[0].plan==='TFSA' && r.candidates[0].d==='2026-01-21' && r.candidates[0].type==='Contribution' && Math.abs(r.candidates[0].amt-410)<0.005;})()?1:0,expected:1,tol:0});
+
+  checks.push({label:'Wealthsimple export infers institution when broker column is missing',actual:(()=>{const text='transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount\n1/21/26,HB03657K4CAD,TFSA,MoneyMovement,EFT,,410.00'; const r=buildGenericTableCandidates(text,'wealthsimple_tfsa.csv',{plan:'TFSA'},'wealthsimple_export'); return r.candidates.length===1 && r.candidates[0].inst==='Wealthsimple';})()?1:0,expected:1,tol:0});
+  checks.push({label:'Wealthsimple TFSA export dedupes against grouped seeded activity account',actual:(()=>{const text='transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount\n1/21/26,HB03657K4CAD,TFSA,MoneyMovement,EFT,,410.00'; const original={tT:clone(tT),fT:clone(fT)}; try{tT=[ensureTxnIdentity('TFSA',{d:'2026-01-21',inst:'Wealthsimple',acct:'Grouped TFSA activity export',type:'Contribution',amt:410,treat:'Include',note:'',id:'WS-GROUPED'},1)]; fT=[]; const r=buildImportSessionFromSource(text,'wealthsimple_tfsa.xlsx',{sourceKind:'auto',plan:'AUTO',signMode:'positive_inflow',dateFormat:'AUTO',institution:'',account:'',mergeMode:'skip'},null); return r.duplicateCount===1 && r.candidates.length===1 && r.candidates[0].duplicate===true; } finally { tT=original.tT; fT=original.fT; }})()?1:0,expected:1,tol:0});
+  checks.push({label:'Wealthsimple export disables nearby-date probable duplicate heuristics',actual:(()=>{const sess={sourceDetected:'Wealthsimple CSV / XLSX activity export',fileName:'fhsa.xlsx',sourceMeta:{fileType:'spreadsheet'},candidates:[{inst:'Wealthsimple'}]}; return shouldUseProbableDateMatchForSession(sess)?0:1;})(),expected:1,tol:0});
+  checks.push({label:'Wealthsimple FHSA export keeps adjacent equal contributions selectable',actual:(()=>{const text='transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount\n2/12/26,HQ5XRTH65CAD,FHSA,MoneyMovement,EFT,,50.00\n2/13/26,HQ5XRTH65CAD,FHSA,MoneyMovement,EFT,,50.00\n2/17/26,HQ5XRTH65CAD,FHSA,MoneyMovement,EFT,,50.00'; const original={tT:clone(tT),fT:clone(fT)}; try{tT=[]; fT=[]; const r=buildImportSessionFromSource(text,'fhsa.xlsx',{sourceKind:'auto',plan:'AUTO',signMode:'positive_inflow',dateFormat:'AUTO',institution:'',account:'',mergeMode:'skip'},null); return r.parsedRows===3 && r.duplicateCount===0 && r.candidates.every(c=>c.selected&&!c.duplicate&&!c.probableDuplicate); } finally { tT=original.tT; fT=original.fT; }})()?1:0,expected:1,tol:0});
+
+  checks.push({label:'CRA duplicate pool is count-based, not boolean',actual:(()=>{const opts={ignoreNote:true,canonicalize:true,allowDateTypeAmountMatch:true}; const existing=[ensureTxnIdentity('TFSA',{d:'2024-03-25',inst:'Wealthsimple',acct:'HB03657K4CAD',type:'Contribution',amt:310,treat:'Include',note:'',id:'POOL-1'},1)]; const pool=buildLedgerMatchPool('TFSA',existing,opts); const incoming=ensureTxnIdentity('TFSA',{d:'2024-03-25',inst:'Wealthsimple',acct:'HB03657K4CAD',type:'Contribution',amt:310,treat:'Include',note:'',id:'POOL-2'},2); const m1=consumeLedgerPoolMatch('TFSA',incoming,pool,opts); const m2=consumeLedgerPoolMatch('TFSA',incoming,pool,opts); return (m1.match?1:0)+(m2.match?1:0)===1;})()?1:0,expected:1,tol:0});
+  checks.push({label:'Non-CRA import preview uses count-based pool dedup',actual:(()=>{const original={tT:clone(tT),fT:clone(fT)}; try{tT=[ensureTxnIdentity('TFSA',{d:'2024-03-25',inst:'Wealthsimple',acct:'TFSA-DEMO-SAMPLE',type:'Contribution',amt:310,treat:'Include',note:'',id:'EXIST-1'},1)]; fT=[]; const text='transaction_date,account_id,account_type,activity_type,activity_sub_type,direction,net_cash_amount
+2024-03-25,HB03657K4CAD,TFSA,MoneyMovement,EFT,,310.00
+2024-03-25,HB03657K4CAD,TFSA,MoneyMovement,EFT,,310.00'; const r=buildImportSessionFromSource(text,'ws.xlsx',{sourceKind:'auto',plan:'AUTO',signMode:'positive_inflow',dateFormat:'AUTO',institution:'',account:'',mergeMode:'skip'},null); const dupeCount=r.candidates.filter(c=>c.duplicate||c.probableDuplicate).length; const selectable=r.candidates.filter(c=>c.selected&&!c.duplicate&&!c.probableDuplicate).length; return dupeCount===1 && selectable===1; } finally { tT=original.tT; fT=original.fT; }})()?1:0,expected:1,tol:0});
+  checks.push({label:'Start Empty only clears the active profile',actual:(()=>{const keepT=[ensureTxnIdentity('TFSA',{d:'2024-01-01',inst:'Test',acct:'A',type:'Contribution',amt:100,treat:'Include',note:'',id:'KEEP-T'},1)]; const keepF=[ensureTxnIdentity('FHSA',{d:'2024-01-01',inst:'Test',acct:'F',type:'Contribution',amt:200,status:'Include',note:'',id:'KEEP-F'},2)]; const original={profileState:clone(profileState),tT:clone(tT),fT:clone(fT),trackerConfig:cloneConfig(trackerConfig),uiPrefs:clonePrefs(uiPrefs),importSession,importSourceBuffer:clone(importSourceBuffer),cached:_cachedSelfTest}; try{profileState={active:'p2',profiles:{p1:normalizeProfileBundle({label:'Profile 1',t:clone(keepT),f:clone(keepF),config:cloneConfig(trackerConfig),prefs:clonePrefs(uiPrefs),resetMode:'seeded'},'p1'),p2:normalizeProfileBundle({label:'Profile 2',t:[ensureTxnIdentity('TFSA',{d:'2024-02-01',inst:'Test',acct:'B',type:'Contribution',amt:300,treat:'Include',note:'',id:'P2-T'},3)],f:[ensureTxnIdentity('FHSA',{d:'2024-02-01',inst:'Test',acct:'G',type:'Contribution',amt:400,status:'Include',note:'',id:'P2-F'},4)],config:cloneConfig(trackerConfig),prefs:clonePrefs(uiPrefs),resetMode:'empty'},'p2')}}; applyProfileBundle('p2'); applyStartEmptyToActiveProfile(); const p1=profileState.profiles.p1; const p2=profileState.profiles.p2; return p1.t.length===1 && p1.f.length===1 && p2.t.length===0 && p2.f.length===0; } finally { profileState=original.profileState; tT=original.tT; fT=original.fT; trackerConfig=original.trackerConfig; uiPrefs=original.uiPrefs; importSession=original.importSession; importSourceBuffer=original.importSourceBuffer; _cachedSelfTest=original.cached; }})()?1:0,expected:1,tol:0});
+  checks.push({label:'Reset restores seeded Profile 1 and empty Profile 2',actual:(()=>{const original={profileState:clone(profileState),tT:clone(tT),fT:clone(fT),trackerConfig:cloneConfig(trackerConfig),uiPrefs:clonePrefs(uiPrefs),importSession,importSourceBuffer:clone(importSourceBuffer),cached:_cachedSelfTest}; try{profileState={active:'p1',profiles:{p1:makeEmptyProfileBundle('Profile 1'),p2:makeSeedProfileBundle('Profile 2')}}; applyProfileBundle('p1'); const seed1=applyResetSeedToActiveProfile(); const p1ok=(seed1.resetMode==='seeded' && tT.length>0 && fT.length>0); profileState.active='p2'; applyProfileBundle('p2'); const seed2=applyResetSeedToActiveProfile(); return p1ok && seed2.resetMode==='empty' && tT.length===0 && fT.length===0; } finally { profileState=original.profileState; tT=original.tT; fT=original.fT; trackerConfig=original.trackerConfig; uiPrefs=original.uiPrefs; importSession=original.importSession; importSourceBuffer=original.importSourceBuffer; _cachedSelfTest=original.cached; }})()?1:0,expected:1,tol:0});
 
   trackerConfig=oldConfig;
 
@@ -5571,7 +5594,9 @@ function parseCSV(text){
 }
 
 function normalizeCompareAccount(plan, inst, acct){
-  return normalizeImportedAccount(plan, inst, acct, '');
+  const canon=canonicalInstitutionName(inst);
+  const ctx=(canon==='Wealthsimple')?'wealthsimple':'';
+  return normalizeImportedAccount(plan, inst, acct, ctx);
 }
 function dateDiffDays(a,b){
   if(!a||!b)return 9999;
@@ -5706,6 +5731,9 @@ function importCSVText(text,fileName=''){
   let added=0,skipped=0,dupes=0;
   let tfsaParsedTotal=0, fhsaParsedTotal=0, tfsaAddedTotal=0, fhsaAddedTotal=0;
   const invalidRows=[['row','reason','id','sequence','plan','date','institution','account','type','amount','treatment','status','note']];
+  const csvDupOpts={respectDistinctIds:true,ignoreNote:true,canonicalize:true};
+  const csvTfsaPool=buildLedgerMatchPool('TFSA',tT.slice(),csvDupOpts);
+  const csvFhsaPool=buildLedgerMatchPool('FHSA',fT.slice(),csvDupOpts);
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
     if(!r.some(v=>String(v||'').trim()))continue;
@@ -5734,19 +5762,17 @@ function importCSVText(text,fileName=''){
       const type=normalizeTfsaType(rawType,{strict:true});
       if(!type){skipped++; invalidRows.push([rowNo,'Unknown TFSA type',...common]); continue}
       const txn=ensureTxnIdentity('TFSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,treat,note});
-      const useProbableDateMatch=canonicalInstitutionName(inst)==='Wealthsimple'&&(detected!=='tracker_csv');
-      const dupOpts={respectDistinctIds:true,ignoreNote:true,canonicalize:true,useProbableDateMatch};
       tfsaParsedTotal+=amt;
-      if(isDuplicateTxn('TFSA',txn,dupOpts)){dupes++; invalidRows.push([rowNo,'Duplicate TFSA transaction',...common]); continue}
+      const dupResult=consumeLedgerPoolMatch('TFSA',txn,csvTfsaPool,csvDupOpts);
+      if(dupResult.match||dupResult.probable){dupes++; invalidRows.push([rowNo,'Duplicate TFSA transaction',...common]); continue}
       tT.push(txn);added++; tfsaAddedTotal+=amt;
     } else if(plan==='FHSA'){
       const type=normalizeFhsaType(rawType,{strict:true});
       if(!type){skipped++; invalidRows.push([rowNo,'Unknown FHSA type',...common]); continue}
       const txn=ensureTxnIdentity('FHSA',{id:idVal,seq:seqVal,d,inst,acct,type,amt,status,note});
-      const useProbableDateMatch=canonicalInstitutionName(inst)==='Wealthsimple'&&(detected!=='tracker_csv');
-      const dupOpts={respectDistinctIds:true,ignoreNote:true,canonicalize:true,useProbableDateMatch};
       fhsaParsedTotal+=amt;
-      if(isDuplicateTxn('FHSA',txn,dupOpts)){dupes++; invalidRows.push([rowNo,'Duplicate FHSA transaction',...common]); continue}
+      const dupResult=consumeLedgerPoolMatch('FHSA',txn,csvFhsaPool,csvDupOpts);
+      if(dupResult.match||dupResult.probable){dupes++; invalidRows.push([rowNo,'Duplicate FHSA transaction',...common]); continue}
       fT.push(txn);added++; fhsaAddedTotal+=amt;
     } else {
       skipped++; invalidRows.push([rowNo,'Unknown plan',...common]);
@@ -7720,11 +7746,8 @@ function exportSettingsCSV(){
   const blob=new Blob([toCSV(rows)],{type:'text/csv;charset=utf-8'});
   const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='tracker_settings_'+new Date().toISOString().split('T')[0]+'.csv';a.click();URL.revokeObjectURL(u);
 }
-function startEmpty(){
+function applyStartEmptyToActiveProfile(){
   ensureProfileState();
-  const activeLabel=getActiveProfileLabel();
-  if(!confirm('⚠️ This will clear all transactions for '+activeLabel+' and leave an empty tracker so you can import only this person\'s data.\n\nBundled seeded data for this profile will be hidden until you click Reset.\n\nContinue?'))return;
-  if(!confirm('Final confirmation: start '+activeLabel+' with an empty ledger?'))return;
   tT=[];fT=[];trackerConfig=cloneConfig();uiPrefs=clonePrefs();
   if(uiPrefs&&uiPrefs.craSnapshots)uiPrefs.craSnapshots={tfsa:null,fhsa:null};
   if(Object.prototype.hasOwnProperty.call(uiPrefs,'demoSeedActive'))uiPrefs.demoSeedActive=false;
@@ -7734,10 +7757,33 @@ function startEmpty(){
   importSession=null;
   importSourceBuffer={name:'',text:'',meta:null,files:[]};
   _cachedSelfTest=null;
+  const active=profileState.active||'p1';
+  const current=profileState.profiles[active]||normalizeProfileBundle(null,active);
+  current.label=current.label||(active==='p1'?'Profile 1':SECOND_PROFILE_LABEL);
+  current.t=[];
+  current.f=[];
+  current.config=cloneConfig(trackerConfig);
+  current.prefs=clonePrefs(uiPrefs);
+  current.resetMode=(active==='p1'?'seeded':'empty');
+  profileState.profiles[active]=current;
+}
+
+function applyResetSeedToActiveProfile(){
   ensureProfileState();
-  const current=profileState.profiles[profileState.active]||normalizeProfileBundle(null,profileState.active);
-  current.resetMode=(profileState.active==='p1'?'seeded':'empty');
-  profileState.profiles[profileState.active]=current;
+  const active=profileState.active||'p1';
+  const seed=getResetSeedForCurrentProfile();
+  profileState.profiles[active]=seed;
+  applyProfileBundle(active);
+  _cachedSelfTest=null;
+  return seed;
+}
+
+function startEmpty(){
+  ensureProfileState();
+  const activeLabel=getActiveProfileLabel();
+  if(!confirm('⚠️ This will clear all transactions for '+activeLabel+' and leave an empty tracker so you can import only this person\'s data.\n\nBundled seeded data for this profile will be hidden until you click Reset.\n\nContinue?'))return;
+  if(!confirm('Final confirmation: start '+activeLabel+' with an empty ledger?'))return;
+  applyStartEmptyToActiveProfile();
   appendActivityLog({kind:'start_empty'});
   save();render();
 }
@@ -7751,9 +7797,8 @@ function resetData(){
     : '⚠️ This will clear '+label+' back to an empty profile.\n\nAre you sure?';
   if(!confirm(msg))return;
   if(!confirm('Final confirmation: Reset '+label+' now?'))return;
-  profileState.profiles[profileState.active]=seed;
-  applyProfileBundle(profileState.active);
-  appendActivityLog({kind:'reset',mode:seed.resetMode});
+  const applied=applyResetSeedToActiveProfile();
+  appendActivityLog({kind:'reset',mode:applied.resetMode});
   save();render();
 }
 
